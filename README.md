@@ -27,6 +27,17 @@ Quick test, without install: `claude --plugin-dir ~/code/skills`
 
 Update after a `git pull`: `/plugin marketplace update jordan-skills`
 
+## Requirements
+
+`stack-pull-requests` needs the `gh stack` extension and the `gh-stack` skill:
+
+```
+gh extension install github/gh-stack
+gh skill install github/gh-stack gh-stack --agent claude-code --scope user
+```
+
+Without `--agent` and `--scope`, `gh` installs the skill in the current project.
+
 ## Use
 
 A plugin skill is called with the plugin name: `/jcontent-traace:<skill>`, for example `/jcontent-traace:rebase`.

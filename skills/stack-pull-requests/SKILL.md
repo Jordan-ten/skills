@@ -31,7 +31,7 @@ This keeps both up to date, which a copy in the repo would not.
 
 ```bash
 gh extension install github/gh-stack
-gh skill install github/gh-stack gh-stack
+gh skill install github/gh-stack gh-stack --agent claude-code --scope user
 ```
 
 Update later with `gh extension upgrade gh-stack` and `gh skill update`.
