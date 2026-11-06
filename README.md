@@ -72,6 +72,12 @@ Skills marked **slash-only** run only when you type their command. Claude never 
 |---|---|---|
 | `deployment-instructions` | Step-by-step instructions to deploy `main` to production or demo. | yes |
 
+### Maintenance
+
+| Skill | What it does | Slash-only |
+|---|---|---|
+| `audit-skills` | Checks the skills of this repo against the current Claude Code docs and release notes. Runs a script for the mechanical rules, reports the gaps, and applies the fixes you choose. | yes |
+
 ## Add a skill
 
 1. Create `skills/<name>/SKILL.md` with `name` and `description` in the front matter.
