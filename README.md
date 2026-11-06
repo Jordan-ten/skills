@@ -29,7 +29,7 @@ Update after a `git pull`: `/plugin marketplace update jordan-skills`
 
 ## Requirements
 
-`stack-pull-requests` needs the `gh stack` extension and the `gh-stack` skill:
+`stack` needs the `gh stack` extension and the `gh-stack` skill:
 
 ```
 gh extension install github/gh-stack
@@ -62,7 +62,7 @@ Skills marked **slash-only** run only when you type their command. Claude never 
 |---|---|---|
 | `rebase` | Rebases the current branch on a target branch (default `main`). Fixes generated-file conflicts, applies migrations, regenerates the GraphQL schema and SDK types, checks types, runs related tests, then force-pushes. | no |
 | `feature-implementation-workflow` | Takes a feature from its GitHub issue to pull requests in six phases, with exit conditions and a compact between phases: refine the issue scenarios, write one plan per package, split into PRs, implement, verify (generated code, all tests, end to end in the UI), push. Resumable. | yes |
-| `stack-pull-requests` | Splits a validated plan into a stack of pull requests, one per layer. Then manages the stack: status, review fixes, rebase, sync. | no |
+| `stack` | Splits a validated plan into a stack of pull requests, one per layer. Then manages the stack: status, review fixes, rebase, sync. | no |
 | `create-local-data` | Creates records in the local app through the GraphQL API with an offline-auth token. Used to see a screen, reproduce a bug, or prepare a demo. | no |
 | `launch` | Starts the backend in dev or test. Checks Docker, runs PostgreSQL and ClickHouse migrations, starts NestJS in watch mode, and waits until it is healthy. | no |
 | `hotfix` | Creates hotfix PRs for demo and/or production, or a revert PR for `main`, from a branch or a commit. Infers the issue number from the branch name. | no |
@@ -77,7 +77,8 @@ Skills marked **slash-only** run only when you type their command. Claude never 
 
 | Skill | What it does | Slash-only |
 |---|---|---|
-| `triage-code-review-pull-request` | Prepares the review of a colleague's pull request. Runs `/code-review`, the coding-style checklists, the ticket check and the CI status. Writes one report: what the agent checked, and what a human must still check. | no |
+| `review` | Prepares the review of a colleague's pull request. Runs `/code-review`, the coding-style checklists, the ticket check and the CI status. Writes one report: what the agent checked, and what a human must still check. | no |
+| `review-workflow` | Run from the Orca "Review" workspace with a PR number or URL. Creates a child Orca workspace on the PR code, drops the review rules in it, and starts the triage agent. | no |
 
 ### Deployment
 

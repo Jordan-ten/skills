@@ -13,7 +13,7 @@ puis plan frontend. Dans un plan, couche par couche, de bas en haut.
 - Relis les scénarios de l'issue. Le plan y renvoie par leur titre.
 - Fichiers de test : utilise le skill `test-patterns`.
 - Branches : suis `tnx-dev-standards-dev-and-git-workflow`. Pour une stack, suis l'étape 4 de `split`
-  dans `../stack-pull-requests/SKILL.md` (`gh stack init`, `gh stack add`). Pour une seule PR, vérifie que
+  dans `../stack/SKILL.md` (`gh stack init`, `gh stack add`). Pour une seule PR, vérifie que
   la branche courante est la bonne. Demande avant de créer une branche.
 
 ## Travail, par couche

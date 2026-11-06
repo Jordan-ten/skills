@@ -18,7 +18,7 @@ But : les branches sont poussées et les pull requests ouvertes, après un oui c
    - Une PR par plan : suis `tnx-dev-standards-dev-and-git-workflow` (nom de branche, message de commit,
      corps de PR : Description / Related Issue / Is this covered by automated tests). Titres et corps
      de PR en anglais simple.
-   - Stack : suis les étapes 6 et 7 de `split` dans `../stack-pull-requests/SKILL.md`
+   - Stack : suis les étapes 6 et 7 de `split` dans `../stack/SKILL.md`
      (`gh stack submit --auto`, puis réécriture des titres et des corps). Couches backend d'abord.
    - Ne force jamais le push. Ne change jamais les labels, le milestone, les assignés. Dis à
      l'utilisateur d'assigner un reviewer.

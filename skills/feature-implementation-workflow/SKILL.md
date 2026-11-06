@@ -118,7 +118,7 @@ compacte à la place.
 - Les actions vers l'extérieur (push, pull request, modification de l'issue) n'ont lieu qu'après un oui
   donné dans cette phase.
 - Réutilise l'existant. Appelle `launch` et `run-qa-scenarios` avec l'outil `Skill`. Les skills en slash
-  uniquement (`stack-pull-requests`) ne peuvent pas être appelés : lis leur `SKILL.md` et suis la
+  uniquement (`stack`) ne peuvent pas être appelés : lis leur `SKILL.md` et suis la
   sous-commande. Ne recopie pas leurs règles ici.
 
 ## Pas de sous-skills (pour l'instant)

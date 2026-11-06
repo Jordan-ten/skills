@@ -4,7 +4,7 @@ But : chaque plan a un découpage en pull requests validé, assez petit pour êt
 
 ## Travail
 
-Lis les règles de couches de `split` (étape 2) dans `../stack-pull-requests/SKILL.md` et applique-les
+Lis les règles de couches de `split` (étape 2) dans `../stack/SKILL.md` et applique-les
 aux étapes de chaque plan. Ne les recopie pas ici.
 
 - Propose un tableau par plan : n, branche, périmètre (une phrase), étapes, tests, dépend de. Une couche

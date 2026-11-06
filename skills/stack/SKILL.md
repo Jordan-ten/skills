@@ -1,6 +1,6 @@
 ---
-name: stack-pull-requests
-description: Transforme un plan validé en stack de pull requests (une PR par couche), puis gère la stack (status, corrections de review sur la bonne couche, rebase et sync). Construit sur le skill officiel gh-stack. À utiliser quand l'utilisateur lance /stack-pull-requests, dit "split the plan into a stack", "stack de PR", "découpe le plan en stack", "corrige les retours de review sur la stack", "sync la stack", ou veut des PR dépendantes. (Turn a validated plan into a stack of pull requests, then manage the stack.)
+name: stack
+description: Transforme un plan validé en stack de pull requests (une PR par couche), puis gère la stack (status, corrections de review sur la bonne couche, rebase et sync). Construit sur le skill officiel gh-stack. À utiliser quand l'utilisateur lance /stack, dit "split the plan into a stack", "stack de PR", "découpe le plan en stack", "corrige les retours de review sur la stack", "sync la stack", ou veut des PR dépendantes. (Turn a validated plan into a stack of pull requests, then manage the stack.)
 disable-model-invocation: true
 allowed-tools: Bash(git *), Bash(gh *), Bash(npm run *), Read, Edit, Write, Glob, Grep, AskUserQuestion
 ---
