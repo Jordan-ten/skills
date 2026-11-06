@@ -51,6 +51,8 @@ Skills marked **slash-only** run only when you type their command. Claude never 
 | `rebase` | Rebases the current branch on a target branch (default `main`). Fixes generated-file conflicts, applies migrations, regenerates the GraphQL schema and SDK types, checks types, runs related tests, then force-pushes. | no |
 | `stack-pull-requests` | Splits a validated plan into a stack of pull requests, one per layer. Then manages the stack: status, review fixes, rebase, sync. | no |
 | `create-local-data` | Creates records in the local app through the GraphQL API with an offline-auth token. Used to see a screen, reproduce a bug, or prepare a demo. | no |
+| `launch` | Starts the backend in dev or test. Checks Docker, runs PostgreSQL and ClickHouse migrations, starts NestJS in watch mode, and waits until it is healthy. | no |
+| `hotfix` | Creates hotfix PRs for demo and/or production, or a revert PR for `main`, from a branch or a commit. Infers the issue number from the branch name. | no |
 
 ### QA
 
