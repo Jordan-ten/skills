@@ -1,5 +1,5 @@
 ---
-name: tnx-qa-scenario-in-ui
+name: run-qa-scenarios
 description: >
   Tests an implemented GitHub issue against its own test scenarios, in the local dev app, through the
   Chrome DevTools MCP. Takes an issue URL or number. Builds the scenario list from the issue (How to
@@ -7,7 +7,7 @@ description: >
   scenarios it can run and which need a human, runs the ones it can, and ends the run with one report
   giving a verdict per scenario. Read-only: it never edits code and never writes on the issue. Use when
   the user asks to test a ticket, verify a fix, QA an issue, says "teste le ticket #X", "vérifie que le
-  ticket marche", or invokes /tnx-qa-scenario-in-ui.
+  ticket marche", or invokes /run-qa-scenarios.
 allowed-tools: Bash(gh issue view *), Bash(gh pr list *), Bash(gh pr view *), Bash(git log *), Bash(git diff *), Bash(git branch *), Bash(npx vitest *), Read, Grep, Glob, Agent, AskUserQuestion, Skill, mcp__chrome-devtools__list_pages, mcp__chrome-devtools__new_page, mcp__chrome-devtools__navigate_page, mcp__chrome-devtools__take_snapshot, mcp__chrome-devtools__take_screenshot, mcp__chrome-devtools__click, mcp__chrome-devtools__fill, mcp__chrome-devtools__fill_form, mcp__chrome-devtools__hover, mcp__chrome-devtools__press_key, mcp__chrome-devtools__wait_for, mcp__chrome-devtools__evaluate_script, mcp__chrome-devtools__list_console_messages, mcp__chrome-devtools__list_network_requests
 ---
 

@@ -1,13 +1,13 @@
 ---
-name: tnx-dev-create-local-data
+name: create-local-data
 description: >
   Creates records in a local environment by calling the backend GraphQL API, with a self-signed
   offline-auth token (no login, no file written, no raw SQL). Use when a local case is missing and
   has to be created to see a screen, reproduce a bug, prepare a demo or unblock a test: "crée-moi
   une campagne en local", "il me faut une tâche de groupe", "génère les données pour reproduire ce
-  bug", "seed local data", or /tnx-dev-create-local-data. Also used by other skills that need a
+  bug", "seed local data", or /create-local-data. Also used by other skills that need a
   record before they can go on.
-allowed-tools: Bash(bash .claude/skills/tnx-dev-create-local-data/scripts/*), Read, Grep, Glob, AskUserQuestion
+allowed-tools: Bash(bash ${CLAUDE_PLUGIN_ROOT}/skills/create-local-data/scripts/*), Read, Grep, Glob, AskUserQuestion
 ---
 
 # Create local data
@@ -31,7 +31,7 @@ validates every call, so the records are coherent — which raw SQL never guaran
 ## The call
 
 ```bash
-GQL_EMAIL=<dev user email> bash .claude/skills/tnx-dev-create-local-data/scripts/graphql.sh \
+GQL_EMAIL=<dev user email> bash ${CLAUDE_PLUGIN_ROOT}/skills/create-local-data/scripts/graphql.sh \
   --variables '{"input":{...}}' <<'GQL'
 mutation CreateX($input: XInput!) { createX(input: $input) { id name } }
 GQL

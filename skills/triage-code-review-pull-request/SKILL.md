@@ -1,6 +1,6 @@
 ---
-name: tnx-review-pr-triage
-description: Triage a colleague's pull request. Runs /code-review (high by default), the coding-style checklists, the ticket check and the CI status, then writes one markdown report that separates what the agent verified from what a human must still check. Use when the user invokes /tnx-review-pr-triage or says "triage cette PR", "prépare ma review de la PR #N", "qu'est-ce que je dois vérifier à la main sur cette PR". To map a big PR by sub-feature, use tnx-review-plan-pr-review instead.
+name: triage-code-review-pull-request
+description: Triage a colleague's pull request. Runs /code-review (high by default), the coding-style checklists, the ticket check and the CI status, then writes one markdown report that separates what the agent verified from what a human must still check. Use when the user invokes /triage-code-review-pull-request or says "triage cette PR", "prépare ma review de la PR #N", "qu'est-ce que je dois vérifier à la main sur cette PR". To map a big PR by sub-feature, use tnx-review-plan-pr-review instead.
 disable-model-invocation: true
 context: fork
 allowed-tools: Bash(git *), Bash(gh *), Read, Grep, Glob, Write, Skill

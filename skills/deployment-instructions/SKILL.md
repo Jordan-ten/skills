@@ -1,6 +1,6 @@
 ---
-name: tnx-oncall-instruction-for-deployment
-description: Slash-only. Use only when the user explicitly invokes /tnx-oncall-instruction-for-deployment to deploy main to production or demo. Never trigger from natural-language requests.
+name: deployment-instructions
+description: Slash-only. Use only when the user explicitly invokes /deployment-instructions to deploy main to production or demo. Never trigger from natural-language requests.
 disable-model-invocation: true
 argument-hint: "[production|demo]"
 allowed-tools: Bash(gh pr create:*), Bash(gh pr list:*), Bash(gh pr view:*), Bash(gh run list:*), Bash(gh run view:*), mcp__claude_ai_Datadog__search_datadog_logs

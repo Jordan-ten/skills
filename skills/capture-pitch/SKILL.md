@@ -1,13 +1,13 @@
 ---
-name: tnx-plan-capture-pitch
-description: Slash-only. Use only when the user explicitly invokes /tnx-plan-capture-pitch with a Notion pitch name or URL. Saves a local copy of a PM pitch from Notion. Never trigger from natural-language requests.
+name: capture-pitch
+description: Slash-only. Use only when the user explicitly invokes /capture-pitch with a Notion pitch name or URL. Saves a local copy of a PM pitch from Notion. Never trigger from natural-language requests.
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash, Glob, AskUserQuestion
 ---
 
 # Capture Pitch
 
-Save a local copy of one PM pitch from Notion. The copy is the input for ticket writing, plans, and `/tnx-plan-analyze-pitch`.
+Save a local copy of one PM pitch from Notion. The copy is the input for ticket writing, plans, and `/analyze-pitch`.
 
 This skill copies. It does not interpret, summarize, or judge.
 
@@ -57,5 +57,5 @@ fetched_at: <YYYY-MM-DD HH:mm>
 
 - Copy the words of the PM. Do not rewrite, shorten, or translate.
 - Keep the MoSCoW value as written in Notion (Must / Should / Could / Won't, or 1 to 4).
-- Do not explore the code. Do not add lexicon, scenarios, or questions. That is the job of `/tnx-plan-analyze-pitch`.
+- Do not explore the code. Do not add lexicon, scenarios, or questions. That is the job of `/analyze-pitch`.
 - If a part of the pitch cannot be read (permission, empty page), write `> Not captured: <reason>` in its place.

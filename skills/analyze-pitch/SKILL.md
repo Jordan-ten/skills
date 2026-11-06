@@ -1,6 +1,6 @@
 ---
-name: tnx-plan-analyze-pitch
-description: Slash-only. Use only when the user explicitly invokes /tnx-plan-analyze-pitch with a captured pitch name. Reads a local pitch capture and writes an analysis: summary, lexicon grounded in the code, and GIVEN/WHEN/THEN scenarios filtered by MoSCoW. Never trigger from natural-language requests.
+name: analyze-pitch
+description: Slash-only. Use only when the user explicitly invokes /analyze-pitch with a captured pitch name. Reads a local pitch capture and writes an analysis: summary, lexicon grounded in the code, and GIVEN/WHEN/THEN scenarios filtered by MoSCoW. Never trigger from natural-language requests.
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 ---
@@ -9,7 +9,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 
 Turn a local pitch capture into a business context: summary, lexicon, scenarios. No technical implementation details.
 
-The capture is made by `/tnx-plan-capture-pitch`. This skill never calls Notion.
+The capture is made by `/capture-pitch`. This skill never calls Notion.
 
 ## Arguments
 
@@ -17,11 +17,11 @@ The capture is made by `/tnx-plan-capture-pitch`. This skill never calls Notion.
 
 Optional flag: `--milestone <title|number>` — compare the selected tasks with the issues of an existing GitHub milestone. Without it, the skill never calls GitHub.
 
-If no capture exists, tell the user to run `/tnx-plan-capture-pitch` first and stop.
+If no capture exists, tell the user to run `/capture-pitch` first and stop.
 
 ## Steps
 
-1. **Read the capture.** `backend/.claude/plans/pitch/<pitch-slug>.md`. Show its `fetched_at` date to the user. If the pitch may have changed since, suggest a refresh with `/tnx-plan-capture-pitch`.
+1. **Read the capture.** `backend/.claude/plans/pitch/<pitch-slug>.md`. Show its `fetched_at` date to the user. If the pitch may have changed since, suggest a refresh with `/capture-pitch`.
 2. **Ask the MoSCoW levels.** Show the tasks grouped by category with their priority. Ask which levels to keep (`1 = Must`, `2 = Should`, `3 = Could`, `4 = Won't`; answers like "1", "1 and 2", "all"). Continue with the selected tasks only.
 3. **Read the code for the lexicon.** Do this silently. In `backend/src/` and `frontend/src/`:
    - find the NestJS module(s) of the pitch (`src/<domain>/`);

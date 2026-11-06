@@ -25,7 +25,7 @@ One `AskUserQuestion` for the whole plan, not one per record. Say which database
 
 | Option | What happens |
 |---|---|
-| `Generate the data` | Follow the `tnx-dev-create-local-data` skill, then run the scenarios. |
+| `Generate the data` | Follow the `create-local-data` skill, then run the scenarios. |
 | `I create it myself` | Give the summary, then wait. Nothing is written. |
 | `Skip these scenarios` | They go to the report as `NOT TESTABLE`, with what was missing. |
 
@@ -34,7 +34,7 @@ this skill must not do.
 
 ## 3. Creating it
 
-The `tnx-dev-create-local-data` skill owns this: it finds the mutation, knows the order of the calls,
+The `create-local-data` skill owns this: it finds the mutation, knows the order of the calls,
 and sends them through the backend API with a self-signed offline-auth token. Do not re-invent the
 transport here, and never create data with SQL.
 

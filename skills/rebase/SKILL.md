@@ -1,6 +1,6 @@
 ---
-name: tnx-dev-rebase
-description: Rebase the current branch on a target branch (default main). Resolves conflicts in generated files, applies migrations, regenerates the GraphQL schema and SDK types, checks the types, runs the related tests, then force-pushes. Use when the user invokes /tnx-dev-rebase, says "rebase sur main", "rebase on main", "rebase la branche", or wants to bring a feature branch up to date.
+name: rebase
+description: Rebase the current branch on a target branch (default main). Resolves conflicts in generated files, applies migrations, regenerates the GraphQL schema and SDK types, checks the types, runs the related tests, then force-pushes. Use when the user invokes /rebase, says "rebase sur main", "rebase on main", "rebase la branche", or wants to bring a feature branch up to date.
 disable-model-invocation: true
 allowed-tools: Bash(git *), Bash(gh *), Bash(docker compose *), Bash(npm run *), Bash(npx dotenvx run *), Read, Edit, Grep, Glob, AskUserQuestion
 ---

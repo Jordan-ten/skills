@@ -1,6 +1,6 @@
 ---
-name: tnx-dev-stack
-description: Turn a validated plan into a stack of pull requests (one PR per layer), then manage the stack - status, review fixes on the right layer, rebase and sync. Built on top of the official gh-stack skill. Use when the user invokes /tnx-dev-stack, says "split the plan into a stack", "stack de PR", "découpe le plan en stack", "corrige les retours de review sur la stack", "sync la stack", or wants dependent PRs.
+name: stack-pull-requests
+description: Turn a validated plan into a stack of pull requests (one PR per layer), then manage the stack - status, review fixes on the right layer, rebase and sync. Built on top of the official gh-stack skill. Use when the user invokes /stack-pull-requests, says "split the plan into a stack", "stack de PR", "découpe le plan en stack", "corrige les retours de review sur la stack", "sync la stack", or wants dependent PRs.
 disable-model-invocation: true
 allowed-tools: Bash(git *), Bash(gh *), Bash(npm run *), Read, Edit, Write, Glob, Grep, AskUserQuestion
 ---
@@ -140,7 +140,7 @@ gh stack sync --prune     # fetch, reconcile, rebase, push, refresh PR state; af
 
 ## Regenerate the artifacts (after a rebase or a fix that touches GraphQL or entities)
 
-Same steps as `/tnx-dev-rebase`, from `backend/`: test migrations (`npm run _test mikro:migration:up`,
+Same steps as `/rebase`, from `backend/`: test migrations (`npm run _test mikro:migration:up`,
 `npm run _test clickhouse:test-schema:up`), `npm run _dev build:graphql-schema`,
 `npm run _test test:graphql-codegen`, the frontend codegen if needed (`npm run graphql:codegen` in
 `frontend/`), then `npm run type:check`. Commit the regenerated files on the layer that introduces the
