@@ -3,7 +3,7 @@
   "owner": { "name": "Jordan" },
   "plugins": [
     {
-      "name": "traace-perso",
+      "name": "jcontent-traace",
       "source": "./",
       "description": "Skills personnels pour le projet Tennaxia (traace)"
     }

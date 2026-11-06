@@ -2,7 +2,7 @@
 
 Personal Claude Code skills for the Tennaxia (traace) project, packaged as a plugin.
 
-- Plugin: `traace-perso`
+- Plugin: `jcontent-traace`
 - Marketplace: `jordan-skills`
 
 ## Install
@@ -11,14 +11,14 @@ From the local clone:
 
 ```
 /plugin marketplace add ~/code/skills
-/plugin install traace-perso@jordan-skills
+/plugin install jcontent-traace@jordan-skills
 ```
 
 From GitHub, on another machine:
 
 ```
 /plugin marketplace add Jordan-ten/skills
-/plugin install traace-perso@jordan-skills
+/plugin install jcontent-traace@jordan-skills
 ```
 
 To use it in one project only, choose the "local" scope when you install.
@@ -29,7 +29,7 @@ Update after a `git pull`: `/plugin marketplace update jordan-skills`
 
 ## Use
 
-A plugin skill is called with the plugin name: `/traace-perso:<skill>`, for example `/traace-perso:rebase`.
+A plugin skill is called with the plugin name: `/jcontent-traace:<skill>`, for example `/jcontent-traace:rebase`.
 The tables below show the short name.
 
 Skills marked **slash-only** run only when you type their command. Claude never starts them from a normal sentence.
