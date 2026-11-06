@@ -45,6 +45,48 @@ The tables below show the short name.
 
 Skills marked **slash-only** run only when you type their command. Claude never starts them from a normal sentence.
 
+## Workflow
+
+Three skills with `workflow` in the name. Each one runs a fixed list of steps.
+
+```
+pitch ─issue-workflow→ issues ─feature-implementation-workflow→ pull requests ─review-workflow→ review
+```
+
+`issue-workflow` and `feature-implementation-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, compact, redo, or stop. You can run the same command again to resume.
+
+### `issue-workflow`
+
+From a PM pitch to GitHub issues. Command: `/jcontent-traace:issue-workflow <pitch name or Notion URL>`.
+
+1. **Capture**: save a local copy of the pitch.
+2. **Analyze**: write the summary and a first draft of the scenarios.
+3. **Overview**: publish a page with the tasks, scenarios and user journeys.
+4. **Refine**: complete and validate the scenarios with you.
+5. **Create issues**: one GitHub issue per task.
+6. **Sync**: update the analysis and the overview with the final result.
+
+### `feature-implementation-workflow`
+
+From a GitHub issue to pull requests. Command: `/jcontent-traace:feature-implementation-workflow <issue URL or number>`.
+
+1. **Refine the issue**: fix the scenarios in the issue.
+2. **Plans**: one plan per package (backend, frontend).
+3. **Split**: decide the pull requests, one per layer.
+4. **Implement**: code and tests, layer by layer, one commit per layer.
+5. **Verify**: generated code, all tests, and each scenario checked in the UI.
+6. **Ship**: push and open the pull requests, after your yes.
+
+### `review-workflow`
+
+From a PR number to a review report. Run it in the Orca "Review" workspace. No phases, no questions.
+
+1. Read the PR.
+2. Create a child workspace `review-<n>` with the PR code.
+3. Start an agent that runs `/jcontent-traace:review <n>`.
+
+The agent writes the report in `.claude/plans/review/<n>.md`. It never posts on the PR.
+
 ## Glossary
 
 ### Pitch
