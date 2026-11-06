@@ -7,7 +7,7 @@ allowed-tools: Read, Write, Bash, Glob, AskUserQuestion
 
 # Capture Pitch
 
-Pitch files live in `.claude/plans/pitch/` at the repo root, whatever the working directory.
+Pitch files live in `.claude/plans/pitch/`, relative to the current working directory (`backend/` or `frontend/`).
 
 Save a local copy of one PM pitch from Notion. The copy is the input for ticket writing, plans, and `/analyze-pitch`.
 

@@ -7,7 +7,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 
 # Analyze Pitch
 
-Pitch files live in `.claude/plans/pitch/` at the repo root, whatever the working directory.
+Pitch files live in `.claude/plans/pitch/`, relative to the current working directory (`backend/` or `frontend/`).
 
 Turn a local pitch capture into a business context: summary, lexicon, scenarios. No technical implementation details.
 

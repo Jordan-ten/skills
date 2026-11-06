@@ -7,7 +7,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, Artifact
 
 # Scenario Overview
 
-Pitch files live in `.claude/plans/pitch/` at the repo root, whatever the working directory.
+Pitch files live in `.claude/plans/pitch/`, relative to the current working directory (`backend/` or `frontend/`).
 
 Show the scenarios of a pitch on one page, to check in a meeting that no scenario is missing.
 The page has two views, linked by clickable chips:
@@ -31,7 +31,7 @@ If the capture or the analysis is missing, tell the user which skill to run firs
 
 ## Steps
 
-Run every command from the repo root. The pitch files are in `.claude/plans/pitch/`.
+Run every command from the current working directory. The pitch files are in `.claude/plans/pitch/`.
 
 1. **Read the inputs.** In that folder: `<slug>.md`, `<slug>.analysis.md`, and `<slug>.overview.json`
    if it exists. In the analysis, `moscow: [1, 2, none]` means the tasks with no priority in Notion are kept too;
