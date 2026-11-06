@@ -1,0 +1,373 @@
+<title>__ARTIFACT_TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* Layout: en-tête + frise des 13 tâches (Must pleines = MVP), barre d'onglets collante, vue "Par tâche" (ordre du pitch, 2 lots) et vue "Par parcours" reliées par des pastilles cliquables. */
+  :root {
+    --bg: #F2F5F8;
+    --surface: #FFFFFF;
+    --ink: #13203A;
+    --muted: #566178;
+    --line: #D8DFE8;
+    --must: #0F766E;
+    --must-ink: #FFFFFF;
+    --must-soft: #DDF1EE;
+    --should: #6B7790;
+    --warn: #8A5200;
+    --warn-soft: #FBEBCC;
+    --hl-soft: #FFF3C4;
+    --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1626; --surface: #152038; --ink: #E6ECF7; --muted: #9AA7BF; --line: #26344F;
+      --must: #4FD1C5; --must-ink: #0E1626; --must-soft: #12383A; --should: #9AA7BF;
+      --warn: #F2B35A; --warn-soft: #3A2B10; --hl-soft: #3B3412; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1626; --surface: #152038; --ink: #E6ECF7; --muted: #9AA7BF; --line: #26344F;
+    --must: #4FD1C5; --must-ink: #0E1626; --must-soft: #12383A; --should: #9AA7BF;
+    --warn: #F2B35A; --warn-soft: #3A2B10; --hl-soft: #3B3412; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 15px/1.55 var(--font-body);
+    padding-block: 28px 64px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+    z-index: 10; background: var(--bg);
+  }
+  .wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .badges { display: flex; gap: 6px; }
+  .badges span {
+    font: 500 12px var(--font-mono); text-transform: uppercase; letter-spacing: .08em;
+    padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--muted);
+  }
+  h1 { font: 700 clamp(28px, 5vw, 42px)/1.08 var(--font-display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+  .lead { margin: 0; max-width: 64ch; color: var(--muted); }
+  .goal { margin: 0; padding: 12px 14px; max-width: 64ch; background: var(--must-soft); border-radius: 6px; }
+  .goal b { font-weight: 600; }
+
+  /* Frise des tâches */
+  .frise { display: flex; flex-direction: column; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+  .frise-line { margin: 0; font-size: 14px; }
+  .frise-line b { font-weight: 600; }
+  .frise-groups { display: flex; flex-wrap: wrap; gap: 14px 28px; }
+  .fgroup { display: flex; flex-direction: column; gap: 6px; }
+  .fgroup h2 { font: 600 11px var(--font-body); text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin: 0; }
+  .fchips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--muted); margin: 0; align-items: center; }
+  .legend .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+  .sw.must { background: var(--must); }
+  .sw.should { border: 1.5px dashed var(--should); }
+
+  /* Pastilles de tâche : pleine = Must, creuse = Should */
+  .tchip {
+    position: relative; font: 500 13px var(--font-mono); min-width: 34px; height: 34px; padding: 0 6px; border-radius: 6px;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .tchip.must { background: var(--must); color: var(--must-ink); border: 1.5px solid var(--must); }
+  .tchip.should { background: transparent; color: var(--should); border: 1.5px dashed var(--should); }
+  .tico {
+    position: absolute; top: -5px; right: -5px; width: 11px; height: 11px; border-radius: 50%;
+    background: #FFFFFF; border: 1.5px solid var(--ink);
+  }
+  .legend-ticket { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-ticket .tico { position: static; display: inline-block; }
+  .tchip.sm { min-width: 26px; height: 26px; font-size: 12px; border-radius: 5px; }
+  .mvp-only .tchip.should { opacity: .35; }
+
+  .toolbar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+    background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line);
+  }
+  .tabs { display: flex; gap: 4px; }
+  .tab {
+    font: 600 14px var(--font-body); color: var(--muted); background: transparent; border: 0; border-bottom: 3px solid transparent;
+    padding: 6px 10px; cursor: pointer;
+  }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--must); }
+  .toolbar .spacer { flex: 1; }
+  .chip {
+    font: 500 13px var(--font-body); color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--must); outline-offset: 2px; }
+
+  /* Vue par tâche */
+  .lot { display: flex; flex-direction: column; gap: 12px; }
+  .lot > h2 { font: 700 22px var(--font-display); margin: 0; }
+  .lot > .sub { margin: -8px 0 0; font-size: 13px; color: var(--muted); }
+  .task {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .task.must { border-left: 6px solid var(--must); }
+  .task.should { border-style: dashed; border-color: var(--should); background: transparent; }
+  .th { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) auto; gap: 4px 12px; align-items: start; }
+  .tnum { font: 700 24px/1.1 var(--font-display); color: var(--must); }
+  .task.should .tnum { color: var(--should); }
+  .th h3 { font: 600 17px/1.3 var(--font-body); margin: 0; text-wrap: balance; }
+  .tmeta { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .badge { font-size: 12px; line-height: 1; padding: 6px 9px; border-radius: 4px; white-space: nowrap; font-weight: 600; }
+  .badge.must { background: var(--must); color: var(--must-ink); }
+  .badge.should { border: 1.5px dashed var(--should); color: var(--should); }
+  a.ticket {
+    font: 500 12px var(--font-mono); line-height: 1; padding: 6px 9px; border-radius: 4px; white-space: nowrap;
+    color: var(--ink); border: 1px solid var(--ink); text-decoration: none;
+  }
+  a.ticket:hover { background: var(--ink); color: var(--bg); }
+  .noticket { font-size: 12px; line-height: 1; padding: 6px 9px; border-radius: 4px; color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
+  .where { margin: 0; font-size: 12.5px; color: var(--muted); padding-left: calc(2.2rem + 12px); }
+  .scen { list-style: none; margin: 4px 0 0; padding: 0 0 0 calc(2.2rem + 12px); display: flex; flex-direction: column; gap: 8px; }
+  .scen li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+  .sit { color: var(--muted); }
+  .res { font-weight: 500; }
+  .arrow { color: var(--must); font-weight: 700; margin-right: 4px; }
+  .pill { font-size: 11.5px; line-height: 1; padding: 4px 7px; border-radius: 4px; white-space: nowrap; border: 1px solid var(--line); color: var(--muted); }
+  .pill.confirmer, .pill.verifier { background: var(--warn-soft); color: var(--warn); border-color: transparent; font-weight: 500; }
+  .pill.decide { background: var(--must-soft); color: var(--must); border-color: transparent; font-weight: 500; }
+  .note { margin: 0; padding-left: calc(2.2rem + 12px); font-size: 13px; color: var(--muted); font-style: italic; }
+  .inparc { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: calc(2.2rem + 12px); margin-top: 2px; font-size: 12.5px; color: var(--muted); }
+  .pchip {
+    font: 500 12px var(--font-mono); padding: 4px 8px; border-radius: 999px; cursor: pointer;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+  }
+  .pchip:hover { border-color: var(--ink); }
+
+  /* Vue par parcours */
+  .parcours { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .parcours > summary { list-style: none; cursor: pointer; padding: 16px 18px; display: flex; gap: 14px; align-items: baseline; }
+  .parcours > summary::-webkit-details-marker { display: none; }
+  .plabel { font: 700 20px var(--font-display); color: var(--must); min-width: 2.4ch; }
+  .parcours h3 { font: 700 19px/1.25 var(--font-display); margin: 0; text-wrap: balance; }
+  .parcours .intro { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+  .head-text { min-width: 0; flex: 1; }
+  .chev { color: var(--muted); transition: transform .15s; }
+  .parcours[open] .chev { transform: rotate(90deg); }
+  .steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .step {
+    display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; gap: 4px 14px; padding: 12px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .step:last-child { border-bottom: 0; }
+  .snum { font: 500 12px var(--font-mono); color: var(--muted); padding-top: 3px; }
+  .step p { margin: 0; }
+  .step .sit { color: var(--muted); }
+  .stasks { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; align-content: flex-start; }
+  .outcome { margin: 0; padding: 12px 18px; background: var(--must-soft); border-radius: 0 0 8px 8px; font-weight: 500; }
+  .mvp-only .step.should-only { opacity: .4; }
+  .step.hl, .task.hl { background: var(--hl-soft); outline: 2px solid var(--warn); outline-offset: -2px; }
+
+
+  @media (max-width: 720px) {
+    .th { grid-template-columns: 2rem minmax(0, 1fr); }
+    .tmeta { grid-column: 2; justify-content: flex-start; margin-top: 4px; }
+    .where, .scen, .note, .inparc { padding-left: 0; }
+    .step { grid-template-columns: 1.8rem minmax(0, 1fr); }
+    .stasks { grid-column: 2; justify-content: flex-start; margin-top: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="badges" id="pitch-badges" hidden></div>
+    <h1 id="pitch-title"></h1>
+    <p class="lead" id="pitch-summary"></p>
+    <p class="goal" id="pitch-goal" hidden></p>
+  </header>
+
+  <section class="frise" aria-label="Vue d'ensemble des tâches">
+    <div class="frise-groups" id="frise-groups"></div>
+    <p class="legend">
+      <span><span class="sw must"></span>Must</span>
+      <span><span class="sw should"></span>Should</span>
+      <span class="legend-ticket"><span class="tico" aria-hidden="true"></span>Ticket existant</span>
+    </p>
+  </section>
+
+  <div class="toolbar" role="group" aria-label="Navigation">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-taches" aria-controls="panel-taches" aria-selected="true">Par tâche</button>
+      <button class="tab" role="tab" id="tab-parcours" aria-controls="panel-parcours" aria-selected="false">Par parcours</button>
+    </div>
+    <span class="spacer"></span>
+    <button class="chip" id="f-clear" hidden>Effacer la sélection</button>
+    <button class="chip" id="f-mvp" aria-pressed="false">Must uniquement</button>
+  </div>
+
+  <main>
+    <div id="panel-taches" role="tabpanel" aria-labelledby="tab-taches" class="wrap" style="padding:0"></div>
+    <div id="panel-parcours" role="tabpanel" aria-labelledby="tab-parcours" class="wrap" style="padding:0; gap:16px" hidden></div>
+  </main>
+
+</div>
+
+<script>
+  const DATA = __OVERVIEW_DATA__;
+  const REPO = DATA.issueBaseUrl;
+  const TICKET_DOT = `<span class="tico" aria-hidden="true"></span>`;
+  const TAG_LABELS = { limite: "cas limite", confirmer: "à confirmer", decide: "décidé", ajout: "ajouté depuis le pitch", verifier: "à vérifier dans le ticket" };
+
+  const TASKS = DATA.tasks;
+  const LOTS = DATA.lots;
+  const PRIORITY_LABELS = { must: "Must", should: "Should", could: "Could" };
+  TASKS.forEach((t) => { t.label = PRIORITY_LABELS[t.p] || t.p; t.p = t.p === "must" ? "must" : "should"; });
+
+  const PARCOURS = DATA.parcours;
+
+
+  const state = { view: "taches", mvp: false };
+  const $ = (id) => document.getElementById(id);
+  const taskOf = (n) => TASKS.find((t) => t.n === n);
+  const parcoursOfTask = (n) => PARCOURS.filter((p) => p.steps.some((s) => s.tasks.includes(n)));
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function badgeHtml(t) {
+    return `<span class="badge ${t.p}">${t.label}</span>`;
+  }
+  function ticketHtml(t) {
+    return t.ticket
+      ? `<a class="ticket" href="${REPO}${t.ticket}" target="_blank" rel="noopener">#${t.ticket}</a>`
+      : `<span class="noticket">pas de ticket</span>`;
+  }
+  function tchipHtml(t, small) {
+    const cls = `tchip ${t.p}${t.ticket && !small ? " has-ticket" : ""}${small ? " sm" : ""}`;
+    return `<button class="${cls}" data-task="${t.n}" title="Tâche ${t.n} : ${t.title}">${t.n}${t.ticket && !small ? TICKET_DOT : ""}</button>`;
+  }
+
+  function renderFrise() {
+    const groups = LOTS.map((l) => ({ title: l.title, lot: l.id }));
+    $("frise-groups").innerHTML = groups.map((g) =>
+      `<div class="fgroup"><h2>${g.title}</h2><div class="fchips">${TASKS.filter((t) => t.lot === g.lot).map((t) => tchipHtml(t, false)).join("")}</div></div>`
+    ).join("");
+  }
+
+  function scenHtml(s) {
+    const tags = (s.tags || []).map((k) => `<span class="pill ${k}">${TAG_LABELS[k]}</span>`).join(" ");
+    return `<li><span><span class="sit">${s.sit}</span> <span class="arrow" aria-hidden="true">→</span><span class="res">${s.res}</span></span>${tags}</li>`;
+  }
+
+  function taskHtml(t) {
+    const chips = parcoursOfTask(t.n).map((p) => `<button class="pchip" data-parcours="${p.id}" data-from="${t.n}" title="${p.title}">${p.label}</button>`).join("");
+    return `<article class="task ${t.p}" id="t-${t.n}">
+      <div class="th"><span class="tnum">${t.n}</span><h3>${t.title}</h3><div class="tmeta">${badgeHtml(t)}${ticketHtml(t)}</div></div>
+      ${t.where ? `<p class="where">Où vérifier : ${t.where}</p>` : ""}
+      <ul class="scen">${t.scen.map(scenHtml).join("")}</ul>
+      ${t.note ? `<p class="note">${t.note}</p>` : ""}
+      ${chips ? `<div class="inparc"><span>Dans les parcours :</span>${chips}</div>` : ""}
+    </article>`;
+  }
+
+  function renderTasks() {
+    const lots = LOTS.map((l) => ({ lot: l.id, title: l.title, sub: l.sub || "" }));
+    $("panel-taches").innerHTML = lots.map((l) =>
+      `<section class="lot" data-lot="${l.lot}"><h2>${l.title}</h2>${l.sub ? `<p class="sub">${l.sub}</p>` : ""}${TASKS.filter((t) => t.lot === l.lot).map(taskHtml).join("")}</section>`
+    ).join("");
+  }
+
+  function stepHtml(s, i) {
+    const allShould = s.tasks.every((n) => taskOf(n).p === "should");
+    const chips = s.tasks.map((n) => tchipHtml(taskOf(n), true)).join("");
+    return `<li class="step${allShould ? " should-only" : ""}" data-tasks="|${s.tasks.join("|")}|">
+      <span class="snum">${i + 1}</span>
+      <p><span class="sit">${s.sit}</span> <span class="arrow" aria-hidden="true">→</span><span class="res">${s.res}</span></p>
+      <div class="stasks">${chips}</div>
+    </li>`;
+  }
+
+  function renderParcours() {
+    $("panel-parcours").innerHTML = PARCOURS.map((p) =>
+      `<details class="parcours" id="pc-${p.id}" open>
+        <summary><span class="plabel">${p.label}</span><div class="head-text"><h3>${p.title}</h3><p class="intro">${p.intro}</p></div><span class="chev" aria-hidden="true">›</span></summary>
+        <ol class="steps">${p.steps.map(stepHtml).join("")}</ol>
+        ${p.outcome ? `<p class="outcome">${p.outcome}</p>` : ""}
+      </details>`
+    ).join("");
+  }
+
+  function renderHeader() {
+    const pitch = DATA.pitch;
+    $("pitch-title").innerHTML = pitch.title;
+    $("pitch-summary").innerHTML = pitch.summary;
+    if (pitch.successIndicator) {
+      $("pitch-goal").innerHTML = `<b>Indicateur de succès :</b> ${pitch.successIndicator}`;
+      $("pitch-goal").hidden = false;
+    }
+    if (pitch.badges && pitch.badges.length) {
+      const box = $("pitch-badges");
+      box.innerHTML = pitch.badges.map((b) => `<span>${b}</span>`).join("");
+      if (pitch.badgesLabel) box.setAttribute("aria-label", pitch.badgesLabel);
+      box.hidden = false;
+    }
+  }
+
+  function clearHighlight() {
+    document.querySelectorAll(".hl").forEach((e) => e.classList.remove("hl"));
+    $("f-clear").hidden = true;
+  }
+  function viewFromHash() { return location.hash === "#parcours" ? "parcours" : "taches"; }
+  function showView(view) {
+    state.view = view;
+    ["taches", "parcours"].forEach((v) => {
+      $("panel-" + v).hidden = v !== view;
+      $("tab-" + v).setAttribute("aria-selected", String(v === view));
+    });
+    if (viewFromHash() !== view) { try { location.hash = view; } catch (e) { /* ignoré */ } }
+  }
+  function scrollTo(el) { el.scrollIntoView({ block: "center", behavior: reducedMotion ? "auto" : "smooth" }); }
+
+  function goTask(n) {
+    clearHighlight();
+    if (state.mvp && taskOf(n).p === "should") setMvp(false);
+    showView("taches");
+    const card = $("t-" + n);
+    card.classList.add("hl");
+    $("f-clear").hidden = false;
+    scrollTo(card);
+  }
+  function goParcours(id, n) {
+    clearHighlight();
+    showView("parcours");
+    const sec = $("pc-" + id);
+    sec.open = true;
+    const hit = [...sec.querySelectorAll(".step")].filter((s) => s.dataset.tasks.includes(`|${n}|`));
+    hit.forEach((s) => s.classList.add("hl"));
+    $("f-clear").hidden = false;
+    scrollTo(hit[0] || sec);
+  }
+
+  function setMvp(on) {
+    state.mvp = on;
+    document.body.classList.toggle("mvp-only", on);
+    $("f-mvp").setAttribute("aria-pressed", String(on));
+    document.querySelectorAll(".task.should").forEach((c) => { c.hidden = on; });
+    document.querySelectorAll(".lot").forEach((l) => { l.hidden = [...l.querySelectorAll(".task")].every((c) => c.hidden); });
+  }
+
+  renderHeader(); renderFrise(); renderTasks(); renderParcours();
+
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-task]");
+    if (t) { goTask(Number(t.dataset.task)); return; }
+    const p = e.target.closest("[data-parcours]");
+    if (p) goParcours(p.dataset.parcours, Number(p.dataset.from));
+  });
+  $("tab-taches").addEventListener("click", () => showView("taches"));
+  $("tab-parcours").addEventListener("click", () => showView("parcours"));
+  $("f-mvp").addEventListener("click", () => setMvp(!state.mvp));
+  $("f-clear").addEventListener("click", clearHighlight);
+  window.addEventListener("hashchange", () => showView(viewFromHash()));
+  showView(viewFromHash());
+</script>

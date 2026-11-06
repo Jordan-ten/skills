@@ -1,0 +1,624 @@
+{
+  "pitch": {
+    "title": "Auto-select email language according to org settings (surveys et 1ers emails)",
+    "artifactTitle": "Langue des emails",
+    "summary": "Plusieurs emails automatiques partent en anglais : l'invitation sur la plateforme, l'invitation à un survey et les emails aux contributeurs invités. La langue ne dépend que du profil, et un nouvel utilisateur ou un destinataire externe n'en a pas. Cela bloque la recette de Naval Group, avant un survey à 17 000 personnes. Le pitch ajoute des langues par organisation (interface et contenu), choisies par chaque utilisateur à sa première connexion, avec une seule règle : le profil, sinon le site, sinon l'organisation.",
+    "successIndicator": "aucun email du survey domicile-travail de Naval Group ne part en anglais.",
+    "badges": [
+      "fr",
+      "en",
+      "de",
+      "es"
+    ],
+    "badgesLabel": "Langues d'interface : français, anglais, allemand, espagnol",
+    "source": {
+      "capture": "auto-select-email-language-according-to-org-settings-surveys-et-1ers-emails.md",
+      "analysis": "auto-select-email-language-according-to-org-settings-surveys-et-1ers-emails.analysis.md",
+      "milestone": "270 — [DC-26-6] Auto-select email language"
+    }
+  },
+  "issueBaseUrl": "https://github.com/Traace-co/traace/issues/",
+  "artifactUrl": "https://claude.ai/artifact/VkFQLfMbvrh68rVcpNAwdt",
+  "lots": [
+    {
+      "id": 1,
+      "title": "Lot 1 · Langues de l'organisation",
+      "sub": "Tâches 1 à 9"
+    },
+    {
+      "id": 2,
+      "title": "Lot 2 · Langues du site",
+      "sub": "Tâches 10 à 13, livrées dans un second temps"
+    }
+  ],
+  "tasks": [
+    {
+      "n": 1,
+      "lot": 1,
+      "p": "must",
+      "ticket": "25030",
+      "title": "Admin : distinguer langue d'interface et langue de contenu",
+      "where": "UI : réglages de l'organisation, onglet Langues",
+      "scen": [
+        {
+          "sit": "L'admin ouvre l'onglet Langues",
+          "res": "Il voit deux listes séparées"
+        },
+        {
+          "sit": "Une organisation existe avant la mise en production",
+          "res": "La liste d'interface reprend l'ordre actuel, la liste de contenu reprend la liste actuelle",
+          "tags": [
+            "limite"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "lot": 1,
+      "p": "must",
+      "ticket": "25034",
+      "title": "Utilisateur sans langue : page de réponse",
+      "where": "UI : lien de réponse du survey ou du contributeur invité",
+      "note": "Le tableau du pitch parle de langue d'interface. L'analyse a tranché pour la langue de contenu.",
+      "scen": [
+        {
+          "sit": "Un destinataire sans profil ouvre le lien (organisation en français)",
+          "res": "La page est en français"
+        },
+        {
+          "sit": "Il change la langue de la page avec des réponses déjà saisies",
+          "res": "La langue change, les réponses restent",
+          "tags": [
+            "limite"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "lot": 1,
+      "p": "must",
+      "ticket": "25033",
+      "title": "Email : utilisateur sans langue",
+      "where": "Email : déclencher un survey ou une invitation",
+      "scen": [
+        {
+          "sit": "Un destinataire sans profil reçoit le survey",
+          "res": "Email et nom du questionnaire en français"
+        },
+        {
+          "sit": "Un utilisateur au profil en allemand (organisation en français) reçoit un email de tâche",
+          "res": "Le texte est en allemand"
+        },
+        {
+          "sit": "Le questionnaire n'est pas traduit dans la langue de contenu",
+          "res": "Le nom suit l'ordre de repli de l'organisation",
+          "tags": [
+            "limite"
+          ]
+        },
+        {
+          "sit": "Deux emails partent en même temps vers la même adresse",
+          "res": "Même langue possible (limite connue de Novu)",
+          "tags": [
+            "limite",
+            "confirmer"
+          ]
+        },
+        {
+          "sit": "Un admin invite un nouvel utilisateur",
+          "res": "L'invitation et ses rappels partent dans les langues de l'organisation",
+          "tags": [
+            "decide",
+            "verifier"
+          ]
+        },
+        {
+          "sit": "Un rappel de survey part",
+          "res": "Il part dans la langue en vigueur à l'envoi",
+          "tags": [
+            "decide"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "lot": 1,
+      "p": "must",
+      "ticket": "25031",
+      "title": "Admin : ordonner les langues d'interface",
+      "where": "UI : onglet Langues",
+      "scen": [
+        {
+          "sit": "Il place « en » en premier",
+          "res": "« en » devient la langue d'interface par défaut"
+        },
+        {
+          "sit": "Il essaie de retirer une des quatre langues",
+          "res": "Impossible, les quatre restent",
+          "tags": [
+            "limite"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "lot": 1,
+      "p": "must",
+      "ticket": "25032",
+      "title": "Admin : ordonner les langues de contenu",
+      "where": "UI : onglet Langues",
+      "scen": [
+        {
+          "sit": "Il place « en » en premier",
+          "res": "« en » est la langue de contenu de l'organisation, le repli suit le nouvel ordre"
+        },
+        {
+          "sit": "Il essaie de retirer la seule langue",
+          "res": "Refusé : il en faut au moins une",
+          "tags": [
+            "limite"
+          ]
+        },
+        {
+          "sit": "Il retire une langue que seul un utilisateur utilise",
+          "res": "Permis. L'utilisateur retombe sur la langue de l'organisation.",
+          "tags": [
+            "limite"
+          ]
+        },
+        {
+          "sit": "Il retire une langue qu'un site utilise (dépend du lot 2)",
+          "res": "La suppression est bloquée",
+          "tags": [
+            "limite",
+            "verifier"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "lot": 1,
+      "p": "should",
+      "title": "Nouvel utilisateur : choix des langues à la première connexion",
+      "where": "UI : première connexion",
+      "scen": [
+        {
+          "sit": "Il se connecte pour la première fois",
+          "res": "L'écran demande prénom, nom, langue d'interface et langue de contenu"
+        },
+        {
+          "sit": "Il valide sans toucher aux sélecteurs",
+          "res": "Son profil garde la première langue de chaque liste de l'organisation",
+          "tags": [
+            "limite"
+          ]
+        },
+        {
+          "sit": "Plus tard, il change ses langues dans son profil",
+          "res": "Ses écrans et ses emails suivent",
+          "tags": [
+            "ajout"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "lot": 1,
+      "p": "should",
+      "title": "Utilisateur : option « Organisation »",
+      "where": "UI : profil",
+      "scen": [
+        {
+          "sit": "Il choisit « Organisation » pour ses langues",
+          "res": "Il suit l'organisation. Suit-il les changements de l'admin ou garde-t-il une copie figée ?",
+          "tags": [
+            "confirmer"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "lot": 1,
+      "p": "should",
+      "title": "Utilisateur : option « Navigateur » à la place de « Auto »",
+      "where": "UI : profil",
+      "scen": [
+        {
+          "sit": "Il ouvre la liste des langues d'interface",
+          "res": "Il voit « Navigateur » (« Browser » en anglais)"
+        },
+        {
+          "sit": "Il choisit « Navigateur », son navigateur est en espagnol",
+          "res": "Les écrans sont en espagnol",
+          "tags": [
+            "limite"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "lot": 1,
+      "p": "must",
+      "title": "Produit Tennaxia : emails traduits dans Novu",
+      "where": "Hors UI : Novu, avant le build",
+      "scen": [
+        {
+          "sit": "Le produit Tennaxia traduit tous les emails",
+          "res": "Chaque email est lisible en fr, en, de, es, sans texte anglais de remplacement"
+        },
+        {
+          "sit": "Une traduction allemande manque",
+          "res": "Le manque est repéré avant le build",
+          "tags": [
+            "limite"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "lot": 2,
+      "p": "should",
+      "title": "Admin : langues des sites dans le tableau",
+      "where": "UI : tableau des sites",
+      "scen": [
+        {
+          "sit": "Il ouvre le tableau des sites",
+          "res": "Chaque site affiche sa langue d'interface et sa langue de contenu"
+        },
+        {
+          "sit": "Un site n'a aucune langue définie",
+          "res": "La cellule indique qu'il suit l'organisation (texte à préciser)",
+          "tags": [
+            "limite",
+            "confirmer"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "lot": 2,
+      "p": "should",
+      "title": "Admin : définir les langues d'un site",
+      "where": "UI : fiche du site, import de sites",
+      "scen": [
+        {
+          "sit": "Il choisit « fr » et « fr » dans la fiche et enregistre",
+          "res": "Le site garde ses deux langues"
+        },
+        {
+          "sit": "Import avec une langue d'interface valide et une langue de contenu vide",
+          "res": "Interface enregistrée, le site suit l'organisation pour le contenu",
+          "tags": [
+            "limite"
+          ]
+        },
+        {
+          "sit": "Import avec une langue hors fr, en, de, es",
+          "res": "Ligne refusée avec une erreur claire (ligne et valeur), les autres lignes suivent l'import habituel",
+          "tags": [
+            "limite",
+            "decide"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "lot": 2,
+      "p": "should",
+      "title": "Destinataire de survey et contributeur invité : langues du site",
+      "where": "Email et page de réponse",
+      "scen": [
+        {
+          "sit": "Site en allemand (organisation en français), tâche assignée",
+          "res": "Email et page en allemand"
+        },
+        {
+          "sit": "Site sans langue",
+          "res": "Email et page en français",
+          "tags": [
+            "limite"
+          ]
+        },
+        {
+          "sit": "Contributeur déjà contacté en allemand, nouvelle tâche sur un site français",
+          "res": "L'email suit le site de la nouvelle tâche",
+          "tags": [
+            "decide"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "lot": 2,
+      "p": "should",
+      "title": "Tâche de groupe",
+      "where": "UI : tâche de groupe (données à créer en local)",
+      "note": "Pas de priorité dans Notion. Le Should vient de la décision prise pendant l'analyse.",
+      "scen": [
+        {
+          "sit": "Tous les sites de la tâche sont en allemand",
+          "res": "La langue utilisée est l'allemand"
+        },
+        {
+          "sit": "Les sites ont des langues différentes",
+          "res": "La langue utilisée est celle de l'organisation",
+          "tags": [
+            "limite"
+          ]
+        }
+      ]
+    }
+  ],
+  "parcours": [
+    {
+      "id": "p1",
+      "label": "P1",
+      "title": "L'admin règle les langues, puis invite de nouveaux collaborateurs",
+      "intro": "Lot 1. Acteurs : admin client, nouveaux utilisateurs.",
+      "lot": 1,
+      "steps": [
+        {
+          "sit": "L'admin ouvre l'onglet Langues",
+          "res": "Il voit deux listes séparées",
+          "tasks": [
+            1
+          ]
+        },
+        {
+          "sit": "Il place le français en premier dans les langues d'interface et de contenu",
+          "res": "Le français devient la langue par défaut de l'organisation",
+          "tasks": [
+            4,
+            5
+          ]
+        },
+        {
+          "sit": "Il invite un collaborateur",
+          "res": "L'invitation et ses rappels partent en français",
+          "tasks": [
+            3
+          ]
+        },
+        {
+          "sit": "Le collaborateur se connecte pour la première fois",
+          "res": "L'écran propose prénom, nom et deux langues, pré-remplies en français",
+          "tasks": [
+            6
+          ]
+        },
+        {
+          "sit": "Il choisit l'allemand pour l'interface et garde le français pour le contenu",
+          "res": "Ses écrans et ses emails de tâche sont en allemand",
+          "tasks": [
+            6,
+            3
+          ]
+        },
+        {
+          "sit": "Un deuxième collaborateur valide sans rien toucher",
+          "res": "Son profil est en français pour les deux langues",
+          "tasks": [
+            6
+          ]
+        },
+        {
+          "sit": "Un collaborateur ouvre la liste des langues d'interface de son profil",
+          "res": "Il voit « Navigateur » à la place de « Auto ». Avec un navigateur en espagnol, les écrans passent en espagnol.",
+          "tasks": [
+            8
+          ]
+        },
+        {
+          "sit": "Il choisit « Organisation » pour ses langues",
+          "res": "Il suit l'organisation. À confirmer : suit-il les changements de l'admin ou garde-t-il une copie figée ?",
+          "tasks": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "label": "P2",
+      "title": "Le chargé RSE envoie le survey domicile-travail à 17 000 collaborateurs",
+      "intro": "Lot 1. Acteurs : chargé RSE (admin de campagne), destinataires sans profil.",
+      "lot": 1,
+      "outcome": "Résultat attendu : aucun email du survey ne part en anglais.",
+      "steps": [
+        {
+          "sit": "Il envoie le survey. Les destinataires n'ont pas de profil, l'organisation est en français",
+          "res": "Email et nom du questionnaire en français",
+          "tasks": [
+            3
+          ]
+        },
+        {
+          "sit": "Un questionnaire n'est pas traduit dans la langue de contenu",
+          "res": "Le nom suit l'ordre de repli de l'organisation",
+          "tasks": [
+            3
+          ]
+        },
+        {
+          "sit": "Un destinataire ouvre le lien",
+          "res": "La page de réponse est en français",
+          "tasks": [
+            2
+          ]
+        },
+        {
+          "sit": "Il change la langue de la page après quelques réponses",
+          "res": "La langue change, ses réponses restent",
+          "tasks": [
+            2
+          ]
+        },
+        {
+          "sit": "Un rappel part plus tard",
+          "res": "Il part en français, dans la langue en vigueur à l'envoi",
+          "tasks": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "label": "P3",
+      "title": "Le coordinateur de campagne invite des contributeurs sans compte",
+      "intro": "Lot 1. Acteurs : coordinateur de campagne, fournisseur externe.",
+      "lot": 1,
+      "steps": [
+        {
+          "sit": "Il assigne un fournisseur à une tâche en saisissant son email",
+          "res": "Invitation et lien d'accès en français",
+          "tasks": [
+            3
+          ]
+        },
+        {
+          "sit": "Le fournisseur ouvre le lien",
+          "res": "La page de réponse est en français",
+          "tasks": [
+            2
+          ]
+        },
+        {
+          "sit": "Le coordinateur rejette ou commente la réponse",
+          "res": "Les emails de rejet et de commentaire sont en français",
+          "tasks": [
+            3
+          ]
+        },
+        {
+          "sit": "Il assigne une deuxième tâche au même fournisseur",
+          "res": "Le nouvel email est lui aussi en français",
+          "tasks": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "label": "P4",
+      "title": "L'admin donne une langue à chaque site, puis la campagne en tient compte",
+      "intro": "Lot 2. Acteurs : admin client, coordinateur de campagne, fournisseur, destinataires.",
+      "lot": 2,
+      "steps": [
+        {
+          "sit": "L'admin importe des sites avec leurs langues",
+          "res": "Les lignes valides sont enregistrées, la ligne avec une langue hors fr, en, de, es est refusée avec une erreur claire",
+          "tasks": [
+            11
+          ]
+        },
+        {
+          "sit": "Dans la fiche d'un site, il choisit l'allemand pour les deux langues",
+          "res": "Le site garde ses deux langues",
+          "tasks": [
+            11
+          ]
+        },
+        {
+          "sit": "Il ouvre le tableau des sites",
+          "res": "Chaque site affiche ses langues, un site sans langue indique qu'il suit l'organisation",
+          "tasks": [
+            10
+          ]
+        },
+        {
+          "sit": "Le coordinateur assigne un fournisseur à une tâche du site allemand",
+          "res": "Email et page en allemand",
+          "tasks": [
+            12
+          ]
+        },
+        {
+          "sit": "Il lui assigne ensuite une tâche d'un site français",
+          "res": "Ce nouvel email est en français",
+          "tasks": [
+            12
+          ]
+        },
+        {
+          "sit": "Un survey part sur un site sans langue",
+          "res": "Email et page en français, comme l'organisation",
+          "tasks": [
+            12
+          ]
+        },
+        {
+          "sit": "Tâche de groupe : tous les sites en allemand, ou des langues différentes",
+          "res": "Allemand dans le premier cas, langue de l'organisation dans le second",
+          "tasks": [
+            13
+          ]
+        },
+        {
+          "sit": "L'admin essaie de retirer une langue de contenu qu'un site utilise",
+          "res": "La suppression est bloquée",
+          "tasks": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "label": "P5",
+      "title": "Une organisation existante migre, ses utilisateurs gardent leurs choix",
+      "intro": "Lot 1. Acteurs : admin client, utilisateurs existants.",
+      "lot": 1,
+      "steps": [
+        {
+          "sit": "Après la mise en production, l'admin ouvre l'onglet Langues",
+          "res": "La liste d'interface reprend l'ordre actuel, la liste de contenu reprend la liste actuelle",
+          "tasks": [
+            1
+          ]
+        },
+        {
+          "sit": "Un utilisateur au profil en allemand, dans une organisation française, reçoit un email de tâche",
+          "res": "En allemand : le profil passe avant l'organisation",
+          "tasks": [
+            3
+          ]
+        },
+        {
+          "sit": "L'admin essaie de retirer une des quatre langues d'interface",
+          "res": "Impossible",
+          "tasks": [
+            4
+          ]
+        },
+        {
+          "sit": "Il essaie de retirer la seule langue de contenu",
+          "res": "Refusé",
+          "tasks": [
+            5
+          ]
+        },
+        {
+          "sit": "Il retire une langue de contenu que seul un utilisateur utilise",
+          "res": "Permis. L'utilisateur retombe sur la langue de l'organisation.",
+          "tasks": [
+            5
+          ]
+        }
+      ]
+    }
+  ]
+}

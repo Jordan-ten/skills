@@ -1,0 +1,11 @@
+{
+  "name": "jordan-skills",
+  "owner": { "name": "Jordan" },
+  "plugins": [
+    {
+      "name": "traace-perso",
+      "source": "./",
+      "description": "Skills personnels pour le projet Tennaxia (traace)"
+    }
+  ]
+}
