@@ -54,12 +54,14 @@ Skills marked **slash-only** run only when you type their command. Claude never 
 | `capture-pitch` | Saves a local copy of a PM pitch from Notion. | yes |
 | `analyze-pitch` | Reads a captured pitch. Writes a summary, a lexicon grounded in the code, and GIVEN/WHEN/THEN scenarios sorted by MoSCoW. | yes |
 | `build-scenario-overview` | Builds an Artifact page with the pitch scenarios: tasks by lot and priority, GitHub tickets, and user journeys. | yes |
+| `issue-workflow` | Takes a PM pitch to GitHub issues in six phases, with exit conditions and a compact between phases: capture, analyze, overview of the pitch lots and tasks with scenarios and journeys, refine and complete the scenarios with the user, create one issue per task, then sync the analysis and the overview. Resumable. | yes |
 
 ### Dev
 
 | Skill | What it does | Slash-only |
 |---|---|---|
 | `rebase` | Rebases the current branch on a target branch (default `main`). Fixes generated-file conflicts, applies migrations, regenerates the GraphQL schema and SDK types, checks types, runs related tests, then force-pushes. | no |
+| `feature-implementation-workflow` | Takes a feature from its GitHub issue to pull requests in six phases, with exit conditions and a compact between phases: refine the issue scenarios, write one plan per package, split into PRs, implement, verify (generated code, all tests, end to end in the UI), push. Resumable. | yes |
 | `stack-pull-requests` | Splits a validated plan into a stack of pull requests, one per layer. Then manages the stack: status, review fixes, rebase, sync. | no |
 | `create-local-data` | Creates records in the local app through the GraphQL API with an offline-auth token. Used to see a screen, reproduce a bug, or prepare a demo. | no |
 | `launch` | Starts the backend in dev or test. Checks Docker, runs PostgreSQL and ClickHouse migrations, starts NestJS in watch mode, and waits until it is healthy. | no |
