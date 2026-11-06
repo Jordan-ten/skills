@@ -7,6 +7,8 @@ allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, Artifact
 
 # Scenario Overview
 
+Pitch files live in `.claude/plans/pitch/` at the repo root, whatever the working directory.
+
 Show the scenarios of a pitch on one page, to check in a meeting that no scenario is missing.
 The page has two views, linked by clickable chips:
 
@@ -20,7 +22,7 @@ This skill never calls Notion and never writes to GitHub.
 ## Arguments
 
 `$ARGUMENTS` — pitch name or path, then optional flags. If the pitch is empty, list
-`backend/.claude/plans/pitch/*.analysis.md` and ask the user to choose.
+`.claude/plans/pitch/*.analysis.md` and ask the user to choose.
 
 - `--milestone <title|number>`: read the tickets from this milestone. Default: the `milestone` of the analysis.
 - `--refresh-tickets`: read the tickets from GitHub even if the analysis already has a ticket table.
@@ -29,7 +31,7 @@ If the capture or the analysis is missing, tell the user which skill to run firs
 
 ## Steps
 
-Run every command from the repo root. The pitch files are in `backend/.claude/plans/pitch/`.
+Run every command from the repo root. The pitch files are in `.claude/plans/pitch/`.
 
 1. **Read the inputs.** In that folder: `<slug>.md`, `<slug>.analysis.md`, and `<slug>.overview.json`
    if it exists. In the analysis, `moscow: [1, 2, none]` means the tasks with no priority in Notion are kept too;
@@ -45,8 +47,8 @@ Run every command from the repo root. The pitch files are in `backend/.claude/pl
 5. **Draft the parcours.** Follow the parcours rules. Show them to the user as a short list (title, steps, task
    numbers) with the tasks that are in no parcours. Ask for corrections. Repeat until the user says "ok".
    Do not build before that: a parcours that forgets a task misleads the meeting.
-6. **Save and build.** Write `backend/.claude/plans/pitch/<slug>.overview.json`. Then run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/skills/build-scenario-overview/scripts/build_overview.py backend/.claude/plans/pitch/<slug>.overview.json <scratchpad>/<slug>.overview.html`.
+6. **Save and build.** Write `.claude/plans/pitch/<slug>.overview.json`. Then run
+   `python3 ${CLAUDE_PLUGIN_ROOT}/skills/build-scenario-overview/scripts/build_overview.py .claude/plans/pitch/<slug>.overview.json <scratchpad>/<slug>.overview.html`.
    Put the HTML in the scratchpad directory, not in the repo. Fix every `error:` and run it again. Warnings are for the report.
 7. **Publish.** Use the Artifact tool on the HTML file. Do not edit the page by hand: the layout is in
    `assets/overview-template.html`. If the data has an `artifactUrl`, publish to that `url` (read it first when this

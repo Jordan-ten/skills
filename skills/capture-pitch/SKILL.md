@@ -7,6 +7,8 @@ allowed-tools: Read, Write, Bash, Glob, AskUserQuestion
 
 # Capture Pitch
 
+Pitch files live in `.claude/plans/pitch/` at the repo root, whatever the working directory.
+
 Save a local copy of one PM pitch from Notion. The copy is the input for ticket writing, plans, and `/analyze-pitch`.
 
 This skill copies. It does not interpret, summarize, or judge.
@@ -21,7 +23,7 @@ This skill copies. It does not interpret, summarize, or judge.
    - URL given: fetch the page.
    - Name given: search. If there are several results, list them and ask the user to choose.
 2. **Read the sub-pages.** Fetch every sub-page and internal link of the pitch. Look first for "Main User Tasks", "User Tasks", "Tâches utilisateur", and detail pages per category or per task.
-3. **Write the capture.** Path: `backend/.claude/plans/pitch/<pitch-slug>.md`.
+3. **Write the capture.** Path: `.claude/plans/pitch/<pitch-slug>.md`.
    - `<pitch-slug>`: pitch title, lowercase, spaces replaced by hyphens, no date (the name must stay stable).
    - If the file exists, tell the user it will be refreshed, then overwrite it.
    - Create the folder if needed.

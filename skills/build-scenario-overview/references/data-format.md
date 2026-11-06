@@ -1,6 +1,6 @@
 # Overview data format
 
-The page is built from one data file: `backend/.claude/plans/pitch/<pitch-slug>.overview.json`.
+The page is built from one data file: `.claude/plans/pitch/<pitch-slug>.overview.json`.
 A complete example is in `references/example.overview.json`. Read it before you write a new file.
 
 ## Concepts

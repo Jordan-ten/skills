@@ -7,13 +7,15 @@ allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 
 # Analyze Pitch
 
+Pitch files live in `.claude/plans/pitch/` at the repo root, whatever the working directory.
+
 Turn a local pitch capture into a business context: summary, lexicon, scenarios. No technical implementation details.
 
 The capture is made by `/capture-pitch`. This skill never calls Notion.
 
 ## Arguments
 
-`$ARGUMENTS` — pitch name or path of a capture, then optional flags. If the pitch is empty, list `backend/.claude/plans/pitch/*.md` (without `*.analysis.md`) and ask the user to choose.
+`$ARGUMENTS` — pitch name or path of a capture, then optional flags. If the pitch is empty, list `.claude/plans/pitch/*.md` (without `*.analysis.md`) and ask the user to choose.
 
 Optional flag: `--milestone <title|number>` — compare the selected tasks with the issues of an existing GitHub milestone. Without it, the skill never calls GitHub.
 
@@ -21,14 +23,14 @@ If no capture exists, tell the user to run `/capture-pitch` first and stop.
 
 ## Steps
 
-1. **Read the capture.** `backend/.claude/plans/pitch/<pitch-slug>.md`. Show its `fetched_at` date to the user. If the pitch may have changed since, suggest a refresh with `/capture-pitch`.
+1. **Read the capture.** `.claude/plans/pitch/<pitch-slug>.md`. Show its `fetched_at` date to the user. If the pitch may have changed since, suggest a refresh with `/capture-pitch`.
 2. **Ask the MoSCoW levels.** Show the tasks grouped by category with their priority. Ask which levels to keep (`1 = Must`, `2 = Should`, `3 = Could`, `4 = Won't`; answers like "1", "1 and 2", "all"). Continue with the selected tasks only.
 3. **Read the code for the lexicon.** Do this silently. In `backend/src/` and `frontend/src/`:
    - find the NestJS module(s) of the pitch (`src/<domain>/`);
    - note the names already used: entities, properties, GraphQL types, services, queues.
    Use these names in the lexicon. Do not invent a new word when the code already has one.
 4. **Check the milestone (only with `--milestone`).** Read `../tnx-plan-refine-issue/references/milestone-context.md` completely and follow its contract for the given milestone. Then, for each selected task, look for an open or closed issue of the milestone that already covers it. Match on meaning, not only on words. Note the issue number and its state. Do not change any scenario because of it. Do not mutate GitHub.
-5. **Write the analysis.** Path: `backend/.claude/plans/pitch/<pitch-slug>.analysis.md`. Write the file at once, before any feedback. Overwrite an existing analysis only after telling the user.
+5. **Write the analysis.** Path: `.claude/plans/pitch/<pitch-slug>.analysis.md`. Write the file at once, before any feedback. Overwrite an existing analysis only after telling the user.
 6. **Iterate.** Give the path, the section titles, and the number of scenarios. Ask for corrections (scenario, lexicon term, scope). Update the file and ask again until the user says "ok".
 
 ## File format
