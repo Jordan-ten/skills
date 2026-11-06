@@ -1,35 +1,35 @@
 ---
 name: capture-pitch
-description: Slash-only. Use only when the user explicitly invokes /capture-pitch with a Notion pitch name or URL. Saves a local copy of a PM pitch from Notion. Never trigger from natural-language requests.
+description: Slash-only. À utiliser uniquement quand l'utilisateur lance explicitement /capture-pitch avec le nom ou l'URL Notion d'un pitch. Sauvegarde une copie locale d'un pitch PM depuis Notion. Ne jamais déclencher depuis une demande en langage naturel.
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash, Glob, AskUserQuestion
 ---
 
 # Capture Pitch
 
-Pitch files live in `.claude/plans/pitch/`, relative to the current working directory (`backend/` or `frontend/`).
+Les fichiers de pitch sont dans `.claude/plans/pitch/`, relatif au répertoire de travail courant (`backend/` ou `frontend/`).
 
-Save a local copy of one PM pitch from Notion. The copy is the input for ticket writing, plans, and `/analyze-pitch`.
+Sauvegarde une copie locale d'un pitch PM depuis Notion. La copie sert d'entrée pour écrire les tickets, les plans et `/analyze-pitch`.
 
-This skill copies. It does not interpret, summarize, or judge.
+Ce skill copie. Il n'interprète pas, ne résume pas, ne juge pas.
 
 ## Arguments
 
-`$ARGUMENTS` — pitch name or Notion URL. If empty, ask the user.
+`$ARGUMENTS` — nom du pitch ou URL Notion. Si vide, demande à l'utilisateur.
 
-## Steps
+## Étapes
 
-1. **Find the pitch.** Follow the `tnx-doc-notion-access` skill to read Notion.
-   - URL given: fetch the page.
-   - Name given: search. If there are several results, list them and ask the user to choose.
-2. **Read the sub-pages.** Fetch every sub-page and internal link of the pitch. Look first for "Main User Tasks", "User Tasks", "Tâches utilisateur", and detail pages per category or per task.
-3. **Write the capture.** Path: `.claude/plans/pitch/<pitch-slug>.md`.
-   - `<pitch-slug>`: pitch title, lowercase, spaces replaced by hyphens, no date (the name must stay stable).
-   - If the file exists, tell the user it will be refreshed, then overwrite it.
-   - Create the folder if needed.
-4. **Report.** Give the file path, the number of sub-pages read, and the number of tasks found. Nothing else.
+1. **Trouver le pitch.** Suis le skill `tnx-doc-notion-access` pour lire Notion.
+   - URL donnée : récupère la page.
+   - Nom donné : cherche. S'il y a plusieurs résultats, liste-les et demande à l'utilisateur de choisir.
+2. **Lire les sous-pages.** Récupère chaque sous-page et chaque lien interne du pitch. Cherche d'abord « Main User Tasks », « User Tasks », « Tâches utilisateur » et les pages de détail par catégorie ou par tâche.
+3. **Écrire la capture.** Chemin : `.claude/plans/pitch/<pitch-slug>.md`.
+   - `<pitch-slug>` : titre du pitch, en minuscules, espaces remplacés par des tirets, sans date (le nom doit rester stable).
+   - Si le fichier existe, dis à l'utilisateur qu'il va être rafraîchi, puis écrase-le.
+   - Crée le dossier si besoin.
+4. **Rapporter.** Donne le chemin du fichier, le nombre de sous-pages lues et le nombre de tâches trouvées. Rien d'autre.
 
-## File format
+## Format du fichier
 
 ```markdown
 ---
@@ -55,9 +55,9 @@ fetched_at: <YYYY-MM-DD HH:mm>
 <sub-page content, copied as written>
 ```
 
-## Rules
+## Règles
 
-- Copy the words of the PM. Do not rewrite, shorten, or translate.
-- Keep the MoSCoW value as written in Notion (Must / Should / Could / Won't, or 1 to 4).
-- Do not explore the code. Do not add lexicon, scenarios, or questions. That is the job of `/analyze-pitch`.
-- If a part of the pitch cannot be read (permission, empty page), write `> Not captured: <reason>` in its place.
+- Copie les mots du PM. Ne réécris pas, ne raccourcis pas, ne traduis pas.
+- Garde la valeur MoSCoW telle qu'écrite dans Notion (Must / Should / Could / Won't, ou 1 à 4).
+- N'explore pas le code. N'ajoute ni lexique, ni scénarios, ni questions. C'est le travail de `/analyze-pitch`.
+- Si une partie du pitch ne peut pas être lue (permission, page vide), écris `> Not captured: <reason>` à sa place.

@@ -1,39 +1,39 @@
 ---
 name: analyze-pitch
-description: Slash-only. Use only when the user explicitly invokes /analyze-pitch with a captured pitch name. Reads a local pitch capture and writes an analysis: summary, lexicon grounded in the code, and GIVEN/WHEN/THEN scenarios filtered by MoSCoW. Never trigger from natural-language requests.
+description: Slash-only. À utiliser uniquement quand l'utilisateur lance explicitement /analyze-pitch avec le nom d'un pitch capturé. Lit une capture locale de pitch et écrit une analyse (résumé, lexique ancré dans le code, scénarios GIVEN/WHEN/THEN filtrés par MoSCoW). Ne jamais déclencher depuis une demande en langage naturel.
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 ---
 
 # Analyze Pitch
 
-Pitch files live in `.claude/plans/pitch/`, relative to the current working directory (`backend/` or `frontend/`).
+Les fichiers de pitch sont dans `.claude/plans/pitch/`, relatif au répertoire de travail courant (`backend/` ou `frontend/`).
 
-Turn a local pitch capture into a business context: summary, lexicon, scenarios. No technical implementation details.
+Transforme une capture locale de pitch en contexte métier : résumé, lexique, scénarios. Aucun détail d'implémentation technique.
 
-The capture is made by `/capture-pitch`. This skill never calls Notion.
+La capture est faite par `/capture-pitch`. Ce skill n'appelle jamais Notion.
 
 ## Arguments
 
-`$ARGUMENTS` — pitch name or path of a capture, then optional flags. If the pitch is empty, list `.claude/plans/pitch/*.md` (without `*.analysis.md`) and ask the user to choose.
+`$ARGUMENTS` — nom du pitch ou chemin d'une capture, puis des options. Si le pitch est vide, liste `.claude/plans/pitch/*.md` (sans `*.analysis.md`) et demande à l'utilisateur de choisir.
 
-Optional flag: `--milestone <title|number>` — compare the selected tasks with the issues of an existing GitHub milestone. Without it, the skill never calls GitHub.
+Option : `--milestone <title|number>` — compare les tâches choisies avec les issues d'un milestone GitHub existant. Sans cette option, le skill n'appelle jamais GitHub.
 
-If no capture exists, tell the user to run `/capture-pitch` first and stop.
+Si aucune capture n'existe, dis à l'utilisateur de lancer `/capture-pitch` d'abord et arrête-toi.
 
-## Steps
+## Étapes
 
-1. **Read the capture.** `.claude/plans/pitch/<pitch-slug>.md`. Show its `fetched_at` date to the user. If the pitch may have changed since, suggest a refresh with `/capture-pitch`.
-2. **Ask the MoSCoW levels.** Show the tasks grouped by category with their priority. Ask which levels to keep (`1 = Must`, `2 = Should`, `3 = Could`, `4 = Won't`; answers like "1", "1 and 2", "all"). Continue with the selected tasks only.
-3. **Read the code for the lexicon.** Do this silently. In `backend/src/` and `frontend/src/`:
-   - find the NestJS module(s) of the pitch (`src/<domain>/`);
-   - note the names already used: entities, properties, GraphQL types, services, queues.
-   Use these names in the lexicon. Do not invent a new word when the code already has one.
-4. **Check the milestone (only with `--milestone`).** Read `../tnx-plan-refine-issue/references/milestone-context.md` completely and follow its contract for the given milestone. Then, for each selected task, look for an open or closed issue of the milestone that already covers it. Match on meaning, not only on words. Note the issue number and its state. Do not change any scenario because of it. Do not mutate GitHub.
-5. **Write the analysis.** Path: `.claude/plans/pitch/<pitch-slug>.analysis.md`. Write the file at once, before any feedback. Overwrite an existing analysis only after telling the user.
-6. **Iterate.** Give the path, the section titles, and the number of scenarios. Ask for corrections (scenario, lexicon term, scope). Update the file and ask again until the user says "ok".
+1. **Lire la capture.** `.claude/plans/pitch/<pitch-slug>.md`. Montre sa date `fetched_at` à l'utilisateur. Si le pitch a pu changer depuis, propose un rafraîchissement avec `/capture-pitch`.
+2. **Demander les niveaux MoSCoW.** Montre les tâches groupées par catégorie avec leur priorité. Demande quels niveaux garder (`1 = Must`, `2 = Should`, `3 = Could`, `4 = Won't` ; réponses comme « 1 », « 1 et 2 », « tous »). Continue avec les tâches choisies seulement.
+3. **Lire le code pour le lexique.** Fais-le en silence. Dans `backend/src/` et `frontend/src/` :
+   - trouve le ou les modules NestJS du pitch (`src/<domain>/`) ;
+   - note les noms déjà utilisés : entités, propriétés, types GraphQL, services, queues.
+   Utilise ces noms dans le lexique. N'invente pas un nouveau mot quand le code en a déjà un.
+4. **Vérifier le milestone (seulement avec `--milestone`).** Lis entièrement `../tnx-plan-refine-issue/references/milestone-context.md` et suis son contrat pour le milestone donné. Puis, pour chaque tâche choisie, cherche une issue ouverte ou fermée du milestone qui la couvre déjà. Compare sur le sens, pas seulement sur les mots. Note le numéro de l'issue et son état. Ne change aucun scénario à cause de cela. Ne modifie rien sur GitHub.
+5. **Écrire l'analyse.** Chemin : `.claude/plans/pitch/<pitch-slug>.analysis.md`. Écris le fichier tout de suite, avant tout retour. N'écrase une analyse existante qu'après avoir prévenu l'utilisateur.
+6. **Itérer.** Donne le chemin, les titres de sections et le nombre de scénarios. Demande des corrections (scénario, terme du lexique, périmètre). Mets à jour le fichier et redemande jusqu'à ce que l'utilisateur dise « ok ».
 
-## File format
+## Format du fichier
 
 ```markdown
 ---
@@ -101,11 +101,11 @@ Tasks with no matching issue: <list, or "none">.
 > _Why it matters_: short reason
 ```
 
-## Rules
+## Règles
 
-- Observable behavior only: no table names, resolvers, or migrations.
-- At least one nominal scenario per selected task.
-- Without `--milestone`, do not call GitHub.
-- A milestone match is a hint for the user. Never remove a task or a scenario because an issue seems to cover it.
-- Never change the capture file. Corrections go in the analysis.
-- Write the analysis in the language of the pitch.
+- Comportement observable seulement : pas de noms de tables, de resolvers ou de migrations.
+- Au moins un scénario nominal par tâche choisie.
+- Sans `--milestone`, n'appelle pas GitHub.
+- Une correspondance avec un milestone est un indice pour l'utilisateur. Ne retire jamais une tâche ou un scénario parce qu'une issue semble le couvrir.
+- Ne modifie jamais le fichier de capture. Les corrections vont dans l'analyse.
+- Écris l'analyse dans la langue du pitch.

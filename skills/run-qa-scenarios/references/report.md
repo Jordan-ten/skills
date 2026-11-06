@@ -1,6 +1,6 @@
-# The report
+# Le rapport
 
-One message, at the end of the run. Nothing is posted on the issue.
+Un seul message, à la fin du run. Rien n'est posté sur l'issue.
 
 ## Verdicts
 
@@ -12,9 +12,9 @@ One message, at the end of the run. Nothing is posted on the issue.
 | `BY HAND` | Not run. Needs a human. Say what the human has to do. |
 | `NOT TESTABLE` | Not run. No case in the local data, and it was not created (user skipped it, or creating it failed). Say what is missing and why. |
 
-Never use `PASS` for a scenario that was only read in the code.
+Ne jamais utiliser `PASS` pour un scénario qui a seulement été lu dans le code.
 
-## Shape
+## Forme
 
 ```markdown
 # <issue number> — <issue title>
@@ -41,10 +41,11 @@ a console error, a slow screen. One line each. Say it is an observation, not a d
 this issue, and suggest its own issue when it deserves one.>
 ```
 
-## Rules for the report
+## Règles du rapport
 
-- The scenario column keeps the author's words. The reader has to recognise their own checklist.
-- One line of evidence per scenario, not a transcript.
-- Count the scenarios that were not run. A run where 4 scenarios out of 6 are `BY HAND` is not a
-  tested ticket, and the report must say so in one sentence under the table.
-- When a scenario fails, give the failing case precisely: input, what was expected, what happened.
+- La colonne scénario garde les mots de l'auteur. Le lecteur doit reconnaître sa propre checklist.
+- Une ligne de preuve par scénario, pas une transcription.
+- Compter les scénarios qui n'ont pas été exécutés. Un run où 4 scénarios sur 6 sont `BY HAND` n'est pas
+  un ticket testé, et le rapport doit le dire en une phrase sous le tableau.
+- Quand un scénario échoue, donner précisément le cas qui échoue : l'entrée, ce qui était attendu, ce
+  qui s'est passé.

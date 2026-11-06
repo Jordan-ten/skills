@@ -1,19 +1,19 @@
-# Overview data format
+# Format des données de la vue d'ensemble
 
-The page is built from one data file: `.claude/plans/pitch/<pitch-slug>.overview.json`.
-A complete example is in `references/example.overview.json`. Read it before you write a new file.
+La page est construite à partir d'un seul fichier de données : `.claude/plans/pitch/<pitch-slug>.overview.json`.
+Un exemple complet est dans `references/example.overview.json`. Lis-le avant d'écrire un nouveau fichier.
 
 ## Concepts
 
-| Word | Meaning in the page |
+| Mot | Sens dans la page |
 |---|---|
-| **Tâche** | One row of the pitch table "Main User Tasks". One capability seen by one role. Its number is its place in the pitch table. |
-| **Issue (ticket)** | The GitHub issue of the milestone that covers the task. A task has zero or one main ticket. |
-| **Lot** | A delivery batch of the pitch ("Lot 1", "Lot 2"). It is the Category column of the pitch table. A pitch with no lot has one lot. |
-| **Parcours** | A story from start to end that chains several tasks, told through one or two roles. It shows how the tasks work together. |
-| **MoSCoW** | The priority of a task. **Must** is in the delivery. **Should** can be cut. **Could** is shown like Should. |
+| **Tâche** | Une ligne du tableau du pitch « Main User Tasks ». Une capacité vue par un rôle. Son numéro est sa place dans le tableau du pitch. |
+| **Issue (ticket)** | L'issue GitHub du milestone qui couvre la tâche. Une tâche a zéro ou un ticket principal. |
+| **Lot** | Un lot de livraison du pitch (« Lot 1 », « Lot 2 »). C'est la colonne Category du tableau du pitch. Un pitch sans lot a un seul lot. |
+| **Parcours** | Une histoire du début à la fin qui enchaîne plusieurs tâches, racontée par un ou deux rôles. Elle montre comment les tâches fonctionnent ensemble. |
+| **MoSCoW** | La priorité d'une tâche. **Must** est dans la livraison. **Should** peut être coupée. **Could** est affichée comme Should. |
 
-## Fields
+## Champs
 
 ```jsonc
 {
@@ -45,61 +45,61 @@ A complete example is in `references/example.overview.json`. Read it before you 
 }
 ```
 
-Write plain text only. The build script escapes it. Do not write HTML.
+Écris du texte brut seulement. Le script de construction l'échappe. N'écris pas de HTML.
 
-## Task rules
+## Règles des tâches
 
-- Keep the pitch order. Never sort by priority. The Must filter does that in the page.
-- Keep only the tasks that the analysis kept (its `moscow` list). A task with no value in Notion
-  has the priority given in the analysis "Decisions". If the analysis gives none, ask the user.
-- The title starts with the role, then a colon, then the action, as in the pitch. When the analysis changes a term of
-  the pitch (for example interface language and content language), use the analysis wording and say so in `note`.
-- When the priority was decided in the analysis and is not in Notion, say it in `note`.
-- A Should task with no ticket needs no flag. The page already shows "pas de ticket".
-- `where` starts with `UI :` (a screen), `Email :` (an email to trigger), or `Hors UI :`.
-- `note` holds a fact the reader needs once, such as a conflict between the pitch and the analysis.
+- Garde l'ordre du pitch. Ne trie jamais par priorité. Le filtre Must de la page le fait.
+- Garde seulement les tâches que l'analyse a gardées (sa liste `moscow`). Une tâche sans valeur dans Notion
+  a la priorité donnée dans les « Decisions » de l'analyse. Si l'analyse n'en donne aucune, demande à l'utilisateur.
+- Le titre commence par le rôle, puis un deux-points, puis l'action, comme dans le pitch. Quand l'analyse change un terme du
+  pitch (par exemple langue d'interface et langue de contenu), utilise la formulation de l'analyse et dis-le dans `note`.
+- Quand la priorité a été décidée dans l'analyse et n'est pas dans Notion, dis-le dans `note`.
+- Une tâche Should sans ticket n'a pas besoin de marque. La page affiche déjà « pas de ticket ».
+- `where` commence par `UI :` (un écran), `Email :` (un email à déclencher) ou `Hors UI :`.
+- `note` contient un fait dont le lecteur a besoin une seule fois, comme un conflit entre le pitch et l'analyse.
 
-## Scenario rules
+## Règles des scénarios
 
-A scenario is one line: a situation, an arrow, a result. The arrow is drawn by the page.
+Un scénario tient sur une ligne : une situation, une flèche, un résultat. La flèche est dessinée par la page.
 
-- `sit`: what happens, with a person as the subject. No `GIVEN`, `WHEN`, `THEN`.
-- `res`: what the person sees or receives. One sentence.
-- Name people by business role (admin, chargé RSE, fournisseur invité). Name values as the user sees them (« Navigateur »).
-- No code words (no entity, field, queue, or class names). Names of tools the team already uses, such as Novu or Auth0, are fine.
-- Take scenarios from the analysis. Merge a GIVEN/WHEN/THEN block into one line. Do not invent a rule the analysis does not state.
-- Put the nominal case first, then the edge cases.
+- `sit` : ce qui se passe, avec une personne comme sujet. Pas de `GIVEN`, `WHEN`, `THEN`.
+- `res` : ce que la personne voit ou reçoit. Une phrase.
+- Nomme les personnes par rôle métier (admin, chargé RSE, fournisseur invité). Nomme les valeurs comme l'utilisateur les voit (« Navigateur »).
+- Pas de mots de code (pas de nom d'entité, de champ, de queue ou de classe). Les noms d'outils que l'équipe utilise déjà, comme Novu ou Auth0, sont acceptés.
+- Prends les scénarios dans l'analyse. Fusionne un bloc GIVEN/WHEN/THEN en une ligne. N'invente pas une règle que l'analyse ne dit pas.
+- Mets le cas nominal en premier, puis les cas limites.
 
-Tags, only when true:
+Tags, seulement quand c'est vrai :
 
-| Tag | Use when |
+| Tag | À utiliser quand |
 |---|---|
-| `limite` | the scenario is an edge or error case |
-| `confirmer` | the analysis marks it "to confirm" or lists it as an open question |
-| `decide` | the analysis lists it in "Decisions". A decision with no scenario in the analysis may get its own line. |
-| `ajout` | the analysis has no scenario for it. It comes from the pitch, an open question, or a decision. |
-| `verifier` | the analysis says to check the ticket for it |
+| `limite` | le scénario est un cas limite ou un cas d'erreur |
+| `confirmer` | l'analyse le marque « à confirmer » ou le liste comme question ouverte |
+| `decide` | l'analyse le liste dans « Decisions ». Une décision sans scénario dans l'analyse peut avoir sa propre ligne. |
+| `ajout` | l'analyse n'a pas de scénario pour lui. Il vient du pitch, d'une question ouverte ou d'une décision. |
+| `verifier` | l'analyse dit de vérifier le ticket pour lui |
 
-## Ticket rules
+## Règles des tickets
 
-- The source is the analysis section "Already covered by existing issues". With `--refresh-tickets`,
-  or when that section is missing, read the milestone with `gh issue list` (read only).
-- Match on meaning, not on words. One main ticket per task. Put extra tickets in `note`.
-- A ticket that covers only a part of the task is still the ticket of the task. Say what is missing in `note`.
-- Never invent a number. No ticket found: leave `ticket` out. The page shows "pas de ticket".
+- La source est la section de l'analyse « Already covered by existing issues ». Avec `--refresh-tickets`,
+  ou quand cette section manque, lis le milestone avec `gh issue list` (lecture seule).
+- Compare sur le sens, pas sur les mots. Un ticket principal par tâche. Mets les tickets en plus dans `note`.
+- Un ticket qui ne couvre qu'une partie de la tâche reste le ticket de la tâche. Dis ce qui manque dans `note`.
+- N'invente jamais un numéro. Aucun ticket trouvé : laisse `ticket` de côté. La page affiche « pas de ticket ».
 
-## Parcours rules
+## Règles des parcours
 
-- Write 3 to 6 parcours. Each one is a story with a clear start and end, for one or two roles.
-- Give each parcours the lot of its tasks in `intro` ("Lot 1." or "Lot 2."). Prefer one lot per parcours, so a cut lot
-  removes whole parcours. Mix lots only when the story needs it, and say so in `intro`.
-- 3 to 8 steps. A step is one `sit → res` line, like a scenario. `tasks` lists the tasks whose scenario the step shows working. Do not list a task for a step that only touches it.
-- Use the parcours to show what the single tasks cannot: a setting made by an admin, then its effect on another person.
-- Every task that a person can see in the product is in at least one parcours. A task with no visible effect
-  (for example translations done in a tool) may stay out. The build warns about it. Say so in your report.
-- `outcome` is only the success indicator of the pitch, when it fits this parcours.
-- Ids are `p1`, `p2`… and labels `P1`, `P2`… in the order shown.
+- Écris 3 à 6 parcours. Chacun est une histoire avec un début et une fin clairs, pour un ou deux rôles.
+- Donne à chaque parcours le lot de ses tâches dans `intro` (« Lot 1. » ou « Lot 2. »). Préfère un seul lot par parcours, pour qu'un lot coupé
+  retire des parcours entiers. Ne mélange les lots que si l'histoire l'exige, et dis-le dans `intro`.
+- 3 à 8 étapes. Une étape est une ligne `sit → res`, comme un scénario. `tasks` liste les tâches dont l'étape montre le scénario qui fonctionne. Ne liste pas une tâche pour une étape qui ne fait que la toucher.
+- Utilise les parcours pour montrer ce que les tâches seules ne peuvent pas montrer : un réglage fait par un admin, puis son effet sur une autre personne.
+- Chaque tâche qu'une personne peut voir dans le produit est dans au moins un parcours. Une tâche sans effet visible
+  (par exemple des traductions faites dans un outil) peut rester dehors. La construction avertit à ce sujet. Dis-le dans ton rapport.
+- `outcome` est seulement l'indicateur de succès du pitch, quand il convient à ce parcours.
+- Les ids sont `p1`, `p2`… et les labels `P1`, `P2`… dans l'ordre affiché.
 
-## Page text
+## Texte de la page
 
-The page text is in French. This file and the skill are in English.
+Le texte de la page est en français. Ce fichier et le skill sont aussi en français.

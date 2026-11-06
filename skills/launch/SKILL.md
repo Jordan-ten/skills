@@ -1,12 +1,14 @@
 ---
 name: launch
 description: >
-  Start the backend server in dev or test environment, and optionally the
-  frontend (Vite, dev only). Checks Docker containers, starts them if needed,
-  runs PostgreSQL and ClickHouse migrations, starts the NestJS server in watch
-  mode, and polls until healthy.
-  Invoke when the user types /launch, /launch dev, /launch test, /launch front,
-  /launch dev front, or asks to start/lancer le serveur backend ou le frontend.
+  Démarre le serveur backend en environnement dev ou test, et optionnellement
+  le frontend (Vite, dev seulement). Vérifie les conteneurs Docker, les démarre
+  si besoin, lance les migrations PostgreSQL et ClickHouse, démarre le serveur
+  NestJS en mode watch, et attend qu'il soit en bonne santé.
+  À invoquer quand l'utilisateur tape /launch, /launch dev, /launch test,
+  /launch front, /launch dev front, ou demande de start/lancer le serveur
+  backend ou le frontend. (Start the backend server in dev or test
+  environment, and optionally the frontend.)
 allowed-tools: Bash
 model: claude-haiku-4-5-20251001
 ---

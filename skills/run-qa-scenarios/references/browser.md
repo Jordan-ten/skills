@@ -1,15 +1,16 @@
-# Driving the browser
+# Piloter le navigateur
 
-Connection and dev login: `tnx-dev-mcp-local-dev`. What follows is only what makes a UI verdict
-wrong when it is ignored.
+Connexion et login dev : `tnx-dev-mcp-local-dev`. Ce qui suit, c'est seulement ce qui fausse un verdict
+d'UI quand on l'ignore.
 
-## Traps that produce a false failure
+## Pièges qui produisent un faux échec
 
-**The same element is often rendered twice.** A modal can hold a sticky header and a visible
-properties block that both render the same component. The accessibility snapshot may show only the
-hidden copy, so a click or a hover lands on something the user cannot see and nothing happens.
+**Le même élément est souvent rendu deux fois.** Une modale peut contenir un en-tête collant et un bloc
+de propriétés visible qui rendent tous deux le même composant. Le snapshot d'accessibilité peut ne
+montrer que la copie cachée : un clic ou un survol tombe alors sur quelque chose que l'utilisateur ne
+voit pas, et rien ne se passe.
 
-Before interacting, keep only the visible instance:
+Avant d'interagir, ne garder que l'instance visible :
 
 ```js
 () => [...document.querySelectorAll('<selector>')]
@@ -21,11 +22,11 @@ Before interacting, keep only the visible instance:
   })
 ```
 
-A hidden copy usually sits under an ancestor with `pointer-events: none` or `opacity-0`, or is not
-displayed (`display: none` gives a zero-size box).
+Une copie cachée se trouve en général sous un ancêtre avec `pointer-events: none` ou `opacity-0`, ou
+n'est pas affichée (`display: none` donne une boîte de taille nulle).
 
-**A tooltip is not in the accessibility snapshot.** Ant Design mounts it on hover, outside the
-component. `take_snapshot` will not show it. Read it from the DOM instead:
+**Un tooltip n'est pas dans le snapshot d'accessibilité.** Ant Design le monte au survol, en dehors du
+composant. `take_snapshot` ne le montrera pas. Le lire plutôt dans le DOM :
 
 ```js
 () => [...document.querySelectorAll('.ant-tooltip')]
@@ -33,22 +34,23 @@ component. `take_snapshot` will not show it. Read it from the DOM instead:
   .map(t => t.innerText)
 ```
 
-**Hovering through the snapshot uid can miss.** When `mcp__chrome-devtools__hover` gives no result,
-dispatch the events on the element you picked yourself, then wait for the tooltip to mount:
-`pointerover`, `mouseover`, `pointerenter`, `mouseenter`, `mousemove`, then ~1s.
+**Survoler par l'uid du snapshot peut rater.** Quand `mcp__chrome-devtools__hover` ne donne aucun
+résultat, envoyer soi-même les événements sur l'élément choisi, puis attendre que le tooltip se monte :
+`pointerover`, `mouseover`, `pointerenter`, `mouseenter`, `mousemove`, puis ~1s.
 
-**An empty dialog means it is still loading.** Wait for a text you expect (`wait_for`) before
-reading a modal. Do not conclude on a snapshot taken too early.
+**Une boîte de dialogue vide veut dire qu'elle charge encore.** Attendre un texte attendu (`wait_for`)
+avant de lire une modale. Ne pas conclure sur un snapshot pris trop tôt.
 
-## What counts as evidence
+## Ce qui compte comme preuve
 
-- A screenshot for anything visual (a layout, a tooltip, a truncated label).
-- The text read from the DOM for a list, a label, a tooltip.
-- `list_console_messages` with `types: ["error"]` for a scenario about an error.
-- The test output when the scenario was checked by an automated test.
+- Une capture d'écran pour tout ce qui est visuel (une mise en page, un tooltip, un libellé tronqué).
+- Le texte lu dans le DOM pour une liste, un libellé, un tooltip.
+- `list_console_messages` avec `types: ["error"]` pour un scénario sur une erreur.
+- La sortie du test quand le scénario a été vérifié par un test automatique.
 
-## Leave the app as you found it
+## Laisser l'app comme on l'a trouvée
 
-The dev database is the user's. Do not submit a form, delete a record, or change a setting unless the
-scenario is about that action and it was marked as a write in the step 1 list the user accepted. Close what you opened and go
-back to the list screen at the end of the run.
+La base de dev est celle de l'utilisateur. Ne pas envoyer de formulaire, ne pas supprimer
+d'enregistrement, ne pas changer de réglage, sauf si le scénario porte sur cette action et qu'elle était
+marquée comme une écriture dans la liste de l'étape 1 que l'utilisateur a acceptée. Fermer ce qu'on a
+ouvert et revenir à l'écran de liste à la fin du run.

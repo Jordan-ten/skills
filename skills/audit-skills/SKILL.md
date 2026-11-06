@@ -1,6 +1,6 @@
 ---
 name: audit-skills
-description: Slash-only. Use only when the user explicitly invokes /audit-skills. Audits the skills of the personal plugin repo against the current Claude Code conventions and recent changes, then proposes and applies fixes after the user agrees. Never trigger from natural-language requests.
+description: Slash-only. À utiliser uniquement quand l'utilisateur lance explicitement /audit-skills. Audite les skills du repo de plugin personnel selon les conventions actuelles de Claude Code et les changements récents, puis propose et applique des corrections après accord de l'utilisateur. Ne jamais déclencher depuis une demande en langage naturel.
 disable-model-invocation: true
 argument-hint: "[repo path, default ~/code/skills]"
 allowed-tools: Bash(python3 *), Bash(git *), Bash(claude --version), Read, Edit, Write, Glob, Grep, WebFetch, WebSearch, Agent, AskUserQuestion
@@ -8,47 +8,47 @@ allowed-tools: Bash(python3 *), Bash(git *), Bash(claude --version), Read, Edit,
 
 # Audit Skills
 
-Keeps the skills of the personal plugin repo up to date with the Claude Code docs.
+Garde les skills du repo de plugin personnel à jour avec la doc de Claude Code.
 
-`REPO` is `$ARGUMENTS`, or `~/code/skills`. Work only in `REPO`. Never edit the skills of a project repo.
+`REPO` est `$ARGUMENTS`, ou `~/code/skills`. Travaille seulement dans `REPO`. Ne modifie jamais les skills d'un repo de projet.
 
-## Steps
+## Étapes
 
-1. **Run the mechanical checks.**
+1. **Lancer les vérifications mécaniques.**
    `python3 ${CLAUDE_PLUGIN_ROOT}/skills/audit-skills/scripts/check_skills.py REPO`
-   Lines are `LEVEL<TAB>skill<TAB>message`. `INFO` lines list the front matter keys in use.
-   Some warnings are false positives (a file that belongs to another skill, for example). Read the
-   skill before you keep a finding.
+   Les lignes sont `LEVEL<TAB>skill<TAB>message`. Les lignes `INFO` listent les clés de front matter utilisées.
+   Certains avertissements sont des faux positifs (un fichier qui appartient à un autre skill, par exemple). Lis le
+   skill avant de garder un constat.
 
-2. **Read the current rules.** Do not rely on memory: the conventions change.
-   - Read the live docs: `https://code.claude.com/docs/en/skills` and `https://code.claude.com/docs/en/plugins`
-     (and the plugin marketplace page). Use the `claude-code-guide` agent, or `WebFetch`.
-   - Read `REPO/.last-audit.json` if it exists (`date`, `claudeVersion`). Look at the Claude Code release
-     notes or changelog since that date. Without the file, look at the last three months.
-   - Get the installed version with `claude --version`.
+2. **Lire les règles actuelles.** Ne te fie pas à ta mémoire : les conventions changent.
+   - Lis la doc en ligne : `https://code.claude.com/docs/en/skills` et `https://code.claude.com/docs/en/plugins`
+     (et la page du marketplace de plugins). Utilise l'agent `claude-code-guide`, ou `WebFetch`.
+   - Lis `REPO/.last-audit.json` s'il existe (`date`, `claudeVersion`). Regarde les notes de version ou le changelog
+     de Claude Code depuis cette date. Sans le fichier, regarde les trois derniers mois.
+   - Récupère la version installée avec `claude --version`.
 
-3. **Compare the skills with the docs.** Look for:
-   - front matter keys in use that are renamed, deprecated or unknown;
-   - new keys or features worth adopting (name each one and say why);
-   - description rules (length, wording, when to use);
-   - body rules (size, `references/` split, script paths, `${CLAUDE_PLUGIN_ROOT}`);
-   - plugin and marketplace file format (`plugin.json`, `marketplace.json`, `version`);
-   - dependencies on files or skills that exist only in a project repo.
-   Every finding that does not come from the script cites the doc page. If you cannot confirm it in the
-   docs, label it "to verify". Do not invent a rule.
+3. **Comparer les skills avec la doc.** Cherche :
+   - des clés de front matter utilisées qui sont renommées, dépréciées ou inconnues ;
+   - des clés ou fonctions nouvelles qui valent la peine d'être adoptées (nomme chacune et dis pourquoi) ;
+   - les règles sur les descriptions (longueur, formulation, quand l'utiliser) ;
+   - les règles sur le corps (taille, découpage en `references/`, chemins de scripts, `${CLAUDE_PLUGIN_ROOT}`) ;
+   - le format des fichiers de plugin et de marketplace (`plugin.json`, `marketplace.json`, `version`) ;
+   - les dépendances à des fichiers ou des skills qui n'existent que dans un repo de projet.
+   Chaque constat qui ne vient pas du script cite la page de la doc. Si tu ne peux pas le confirmer dans la
+   doc, marque-le « à vérifier ». N'invente pas de règle.
 
-4. **Report in the chat, in French.** One table: severity, skill, finding, proposed fix. Group the
-   findings from the script and the findings from the docs. End with the fixes you recommend.
-   Write no report file.
+4. **Rapporter dans le chat, en français.** Un seul tableau : gravité, skill, constat, correction proposée. Groupe
+   les constats du script et les constats de la doc. Termine par les corrections que tu recommandes.
+   N'écris aucun fichier de rapport.
 
-5. **Ask which fixes to apply** (`AskUserQuestion`). Never delete a skill without an explicit yes.
+5. **Demander quelles corrections appliquer** (`AskUserQuestion`). Ne supprime jamais un skill sans un oui explicite.
 
-6. **Apply the chosen fixes.**
-   - Edit the skill files. Keep names in `kebab-case`, verb first, no `tnx-` prefix.
-   - Keep the README glossary in sync: one line per skill, same groups.
-   - Run the script again. No new `ERROR`.
-   - Bump the patch number of `version` in `.claude-plugin/plugin.json`.
-   - Write `REPO/.last-audit.json` with today's date and the `claude --version` value.
+6. **Appliquer les corrections choisies.**
+   - Modifie les fichiers du skill. Garde les noms en `kebab-case`, verbe en premier, sans préfixe `tnx-`.
+   - Garde le glossaire du README synchronisé : une ligne par skill, mêmes groupes.
+   - Relance le script. Aucun nouveau `ERROR`.
+   - Incrémente le numéro de patch de `version` dans `.claude-plugin/plugin.json`.
+   - Écris `REPO/.last-audit.json` avec la date du jour et la valeur de `claude --version`.
 
-7. **Commit, do not push.** One commit per logical change, message in simple English. Tell the user to
-   push and to run `/plugin marketplace update <marketplace-name>`.
+7. **Commit, sans push.** Un commit par changement logique, message en anglais simple. Dis à l'utilisateur de
+   pousser et de lancer `/plugin marketplace update <marketplace-name>`.

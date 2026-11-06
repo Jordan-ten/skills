@@ -1,23 +1,25 @@
 ---
 name: rebase
-description: Rebase the current branch on a target branch (default main). Resolves conflicts in generated files, applies migrations, regenerates the GraphQL schema and SDK types, checks the types, runs the related tests, then force-pushes. Use when the user invokes /rebase, says "rebase sur main", "rebase on main", "rebase la branche", or wants to bring a feature branch up to date.
+description: Rebase la branche courante sur une branche cible (par défaut main). Résout les conflits dans les fichiers générés, applique les migrations, régénère le schéma GraphQL et les types du SDK, vérifie les types, lance les tests liés, puis fait un force-push. À utiliser quand l'utilisateur invoque /rebase, dit "rebase sur main", "rebase on main", "rebase la branche", ou veut remettre une branche de feature à jour (rebase the current branch on a target branch).
 disable-model-invocation: true
 allowed-tools: Bash(git *), Bash(gh *), Bash(docker compose *), Bash(npm run *), Bash(npx dotenvx run *), Read, Edit, Grep, Glob, AskUserQuestion
 ---
 
 # Rebase
 
-Run all commands from `backend/` unless a step says otherwise. `TARGET` is the argument, or `main`.
+Lance toutes les commandes depuis `backend/`, sauf si une étape dit autre chose. `TARGET` est l'argument, ou `main`.
 
-## 1. Check the branch
+Les messages de commit restent en anglais simple.
+
+## 1. Vérifier la branche
 
 ```bash
 git branch --show-current
 git status --short
 ```
 
-Rebase the branch the user named. If the current branch is not the one they expect, stop and ask.
-Do not rebase with uncommitted changes to tracked files.
+Rebase la branche que l'utilisateur a nommée. Si la branche courante n'est pas celle qu'il attend, arrête-toi et demande.
+Ne fais pas de rebase avec des changements non commités sur des fichiers suivis.
 
 ## 2. Rebase
 
@@ -25,14 +27,14 @@ Do not rebase with uncommitted changes to tracked files.
 git pull --rebase origin $TARGET
 ```
 
-If the command fails with `Permission denied (publickey)`, retry a few times: the SSH agent can fail
-at random. Do not change the remote URL.
+Si la commande échoue avec `Permission denied (publickey)`, réessaie plusieurs fois : l'agent SSH peut échouer
+au hasard. Ne change pas l'URL du remote.
 
-## 3. Resolve conflicts
+## 3. Résoudre les conflits
 
-Generated files: take the version of the target branch. During a rebase, that is `--ours`.
+Fichiers générés : prends la version de la branche cible. Pendant un rebase, c'est `--ours`.
 
-Git reads paths from the current folder, so run this step from the repo root.
+Git lit les chemins depuis le dossier courant, donc lance cette étape depuis la racine du dépôt.
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"
@@ -40,28 +42,28 @@ git checkout --ours backend/src/schema.gql backend/sdk/generated/graphql/ fronte
 git add backend/src/schema.gql backend/sdk/generated/graphql/ frontend/src/gql/ 2>/dev/null || true
 ```
 
-Business code: resolve by hand, then `git add`. Never edit a generated file by hand.
+Code métier : résous à la main, puis `git add`. Ne modifie jamais un fichier généré à la main.
 
 ```bash
 git rebase --continue
 ```
 
-Repeat until the rebase ends, then go back to `backend/`.
+Répète jusqu'à la fin du rebase, puis retourne dans `backend/`.
 
-## 4. Pick the steps from the diff
+## 4. Choisir les étapes selon le diff
 
 ```bash
 git diff origin/$TARGET --name-only
 ```
 
-If every changed file is a doc or a skill (`.claude/`, `*.md`), skip to step 10.
-Run the steps below only for what changed:
+Si tous les fichiers modifiés sont des docs ou des skills (`.claude/`, `*.md`), va directement à l'étape 10.
+Lance les étapes ci-dessous seulement pour ce qui a changé :
 
-- `migrations/` or an entity changed: steps 5 to 6.
-- A resolver, an input or an entity with GraphQL decorators changed: steps 7 to 8.
-- Any `.ts` file changed: steps 9 to 10.
+- `migrations/` ou une entité a changé : étapes 5 à 6.
+- Un resolver, un input ou une entité avec des décorateurs GraphQL a changé : étapes 7 à 8.
+- Un fichier `.ts` a changé : étapes 9 à 10.
 
-## 5. Docker (test environment)
+## 5. Docker (environnement de test)
 
 ```bash
 docker compose -f docker-compose.yml --env-file .test.env -p backend_test ps
@@ -75,31 +77,31 @@ npm run _test mikro:migration:up
 npm run _test clickhouse:test-schema:up
 ```
 
-## 7. GraphQL schema
+## 7. Schéma GraphQL
 
 ```bash
 npm run _dev build:graphql-schema
 ```
 
-## 8. GraphQL types
+## 8. Types GraphQL
 
 ```bash
 npm run _test test:graphql-codegen
 cd ../frontend && npm run graphql:codegen && cd ../backend
 ```
 
-## 9. Type check
+## 9. Vérification des types
 
 ```bash
 npm run type:check
 ```
 
-Never run `tsc` or `npx tsc`.
+Ne lance jamais `tsc` ni `npx tsc`.
 
-## 10. Regressions from the target branch
+## 10. Régressions venant de la branche cible
 
-List the commits of the target branch that touch files of this branch. `git diff --name-only` prints
-paths from the repo root, so run this step from the repo root.
+Liste les commits de la branche cible qui touchent des fichiers de cette branche. `git diff --name-only`
+affiche les chemins depuis la racine du dépôt, donc lance cette étape depuis la racine du dépôt.
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"
@@ -110,11 +112,11 @@ rm "$BRANCH_FILES"
 cd backend
 ```
 
-For each commit, run `git show <sha> -- <file>`. Check that this branch still uses the right APIs:
-a renamed or removed method, a new required parameter, an import that no longer exists.
-Fix what is broken in a separate commit: `chore(<issue>): adapt to <change> from #<PR>`.
+Pour chaque commit, lance `git show <sha> -- <file>`. Vérifie que cette branche utilise encore les bonnes API :
+une méthode renommée ou supprimée, un nouveau paramètre obligatoire, un import qui n'existe plus.
+Corrige ce qui est cassé dans un commit séparé : `chore(<issue>): adapt to <change> from #<PR>`.
 
-## 11. Related tests
+## 11. Tests liés
 
 ```bash
 FILES=$(git diff origin/$TARGET --name-only --relative | tr '\n' ' ')
@@ -122,10 +124,10 @@ npx dotenvx run -f .test.env -- npx cross-env TESTING=true vitest related --run 
 npx dotenvx run -f .test.env -- npx cross-env TESTING=true vitest related --run --passWithNoTests --config vitest-itg.config.ts $FILES
 ```
 
-`--relative` gives paths from `backend/`. `vitest related` replaces the Jest option `--findRelatedTests`.
+`--relative` donne les chemins depuis `backend/`. `vitest related` remplace l'option Jest `--findRelatedTests`.
 
-Never start the test server and never run e2e tests. If the schema changed, give the user the e2e
-command to run (see `backend/AGENTS.md`).
+Ne démarre jamais le serveur de test et ne lance jamais les tests e2e. Si le schéma a changé, donne à
+l'utilisateur la commande e2e à lancer (voir `backend/AGENTS.md`).
 
 ## 12. Push
 
@@ -133,4 +135,4 @@ command to run (see `backend/AGENTS.md`).
 git push --force-with-lease
 ```
 
-Never use `--force`. Report the result and anything skipped.
+N'utilise jamais `--force`. Rapporte le résultat et tout ce qui a été sauté.

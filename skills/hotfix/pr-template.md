@@ -3,6 +3,8 @@
 Les descriptions sont intentionnellement minimalistes.
 Elles référencent l'issue et la PR d'origine, rien de plus.
 
+Les titres et les descriptions de PR restent en anglais simple (les gabarits ci-dessous ne se traduisent pas).
+
 ## Hotfix
 
 ```

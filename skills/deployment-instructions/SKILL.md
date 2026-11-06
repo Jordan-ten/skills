@@ -1,6 +1,6 @@
 ---
 name: deployment-instructions
-description: Slash-only. Use only when the user explicitly invokes /deployment-instructions to deploy main to production or demo. Never trigger from natural-language requests.
+description: Slash uniquement. À utiliser seulement quand l'utilisateur invoque explicitement /deployment-instructions pour déployer main en production ou en demo. Ne jamais déclencher depuis une demande en langage naturel (slash-only, deploy main to production or demo).
 disable-model-invocation: true
 argument-hint: "[production|demo]"
 allowed-tools: Bash(gh pr create:*), Bash(gh pr list:*), Bash(gh pr view:*), Bash(gh run list:*), Bash(gh run view:*), mcp__claude_ai_Datadog__search_datadog_logs
@@ -8,45 +8,48 @@ allowed-tools: Bash(gh pr create:*), Bash(gh pr list:*), Bash(gh pr view:*), Bas
 
 # Deploy
 
-Guide a deployment of `main` to `production` or `demo`, in four steps: checklist, pull request,
-monitoring, closing.
+Guide le déploiement de `main` vers `production` ou `demo`, en quatre étapes : checklist, pull request,
+suivi, clôture.
 
-## Target
+Le titre et le corps de la PR de déploiement restent en anglais simple.
 
-`$ARGUMENTS` is `production` (default) or `demo`. Treat `prod` as `production`. Any other value:
-stop and ask.
+## Cible
 
-## Hard rules
+`$ARGUMENTS` vaut `production` (défaut) ou `demo`. Traite `prod` comme `production`. Toute autre valeur :
+arrête-toi et demande.
 
-Only the user merges and pushes. Merging the deploy PR starts the deployment.
+## Règles strictes
 
-- Never run `gh pr merge`, and never merge by the API or any other command.
-- Never run `git push` to `production` or `demo`, even with `-f`. The user saying that force push is
-  allowed, or that branch protection is off, is not a request to push. Wait for an explicit request.
-- Never say the PR is ready to merge, and never ask the user to merge it, before both conditions are
-  met (see Step 2): the CI pipeline has passed, and a reviewer has approved the PR. A missing
-  condition means no merge, even if the user is in a hurry.
-- Never cancel or re-run a deploy GitHub Actions run without an explicit request.
-- For conflicts: explain the procedure at the end of this file and give the commands. Do not run them.
+Seul l'utilisateur merge et push. Merger la PR de déploiement lance le déploiement.
 
-## Step 1 — Checklist
+- Ne lance jamais `gh pr merge`, et ne merge jamais par l'API ni par une autre commande.
+- Ne lance jamais `git push` vers `production` ou `demo`, même avec `-f`. Si l'utilisateur dit que le force
+  push est autorisé, ou que la protection de branche est désactivée, ce n'est pas une demande de push.
+  Attends une demande explicite.
+- Ne dis jamais que la PR est prête à merger, et ne demande jamais à l'utilisateur de la merger, avant que
+  les deux conditions soient remplies (voir l'étape 2) : le pipeline CI est passé, et un relecteur a
+  approuvé la PR. Si une condition manque, pas de merge, même si l'utilisateur est pressé.
+- N'annule jamais et ne relance jamais un run GitHub Actions de déploiement sans demande explicite.
+- En cas de conflits : explique la procédure à la fin de ce fichier et donne les commandes. Ne les lance pas.
 
-Ask the user to confirm each point. Do not go on before all are confirmed.
+## Étape 1 — Checklist
 
-- [ ] `#tech-esg-deploy-sync` and `#tech-esg-code-review` are set to 🔴 `Freeze merge on staging except fixes`.
-- [ ] The [list of untested or failing issues](https://github.com/orgs/Traace-co/projects/2/views/48) is empty.
-- [ ] `demo` only: the "Demo" calendar shows no demo in progress.
+Demande à l'utilisateur de confirmer chaque point. Ne continue pas avant que tous soient confirmés.
 
-## Step 2 — Open the pull request
+- [ ] `#tech-esg-deploy-sync` et `#tech-esg-code-review` sont sur 🔴 `Freeze merge on staging except fixes`.
+- [ ] La [liste des issues non testées ou en échec](https://github.com/orgs/Traace-co/projects/2/views/48) est vide.
+- [ ] `demo` seulement : le calendrier "Demo" n'affiche aucune démo en cours.
 
-Check first that no deploy PR is already open:
+## Étape 2 — Ouvrir la pull request
+
+Vérifie d'abord qu'aucune PR de déploiement n'est déjà ouverte :
 
 ```bash
 gh pr list --base "$TARGET" --head main --state open
 ```
 
-If one is open, show it and use it. Otherwise create it. The heredoc delimiter is not quoted, so
-`$TARGET` is expanded in the body.
+Si une PR est ouverte, montre-la et utilise-la. Sinon, crée-la. Le délimiteur du heredoc n'est pas entre
+guillemets, donc `$TARGET` est remplacé dans le corps.
 
 ```bash
 gh pr create --base "$TARGET" --head main \
@@ -64,77 +67,77 @@ BODY
 )"
 ```
 
-Show the PR link.
+Montre le lien de la PR.
 
-### Wait for CI and a reviewer approval
+### Attendre la CI et l'approbation d'un relecteur
 
-A release PR is never merged unless the CI pipeline has passed and a reviewer has approved it. Ask a
-reviewer to review the PR, then check both conditions:
+Une PR de release n'est jamais mergée si le pipeline CI n'est pas passé et si un relecteur ne l'a pas
+approuvée. Demande à un relecteur de relire la PR, puis vérifie les deux conditions :
 
 ```bash
 gh pr view <number> --json reviewDecision,reviews,statusCheckRollup,headRefOid
 ```
 
-CI is passed only if **every** check in `statusCheckRollup` is `SUCCESS` (or `SKIPPED`, or `NEUTRAL`).
-- A check still `PENDING` or `IN_PROGRESS`: stop and wait.
-- A check `FAILURE`, `CANCELLED` or `TIMED_OUT`: stop. Show the failing checks with their links. Do not
-  re-run them (see the hard rules).
-- No check at all: stop. The pipeline did not start, so CI has not passed.
+La CI est passée seulement si **chaque** check de `statusCheckRollup` est `SUCCESS` (ou `SKIPPED`, ou `NEUTRAL`).
+- Un check encore `PENDING` ou `IN_PROGRESS` : arrête-toi et attends.
+- Un check `FAILURE`, `CANCELLED` ou `TIMED_OUT` : arrête-toi. Montre les checks en échec avec leurs liens.
+  Ne les relance pas (voir les règles strictes).
+- Aucun check : arrête-toi. Le pipeline n'a pas démarré, donc la CI n'est pas passée.
 
-The review is valid only if `reviewDecision` is `APPROVED`.
-- Any other value (`REVIEW_REQUIRED`, `CHANGES_REQUESTED`, empty): stop.
-- An approval on an older commit than `headRefOid` is outdated: ask for a new review.
-- Do not accept "the reviewer said OK in Slack". The approval must be on the PR.
+La relecture est valide seulement si `reviewDecision` vaut `APPROVED`.
+- Toute autre valeur (`REVIEW_REQUIRED`, `CHANGES_REQUESTED`, vide) : arrête-toi.
+- Une approbation sur un commit plus ancien que `headRefOid` est périmée : demande une nouvelle relecture.
+- N'accepte pas "le relecteur a dit OK sur Slack". L'approbation doit être sur la PR.
 
-If a condition is missing, tell the user which one and wait. Check again when the user asks.
+Si une condition manque, dis à l'utilisateur laquelle et attends. Revérifie quand l'utilisateur le demande.
 
-When both are met, say so, with the reviewer's name. Then ask the user to merge the PR and to tell
-you when it is done.
+Quand les deux sont remplies, dis-le, avec le nom du relecteur. Puis demande à l'utilisateur de merger la
+PR et de te prévenir quand c'est fait.
 
-Remind the user to post in `#tech-esg-deploy-sync`: deployment in progress, with the link to the
-[GitHub Actions run](https://github.com/Traace-co/traace/actions).
+Rappelle à l'utilisateur de poster dans `#tech-esg-deploy-sync` : déploiement en cours, avec le lien du
+[run GitHub Actions](https://github.com/Traace-co/traace/actions).
 
-## Step 3 — Monitoring
+## Étape 3 — Suivi
 
-Wait until the user says the deployment succeeded. Check it if needed with
+Attends que l'utilisateur dise que le déploiement a réussi. Vérifie-le si besoin avec
 `gh run list --branch "$TARGET" --limit 3`.
 
-Search Datadog for the last 30 minutes with the Datadog MCP. Use `env:production` for production.
-For `demo`, use the `env` value of the demo logs (look at one log first, do not guess).
+Cherche dans Datadog sur les 30 dernières minutes avec le MCP Datadog. Utilise `env:production` pour la
+production. Pour `demo`, utilise la valeur de `env` des logs de demo (regarde d'abord un log, ne devine pas).
 
 ```
 env:<env> status:(error OR critical OR alert OR emergency)
 ```
 
-Read the results:
+Lis les résultats :
 
-- Ignore Node.js warnings (`UnsupportedWarning`).
-- Report GraphQL schema errors (field not found). Often a browser cache: see if they continue.
-- Report unexpected 500 errors.
-- Say for each error if it is old (before the deployment time) or new.
+- Ignore les warnings Node.js (`UnsupportedWarning`).
+- Signale les erreurs de schéma GraphQL (champ introuvable). Souvent un cache navigateur : regarde si elles continuent.
+- Signale les erreurs 500 inattendues.
+- Dis pour chaque erreur si elle est ancienne (avant l'heure du déploiement) ou nouvelle.
 
-End with one verdict: ✅ nothing unusual, 🟡 points to watch, or 🔴 urgent action needed.
+Termine par un seul verdict : ✅ rien d'anormal, 🟡 points à surveiller, ou 🔴 action urgente nécessaire.
 
-## Step 4 — Closing
+## Étape 4 — Clôture
 
-Remind the user to:
+Rappelle à l'utilisateur de :
 
-- [ ] Test the app on the target environment (login and navigation).
-- [ ] Post in `#tech-esg-deploy-sync`: deployment succeeded ✅.
-- [ ] Set `#tech-esg-deploy-sync` and `#tech-esg-code-review` back to 🟢 `OK to merge on staging`.
+- [ ] Tester l'application sur l'environnement cible (connexion et navigation).
+- [ ] Poster dans `#tech-esg-deploy-sync` : déploiement réussi ✅.
+- [ ] Remettre `#tech-esg-deploy-sync` et `#tech-esg-code-review` sur 🟢 `OK to merge on staging`.
 
-## If the deployment fails
+## Si le déploiement échoue
 
-- Notify `#tech-esg-deploy-sync`.
-- Critical case: SQL migration succeeded but backend or frontend failed. Alert the team with `@here` now.
-- Usual causes:
-  - **Migration timeout**: run it on AlloyDB and make it idempotent.
-  - **Deadlock**: retry, split the migration, or run it in the evening.
-  - **Random GitHub Action failure**: re-run the failed jobs (the user does it).
+- Préviens `#tech-esg-deploy-sync`.
+- Cas critique : la migration SQL a réussi mais le backend ou le frontend a échoué. Alerte l'équipe avec `@here` tout de suite.
+- Causes habituelles :
+  - **Timeout de migration** : lance-la sur AlloyDB et rends-la idempotente.
+  - **Deadlock** : réessaie, découpe la migration, ou lance-la le soir.
+  - **Échec aléatoire de GitHub Action** : relance les jobs en échec (c'est l'utilisateur qui le fait).
 
-## If `production` or `demo` has conflicts with `main`
+## Si `production` ou `demo` a des conflits avec `main`
 
-Do not run these commands. Give them to the user (see the hard rules).
+Ne lance pas ces commandes. Donne-les à l'utilisateur (voir les règles strictes).
 
 ```bash
 # 1. GitHub Settings > Branches: "Do not allow bypassing" off, "Allow force pushes" on

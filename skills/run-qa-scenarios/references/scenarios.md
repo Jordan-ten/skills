@@ -1,44 +1,47 @@
-# Build the scenario list
+# Construire la liste de scénarios
 
-## Where the scenarios come from
+## D'où viennent les scénarios
 
-Read these parts of the issue, in this order:
+Lire ces parties de l'issue, dans cet ordre :
 
-1. **How to test** — the checklist written by the author. Each box is one scenario.
-2. **Scenarios** (Given / When / Then) — when the issue has them.
-3. **Reproduction Steps** — for a bug, the steps are the scenario: the bug must be gone.
+1. **How to test** — la checklist écrite par l'auteur. Chaque case est un scénario.
+2. **Scenarios** (Given / When / Then) — quand l'issue en a.
+3. **Reproduction Steps** — pour un bug, les étapes sont le scénario : le bug doit avoir disparu.
 
-**If the issue has none of these, stop the run.** Do not write the scenarios yourself, and do not
-infer them from the code or the diff. Invented scenarios test what the code does, not what the issue
-asked for, so they always pass and prove nothing. Tell the user the issue has nothing to test
-against, and that the scenarios have to be defined in the issue first. The `generate-ticket-scenarios`
-skill can write them, but that is a separate decision, taken on the issue, before this run.
+**Si l'issue n'a rien de tout cela, arrêter le run.** Ne pas écrire les scénarios soi-même, et ne pas
+les déduire du code ou du diff. Des scénarios inventés testent ce que fait le code, pas ce que l'issue
+demandait : ils passent donc toujours et ne prouvent rien. Dire à l'utilisateur que l'issue n'a rien
+contre quoi tester, et que les scénarios doivent d'abord être définis dans l'issue. Le skill
+`generate-ticket-scenarios` peut les écrire, mais c'est une décision séparée, prise sur l'issue, avant
+ce run.
 
-Keep the author's words. Do not rename a scenario to match what the code does: the gap between the
-two is exactly what the test is looking for.
+Garder les mots de l'auteur. Ne pas renommer un scénario pour qu'il colle à ce que fait le code : l'écart
+entre les deux est exactement ce que le test cherche.
 
-## Say how each scenario will be checked
+## Dire comment chaque scénario sera vérifié
 
-For every scenario, pick one:
+Pour chaque scénario, choisir une valeur :
 
-| How | When |
+| Comment | Quand |
 |---|---|
-| `browser` | The local dev data has a case for it. |
-| `automated test` | An existing unit test (`*.test.tsx`) covers it. Name the file; you will run it with `npx vitest run <file>`. An e2e spec is named in the report but **not run**: it would write into the database of the session. |
-| `by hand` | It needs a role, a tenant, or an action the run must not perform (sending a mail, a long import, anything that reaches a third party). |
-| `not testable` | The local data has no case for it. Say what is missing, then follow `data.md`: the case can often be created. |
+| `browser` | Les données dev locales ont un cas pour lui. |
+| `automated test` | Un test unitaire existant (`*.test.tsx`) le couvre. Nommer le fichier ; on l'exécutera avec `npx vitest run <file>`. Un spec e2e est nommé dans le rapport mais **n'est pas exécuté** : il écrirait dans la base de la session. |
+| `by hand` | Il demande un rôle, un tenant, ou une action que le run ne doit pas faire (envoyer un mail, un long import, tout ce qui atteint un tiers). |
+| `not testable` | Les données locales n'ont pas de cas pour lui. Dire ce qui manque, puis suivre `data.md` : le cas peut souvent être créé. |
 
-To find an existing test, grep the component or use case name under `frontend/src/**/*.test.tsx`
-and `frontend/tests/**/*.spec.ts`.
+Pour trouver un test existant, chercher (grep) le nom du composant ou du use case sous
+`frontend/src/**/*.test.tsx` et `frontend/tests/**/*.spec.ts`.
 
-A scenario that needs a second user (a contributor, a validator) is usually `by hand` unless the dev
-data already holds that user: the run must not create accounts.
+Un scénario qui a besoin d'un deuxième utilisateur (un contributeur, un validateur) est en général
+`by hand`, sauf si les données dev contiennent déjà cet utilisateur : le run ne doit pas créer de
+comptes.
 
-## Check the data before promising a browser run
+## Vérifier les données avant de promettre un run navigateur
 
-Before marking a scenario `browser`, confirm the case exists. Example: a scenario about a group task
-needs a task whose `__typename` is the group one, not any task. Open the list screen and look, or
-read the GraphQL response through `mcp__chrome-devtools__list_network_requests`.
+Avant de marquer un scénario `browser`, confirmer que le cas existe. Exemple : un scénario sur une
+tâche de groupe a besoin d'une tâche dont le `__typename` est celui du groupe, pas d'une tâche
+quelconque. Ouvrir l'écran de liste et regarder, ou lire la réponse GraphQL avec
+`mcp__chrome-devtools__list_network_requests`.
 
-A scenario promised as `browser` that turns out to have no data goes to step 2 (`data.md`), not
-straight to the report. Do not silently drop it.
+Un scénario promis `browser` qui se révèle sans données va à l'étape 2 (`data.md`), pas directement au
+rapport. Ne pas l'abandonner en silence.

@@ -1,79 +1,79 @@
 ---
 name: triage-code-review-pull-request
-description: Triage a colleague's pull request. Runs /code-review (high by default), the coding-style checklists, the ticket check and the CI status, then writes one markdown report that separates what the agent verified from what a human must still check. Use when the user invokes /triage-code-review-pull-request or says "triage cette PR", "prépare ma review de la PR #N", "qu'est-ce que je dois vérifier à la main sur cette PR". To map a big PR by sub-feature, use tnx-review-plan-pr-review instead.
+description: Fait le triage de la pull request d'un collègue. Lance /code-review (high par défaut), les checklists de coding-style, la vérification du ticket et le statut de la CI, puis écrit un rapport markdown qui sépare ce que l'agent a vérifié de ce qu'un humain doit encore contrôler. À utiliser quand l'utilisateur lance /triage-code-review-pull-request ou dit "triage cette PR", "prépare ma review de la PR #N", "qu'est-ce que je dois vérifier à la main sur cette PR". Pour cartographier une grosse PR par sous-fonctionnalité, utiliser tnx-review-plan-pr-review à la place. (Triage a colleague's pull request, with a report split between agent-verified items and human checks.)
 disable-model-invocation: true
 context: fork
 allowed-tools: Bash(git *), Bash(gh *), Read, Grep, Glob, Write, Skill
 ---
 
-# PR triage
+# Triage de PR
 
-Goal: the human reviewer reads only what an agent cannot judge. The agent checks the rest and shows its proof.
+But : le relecteur humain ne lit que ce qu'un agent ne peut pas juger. L'agent vérifie le reste et montre sa preuve.
 
-Input: a PR number or URL (required). Optional level `low|medium|high|xhigh` for `/code-review`. Default: `high`. Use `max` only if the user asks for it.
+Entrée : un numéro ou une URL de PR (obligatoire). Niveau optionnel `low|medium|high|xhigh` pour `/code-review`. Défaut : `high`. N'utiliser `max` que si l'utilisateur le demande.
 
-## Step 1 — Collect
+## Étape 1 — Collecter
 
 - `gh pr view <n> --json title,body,headRefName,baseRefName,files,closingIssuesReferences`
-- `gh pr diff <n> --name-only`, then the stat. Never load the full diff at once. Read file by file, only what a check needs.
-- `gh pr checks <n>`: CI status, including the OpenGrep and type checks.
-- Linked issue: `gh issue view <number>`. No linked issue → say so in the report.
-- Skip generated files (`schema.gql`, `generated/`, `gql/`, `package-lock.json`): name them, do not read them.
+- `gh pr diff <n> --name-only`, puis la stat. Ne jamais charger le diff complet d'un coup. Lire fichier par fichier, seulement ce dont un contrôle a besoin.
+- `gh pr checks <n>` : statut de la CI, y compris OpenGrep et les vérifications de types.
+- Issue liée : `gh issue view <number>`. Pas d'issue liée → le dire dans le rapport.
+- Ignorer les fichiers générés (`schema.gql`, `generated/`, `gql/`, `package-lock.json`) : les nommer, ne pas les lire.
 
-## Step 2 — Agent checks
+## Étape 2 — Contrôles de l'agent
 
-Run all of these. Each one yields findings **and** a line of proof for the "verified" block.
+Lancer tous ceux-ci. Chacun produit des findings **et** une ligne de preuve pour le bloc "vérifié".
 
-1. **Bugs and cleanups**: invoke the `code-review` skill with the level and the PR number, e.g. `high <n>`. Never pass `--comment` or `--fix`.
-2. **Focused controls** (same as `tnx-review-review-changes`), on the hunks of the PR. Skip what `/code-review` already reported:
-   - **Bug**: wrong logic, off-by-one, wrong condition, unhandled edge case.
-   - **Security**: injection, exposed secret, missing auth check, unsafe data handling.
-   - **Logic**: race condition, missing null check, wrong assumption, broken invariant.
-   - **Improvement**: missing error handling, only if clearly worth fixing.
-   - **Atomicity**: one user action done as several independent mutations or endpoints, especially in loops or `Promise.all`. Look for partial failure, ordering dependency, validation against an intermediate state, optimistic cache rollback gap, missing transaction, broken final-state invariant. Report it as `Logic`, or as `Bug` if data is lost or invalid state is persisted.
-3. **Coding-style rules**: the skill runs from `backend/` or `frontend/`. A PR can touch both. Check each touched package with its own rules.
-   - **Backend files**: read the matching `backend/docs/coding-style/*.md` files and tick each "Review checklist" item against the diff. Mapping:
+1. **Bugs et nettoyages** : invoquer le skill `code-review` avec le niveau et le numéro de PR, par exemple `high <n>`. Ne jamais passer `--comment` ni `--fix`.
+2. **Contrôles ciblés** (les mêmes que `tnx-review-review-changes`), sur les hunks de la PR. Sauter ce que `/code-review` a déjà remonté :
+   - **Bug** : logique fausse, off-by-one, mauvaise condition, cas limite non géré.
+   - **Sécurité** : injection, secret exposé, contrôle d'auth manquant, traitement de données dangereux.
+   - **Logique** : race condition, null check manquant, mauvaise hypothèse, invariant cassé.
+   - **Amélioration** : gestion d'erreur manquante, seulement si elle vaut clairement la peine d'être corrigée.
+   - **Atomicité** : une action utilisateur faite par plusieurs mutations ou endpoints indépendants, surtout dans des boucles ou `Promise.all`. Chercher : échec partiel, dépendance d'ordre, validation contre un état intermédiaire, trou dans le rollback optimiste du cache, transaction manquante, invariant d'état final cassé. La remonter comme `Logic`, ou comme `Bug` si des données sont perdues ou si un état invalide est persisté.
+3. **Règles de coding-style** : le skill tourne depuis `backend/` ou `frontend/`. Une PR peut toucher les deux. Vérifier chaque package touché avec ses propres règles.
+   - **Fichiers backend** : lire les fichiers `backend/docs/coding-style/*.md` correspondants et cocher chaque item "Review checklist" contre le diff. Correspondance :
      - `*.usecase.ts`, `*.service.ts` → `use-cases.md`, `architecture.md`, `permissions.md`, `errors.md`
      - `*.resolver.ts`, `*.entity.ts` → `resolvers.md`, `graphql.md`, `dataloaders.md`
      - `*.repository.ts`, ports, adapters → `repositories.md`
      - `migrations/` → `migrations.md`
-     - Always: `naming.md`, `typescript.md`
-   - **Frontend files**: read `frontend/AGENTS.md` (sections "Critical Frontend Directives", "Coding Style", "Frontend Architecture Patterns", "File Naming Conventions", "Testing Guidelines", "Performance") and check each rule against the diff. Also read any `frontend/docs/` file that matches the touched area.
-4. **Generated artifacts**:
-   - Backend: schema and SDK files changed when GraphQL changed. `DOCS.md` changed when a `*.doc.md` changed. Migration and entity `@Check` agree.
-   - Frontend: `src/gql/` changed when a `*.graphql.ts` changed. i18n types changed when a translation file changed.
-5. **Tests**: list the new public methods and the new behavior. For each, name the test that covers it, or write "no test found". Do not run tests.
-6. **Ticket conformance**: for each acceptance criterion or scenario of the issue, point to the code or test that covers it, or write "not found in the diff".
-7. **CI**: copy the status of each check. A red check is a finding, not a verdict on the code.
+     - Toujours : `naming.md`, `typescript.md`
+   - **Fichiers frontend** : lire `frontend/AGENTS.md` (sections "Critical Frontend Directives", "Coding Style", "Frontend Architecture Patterns", "File Naming Conventions", "Testing Guidelines", "Performance") et vérifier chaque règle contre le diff. Lire aussi tout fichier `frontend/docs/` qui correspond à la zone touchée.
+4. **Artefacts générés** :
+   - Backend : les fichiers de schéma et de SDK ont changé quand le GraphQL a changé. `DOCS.md` a changé quand un `*.doc.md` a changé. La migration et le `@Check` de l'entité sont d'accord.
+   - Frontend : `src/gql/` a changé quand un `*.graphql.ts` a changé. Les types i18n ont changé quand un fichier de traduction a changé.
+5. **Tests** : lister les nouvelles méthodes publiques et les nouveaux comportements. Pour chacun, nommer le test qui le couvre, ou écrire "no test found". Ne pas lancer les tests.
+6. **Conformité au ticket** : pour chaque critère d'acceptation ou scénario de l'issue, pointer le code ou le test qui le couvre, ou écrire "not found in the diff".
+7. **CI** : recopier le statut de chaque check. Un check rouge est un finding, pas un verdict sur le code.
 
-Never run tests, the app or the e2e. Say what you did not check.
+Ne jamais lancer les tests, l'app ou l'e2e. Dire ce qui n'a pas été vérifié.
 
-## Step 3 — Human checks
+## Étape 3 — Contrôles humains
 
-Pick at most **5** points, ranked by risk. Each one needs a precise question and a `file:line`. Look in these areas, in this order:
+Choisir au plus **5** points, classés par risque. Chacun demande une question précise et un `file:line`. Chercher dans ces zones, dans cet ordre :
 
-1. **Production risk**: migration on a big table, backfill, lock, behavior on existing data.
-2. **Business intent**: does the behavior match what the product wants, beyond what the ticket says?
-3. **Permission semantics**: is the check present (agent can see it) and is it the right role (only a human knows)?
-4. **Design decisions**: new aggregate, new service, boundary between use case and service, an abstraction that may not pay off.
-5. **Domain vocabulary**: a new term in names, API fields or user-facing strings.
-6. **Test value**: do the tests cover a real business scenario, or only the code?
-7. **Trade-offs**: performance, accepted debt, scope of the PR.
+1. **Risque de production** : migration sur une grosse table, backfill, verrou, comportement sur les données existantes.
+2. **Intention métier** : le comportement correspond-il à ce que veut le produit, au-delà de ce que dit le ticket ?
+3. **Sémantique des permissions** : le contrôle est-il présent (l'agent peut le voir) et est-ce le bon rôle (seul un humain le sait) ?
+4. **Décisions de conception** : nouvel agrégat, nouveau service, frontière entre use case et service, une abstraction qui ne vaut peut-être pas son coût.
+5. **Vocabulaire du domaine** : un nouveau terme dans les noms, les champs d'API ou les textes visibles par l'utilisateur.
+6. **Valeur des tests** : les tests couvrent-ils un vrai scénario métier, ou seulement le code ?
+7. **Compromis** : performance, dette acceptée, périmètre de la PR.
 
-Also list what the agent **could not judge** (for example "migration on table X: volume not known").
+Lister aussi ce que l'agent **n'a pas pu juger** (par exemple "migration on table X: volume not known").
 
-If nothing needs a human, say so. Do not fill the list.
+Si rien ne demande un humain, le dire. Ne pas remplir la liste.
 
-## Step 4 — Write the report
+## Étape 4 — Écrire le rapport
 
-Path: `.claude/plans/review/<pr-number>.md`, relative to the current working directory (`backend/` or `frontend/`). If the working directory is the repo root, use the package with most touched files. Create the folder if needed. Overwrite an older report of the same PR. Both packages git-ignore `.claude/plans`.
+Chemin : `.claude/plans/review/<pr-number>.md`, relatif au répertoire de travail courant (`backend/` ou `frontend/`). Si le répertoire de travail est la racine du repo, utiliser le package avec le plus de fichiers touchés. Créer le dossier si besoin. Écraser un ancien rapport de la même PR. Les deux packages ignorent `.claude/plans` dans git.
 
-**Links.** Every `file:line` in the report, in all blocks (also "Vérifié par l'agent"), is a clickable markdown link `[file:line](url)`. Get the data with `gh pr view <n> --json headRefOid,url`. Never guess a line number: read it in the file at `headRefOid` with `gh api -H 'Accept: application/vnd.github.raw' 'repos/<owner>/<repo>/contents/<path>?ref=<headRefOid>'`.
-- Line changed by the PR: link to the PR diff, `<PR url>/files#diff-<sha256 of the path>R<line>` (a range: `R<start>-R<end>`). Hash: `printf %s '<path>' | sha256sum | cut -d' ' -f1`.
-- Line outside the diff, or file not in the PR: `https://github.com/<owner>/<repo>/blob/<headRefOid>/<path>#L<line>`.
-- A CI check: link to its run URL from `gh pr checks`.
+**Liens.** Chaque `file:line` du rapport, dans tous les blocs (aussi "Vérifié par l'agent"), est un lien markdown cliquable `[file:line](url)`. Obtenir les données avec `gh pr view <n> --json headRefOid,url`. Ne jamais deviner un numéro de ligne : le lire dans le fichier à `headRefOid` avec `gh api -H 'Accept: application/vnd.github.raw' 'repos/<owner>/<repo>/contents/<path>?ref=<headRefOid>'`.
+- Ligne changée par la PR : lien vers le diff de la PR, `<PR url>/files#diff-<sha256 of the path>R<line>` (une plage : `R<start>-R<end>`). Hash : `printf %s '<path>' | sha256sum | cut -d' ' -f1`.
+- Ligne hors du diff, ou fichier absent de la PR : `https://github.com/<owner>/<repo>/blob/<headRefOid>/<path>#L<line>`.
+- Un check de CI : lien vers l'URL de son run, donnée par `gh pr checks`.
 
-Write the report in French (the reader is French). Use simple, short sentences. Keep code identifiers, file names and PR titles as they are. Use exactly this structure:
+Écrire le rapport en français (le lecteur est français). Utiliser des phrases simples et courtes. Garder tels quels les identifiants de code, les noms de fichiers et les titres de PR. Utiliser exactement cette structure :
 
 ```markdown
 # PR #<n> — <title>
@@ -103,13 +103,13 @@ Branche `<head>` → `<base>` · Niveau : <level> · Ticket : #<m> ou aucun · C
 - <fichiers générés ou bruit, par nom>
 ```
 
-## Step 5 — Reply in the chat
+## Étape 5 — Répondre dans le chat
 
-Reply in French. Give only: the verdict, the path of the report, and the human points (titles only). Never post anything on the PR. If the user wants comments on the PR, they ask for it, and each comment is shown for approval first.
+Répondre en français. Donner seulement : le verdict, le chemin du rapport, et les points humains (titres seulement). Ne jamais rien poster sur la PR. Si l'utilisateur veut des commentaires sur la PR, il le demande, et chaque commentaire lui est montré pour accord avant.
 
-## Constraints
+## Contraintes
 
-- Do not repeat the same issue in two blocks. A finding the agent can fix goes in "Findings à corriger", not in "À vérifier par un humain".
-- A "Vérifié par l'agent" line needs proof. No proof → it goes in "Non vérifié".
-- No style nitpicks outside the coding-style rules.
-- Do not use the word "Traace" for the product. Use Tennaxia.
+- Ne pas répéter le même problème dans deux blocs. Un finding que l'agent peut corriger va dans "Findings à corriger", pas dans "À vérifier par un humain".
+- Une ligne "Vérifié par l'agent" demande une preuve. Pas de preuve → elle va dans "Non vérifié".
+- Pas de chipotage de style en dehors des règles de coding-style.
+- Ne pas utiliser le mot "Traace" pour le produit. Utiliser Tennaxia.

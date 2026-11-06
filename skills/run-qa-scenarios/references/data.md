@@ -1,12 +1,12 @@
-# When a scenario has no data
+# Quand un scénario n'a pas de données
 
-A scenario is often blocked by one missing record, not by the feature. Do not drop it, and do not
-change what exists to make it fit. Say what is missing, let the user decide, and delegate the
-creation.
+Un scénario est souvent bloqué par un seul enregistrement manquant, pas par la fonctionnalité. Ne pas
+l'abandonner, et ne pas changer ce qui existe pour qu'il rentre. Dire ce qui manque, laisser
+l'utilisateur décider, et déléguer la création.
 
-## 1. Say exactly what is missing
+## 1. Dire exactement ce qui manque
 
-One line per record, in the words of the domain, with the property that matters:
+Une ligne par enregistrement, avec les mots du domaine, et la propriété qui compte :
 
 ```
 Scenario 2 (long label is readable in full)
@@ -14,34 +14,35 @@ Scenario 2 (long label is readable in full)
   have:    "Division France" (15 characters), 4 sites
 ```
 
-Never write "missing test data". The user has to recognise the record without reading the code.
+Ne jamais écrire "missing test data". L'utilisateur doit reconnaître l'enregistrement sans lire le code.
 
-Check first that the case is really absent: it is often there under another name.
+Vérifier d'abord que le cas est vraiment absent : il est souvent là sous un autre nom.
 
-## 2. Ask, with three ways out
+## 2. Demander, avec trois sorties
 
-One `AskUserQuestion` for the whole plan, not one per record. Say which database would be written to
-(the backend on port 3000 is the dev one in a dev session).
+Une seule `AskUserQuestion` pour tout le plan, pas une par enregistrement. Dire dans quelle base on
+écrirait (le backend sur le port 3000 est celui de dev dans une session dev).
 
-| Option | What happens |
+| Option | Ce qui se passe |
 |---|---|
-| `Generate the data` | Follow the `create-local-data` skill, then run the scenarios. |
-| `I create it myself` | Give the summary, then wait. Nothing is written. |
-| `Skip these scenarios` | They go to the report as `NOT TESTABLE`, with what was missing. |
+| `Generate the data` | Suivre le skill `create-local-data`, puis exécuter les scénarios. |
+| `I create it myself` | Donner le résumé, puis attendre. Rien n'est écrit. |
+| `Skip these scenarios` | Ils vont dans le rapport en `NOT TESTABLE`, avec ce qui manquait. |
 
-Default to proposing, never to doing. Writing into the user's database without a yes is the one thing
-this skill must not do.
+Par défaut, proposer, jamais faire. Écrire dans la base de l'utilisateur sans un oui est la seule chose
+que ce skill ne doit pas faire.
 
-## 3. Creating it
+## 3. La création
 
-The `create-local-data` skill owns this: it finds the mutation, knows the order of the calls,
-and sends them through the backend API with a self-signed offline-auth token. Do not re-invent the
-transport here, and never create data with SQL.
+Le skill `create-local-data` s'en charge : il trouve la mutation, connaît l'ordre des appels, et les
+envoie par l'API du backend avec un token offline-auth auto-signé. Ne pas réinventer le transport ici,
+et ne jamais créer de données avec du SQL.
 
-## 4. After creating
+## 4. Après la création
 
-- Run the scenarios that were blocked.
-- List every record created in the report, with its id and name.
-- Offer the delete mutations at the end of the run. Do not delete on your own: the user may want to
-  keep the case for a later test.
-- A record that could not be created is a `NOT TESTABLE` scenario with the error, not a silent skip.
+- Exécuter les scénarios qui étaient bloqués.
+- Lister chaque enregistrement créé dans le rapport, avec son id et son nom.
+- Proposer les mutations de suppression à la fin du run. Ne pas supprimer de soi-même : l'utilisateur
+  peut vouloir garder le cas pour un test ultérieur.
+- Un enregistrement qui n'a pas pu être créé donne un scénario `NOT TESTABLE` avec l'erreur, pas un
+  saut silencieux.

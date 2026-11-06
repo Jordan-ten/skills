@@ -1,17 +1,20 @@
 ---
 name: hotfix
 description: >
-  Create hotfix PRs targeting demo and/or production, and/or a revert PR targeting main,
-  from an existing branch or commit SHA. Infers issue number and main PR from the branch name.
-  Uses the minimal PR format defined in pr-template.md.
-  Invoke when the user types /hotfix, /revert, says "crée un hotfix", "hotfix sur demo/prod",
-  "crée la PR de revert", or wants to backport or revert a feature.
+  Crée des PRs de hotfix ciblant demo et/ou production, et/ou une PR de revert ciblant main,
+  à partir d'une branche existante ou d'un SHA de commit. Déduit le numéro d'issue et la PR principale
+  depuis le nom de la branche. Utilise le format minimal de PR défini dans pr-template.md.
+  À invoquer quand l'utilisateur tape /hotfix, /revert, dit "crée un hotfix", "hotfix sur demo/prod",
+  "crée la PR de revert", ou veut backporter ou revert une feature
+  (create hotfix PRs, create a revert PR, backport or revert a feature).
 allowed-tools: Bash
 ---
 
 # Hotfix / Revert — créer des PRs de backport ou de revert
 
 Crée des PRs de hotfix (ciblant `demo` et/ou `production`) et/ou une PR de revert (ciblant `main`).
+
+Les titres et les corps de PR, les messages de commit et les noms de branche restent en anglais simple.
 
 ## Arguments
 
