@@ -141,6 +141,7 @@ The Chrome profile is `.claude/chrome-profile/`, relative to the folder where Cl
 | Skill | What it does | Slash-only |
 |---|---|---|
 | `review` | Prepares the review of a colleague's pull request. Runs `/code-review`, the coding-style checklists, the ticket check and the CI status. Writes one report: what the agent checked, and what a human must still check. | no |
+| `review-fix` | Handles the review comments of a pull request. Checks each comment is right, groups them by family, fixes the ones that need no decision, and asks you the others one by one with options. Skips wrong comments and says why. | yes |
 | `review-workflow` | Run from the Orca "Review" workspace with a PR number or URL. Creates a child Orca workspace on the PR code, drops the review rules in it, and starts the triage agent. | no |
 
 ### Deployment
