@@ -132,6 +132,22 @@ Jamais de `kill -9` sans oui, jamais de `pkill` par nom.
 
 ---
 
+## Étape 0 bis — Fichiers d'environnement
+
+Les workspaces neufs n'ont pas `backend/.dev.env` ni `frontend/.dev.env` (fichiers ignorés par git).
+Des copies de référence sont dans `env/` à côté de ce skill (`env/backend.dev.env`, `env/frontend.dev.env`).
+Ce dossier contient des secrets : il est dans le `.gitignore` du dépôt de skills, ne jamais le committer.
+
+Si un fichier manque, le copier depuis `env/`. Ne jamais écraser un fichier existant.
+
+```bash
+SKILL_DIR=/home/jcontent/code/skills/skills/launch
+[ -f $BACKEND_DIR/.dev.env ]  || cp $SKILL_DIR/env/backend.dev.env  $BACKEND_DIR/.dev.env
+[ -f $FRONTEND_DIR/.dev.env ] || cp $SKILL_DIR/env/frontend.dev.env $FRONTEND_DIR/.dev.env
+```
+
+---
+
 ## Étape 1 — Vérifier et démarrer Docker
 
 Compter le nombre de services attendus et le nombre de conteneurs running :
