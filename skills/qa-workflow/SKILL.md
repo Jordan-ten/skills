@@ -1,7 +1,7 @@
 ---
 name: qa-workflow
 description: Depuis le workspace Orca "QA", ouvre la QA d'une issue ou d'une pull request dans un workspace enfant. Prend un numéro ou une URL d'issue ou de PR, retrouve l'issue et la PR liées, crée un workspace Orca enfant sur le code de la PR, y dépose les consignes de QA, puis lance run-qa-scenarios dans un agent Claude. À utiliser quand l'utilisateur donne seulement un numéro ou un lien d'issue ou de PR dans le workspace QA, ou dit "QA de la PR 123", "teste le ticket 456 dans un workspace" (open a QA run in a child Orca workspace).
-allowed-tools: Bash(gh *), Bash(git *), Bash(orca-ide *), Bash(orca *), Bash(/home/jcontent/.config/orca/linux-orca-cli-shim/orca *), Read, Write, AskUserQuestion
+allowed-tools: Bash(gh *), Bash(git *), Bash(orca-ide *), Bash(orca *), Bash(/home/jcontent/.config/orca/linux-orca-cli-shim/orca *), Bash(npm ci *), Bash(cd *), Read, Write, AskUserQuestion
 ---
 
 # Lancer la QA d'une issue ou d'une PR
@@ -22,6 +22,25 @@ ORCA worktree current --json
 ```
 
 Le `displayName` doit être `QA`. Sinon, arrête-toi : ce skill ne se lance que depuis le workspace parent QA.
+
+## 1 bis. Préparer les dépendances du parent
+
+Le workspace parent garde un `node_modules` à jour pour le backend et le frontend. Il sert de cache chaud :
+le `npm install` du setup des enfants (étape 4) ne télécharge plus rien. Le parent ne contient aucun
+travail : il peut se déplacer sur `origin/main`.
+
+```bash
+git fetch origin main
+git checkout --detach origin/main
+for package in backend frontend; do
+  if [ ! -d "$package/node_modules" ] || [ "$package/package-lock.json" -nt "$package/node_modules/.package-lock.json" ]; then
+    (cd "$package" && npm ci --no-audit --no-fund)
+  fi
+done
+```
+
+Si `git checkout` refuse (parent modifié), n'insiste pas : saute cette étape et dis-le.
+Ne lance jamais `npm ci` dans un enfant : il supprime `node_modules` et efface le gain.
 
 ## 2. Retrouver l'issue et la PR
 
