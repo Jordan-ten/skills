@@ -48,10 +48,14 @@ l'issue depuis la branche courante, le dernier commit ou la conversation.
 
 ## Avant tout : le MCP navigateur
 
-Le serveur `chrome-devtools` est déclaré dans `frontend/.mcp.json`, donc il ne se charge que si la
-session a démarré depuis `frontend/`. Si aucun outil `mcp__chrome-devtools__*` n'est disponible,
-s'arrêter et dire à l'utilisateur de relancer depuis `frontend/`. Ne pas ajouter de serveur MCP pour
-contourner le problème.
+Le serveur `chrome-devtools` est déclaré au niveau utilisateur (`claude mcp add --scope user`, voir le
+README du dépôt de skills). Il se charge donc depuis n'importe quel dossier du dépôt : plus besoin de
+lancer la session depuis `frontend/`. Son profil Chrome est `.claude/chrome-profile/`, relatif au dossier
+de lancement, et ignoré par git via `.git/info/exclude`.
+
+Si aucun outil `mcp__chrome-devtools__*` n'est disponible, s'arrêter et dire à l'utilisateur de déclarer
+le serveur au niveau utilisateur, puis de relancer la session. Ne pas ajouter de serveur MCP au dépôt
+pour contourner le problème.
 
 Connexion et login dev : suivre le skill `tnx-dev-mcp-local-dev`. Ne pas réinventer l'authentification.
 

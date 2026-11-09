@@ -47,10 +47,11 @@ Skills marked **slash-only** run only when you type their command. Claude never 
 
 ## Workflow
 
-Three skills with `workflow` in the name. Each one runs a fixed list of steps.
+Four skills with `workflow` in the name. Each one runs a fixed list of steps.
 
 ```
 pitch ─issue-workflow→ issues ─feature-implementation-workflow→ pull requests ─review-workflow→ review
+                                                       └─qa-workflow→ QA report
 ```
 
 `issue-workflow` and `feature-implementation-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, compact, redo, or stop. You can run the same command again to resume.
@@ -87,6 +88,25 @@ From a PR number to a review report. Run it in the Orca "Review" workspace. No p
 
 The agent writes the report in `.claude/plans/review/<n>.md`. It never posts on the PR.
 
+### `qa-workflow`
+
+From an issue or PR number (or URL) to a QA report. Run it in the Orca "QA" workspace. No phases.
+
+1. Find the issue and its PR. With a stack of PRs, you choose one.
+2. Create a child workspace `qa-<issue>` with the PR code, and run the repo setup.
+3. Copy the QA rules (and the dev email file, if the parent has it) into the child.
+4. Start an agent that runs `/jcontent-traace:run-qa-scenarios <issue>`.
+
+The agent tests the scenarios of the issue in the browser and reports in the chat. It never writes on the issue.
+
+Requirement: the Chrome DevTools MCP server must be declared at user level, so it loads from any folder:
+
+```
+claude mcp add --scope user chrome-devtools -- npx chrome-devtools-mcp@0.13.0 --user-data-dir=.claude/chrome-profile --acceptInsecureCerts
+```
+
+The Chrome profile is `.claude/chrome-profile/`, relative to the folder where Claude starts, so each workspace has its own. Keep it out of git with a local exclude, shared by all worktrees: add `/.claude/chrome-profile/` to `<repo>/.git/info/exclude`.
+
 ## Glossary
 
 ### Pitch
@@ -114,6 +134,7 @@ The agent writes the report in `.claude/plans/review/<n>.md`. It never posts on 
 | Skill | What it does | Slash-only |
 |---|---|---|
 | `run-qa-scenarios` | Tests a GitHub issue against its own scenarios in the local app, with the Chrome DevTools MCP. Gives one verdict per scenario. Read-only. | no |
+| `qa-workflow` | Run from the Orca "QA" workspace with an issue or PR number or URL. Finds the issue and its PR, creates a child Orca workspace on the PR code, drops the QA rules in it, and starts `run-qa-scenarios`. | no |
 
 ### Review
 
