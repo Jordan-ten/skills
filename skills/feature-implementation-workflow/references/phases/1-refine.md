@@ -23,6 +23,9 @@ anglais simple.
   - Tiens un journal des décisions : une décision produit va dans l'issue, une décision technique dans les
     plans.
   - Les edge cases refusés vont dans la ligne `Out of scope:` du Context de l'issue.
+  - Écris les décisions techniques dans les notes du run (`.claude/plans/<n>.notes.md`, voir « Fichiers du
+    run » dans `SKILL.md`) au fur et à mesure, mot pour mot, avec les faits du code utiles aux plans.
+    Ainsi la phase 2 peut démarrer après un `/clear`.
 - **Écriture dans l'issue.** Seuls les scénarios, les groupes How to test correspondants, la ligne
   `Out of scope:` et la ligne `Design:` changent. Le texte écrit est en **anglais simple**. Chaque scénario
   ajouté ou modifié, et son groupe How to test, reçoit le flag (voir « Écrire dans l'issue » dans
@@ -42,12 +45,8 @@ anglais simple.
 - [ ] Un scénario qui montre un écran a un lien design (Figma ou Claude Design) dans l'issue, ou
       l'utilisateur a confirmé qu'aucun n'est nécessaire.
 - [ ] L'utilisateur a validé le diff avant l'écriture.
+- [ ] Les notes du run existent et contiennent toutes les décisions techniques du grill (ou disent qu'il
+      n'y en a aucune).
 
 Au passage, si l'issue a le label `scenarios-approved` et que des scénarios ont été ajoutés, dis que le
 PO doit les relire.
-
-## Compactage
-
-Seulement dans la conversation : les décisions techniques du grill, mot pour mot (la phase 2 les écrit
-dans les plans), et les faits du code utiles aux plans (chemins de modules, d'entités et de tests, une
-ligne chacun).

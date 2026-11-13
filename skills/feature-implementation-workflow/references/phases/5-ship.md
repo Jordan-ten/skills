@@ -1,12 +1,12 @@
-# Phase 6 — Livrer
+# Phase 5 — Livrer
 
 But : les branches sont poussées et les pull requests ouvertes, après un oui clair de l'utilisateur.
 
 ## Contraintes
 
 - **Base saine.** Tout est commité, `git status` est propre (les fichiers de plan ne sont pas commités), et
-  les commits n'ont pas changé depuis le dernier passage de la phase 5. Sinon, retourne à la phase 5.
-- **Résumé avant le oui.** Montre : le tableau de vérification de la phase 5 (scénario | tests | verdict
+  les commits n'ont pas changé depuis le dernier passage de la phase 4. Sinon, retourne à la phase 4.
+- **Résumé avant le oui.** Montre : le tableau de vérification de la phase 4 (scénario | tests | verdict
   UI), les commits et les branches à pousser, les pull requests à ouvrir (le titre de chacune), et les
   avertissements (label `scenarios-approved` avec des scénarios ajoutés ; un scénario `needs a human`
   répondu par l'utilisateur). Demande ensuite s'il faut pousser et ouvrir, pousser seulement, ou arrêter.
