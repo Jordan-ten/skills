@@ -2,27 +2,22 @@
 
 But : les branches sont poussées et les pull requests ouvertes, après un oui clair de l'utilisateur.
 
-## Travail
+## Contraintes
 
-1. **Vérifier la base.** Tout est commité, `git status` est propre (les fichiers de plan ne sont pas
-   commités), et les conditions de sortie de la phase 5 sont toujours vraies : les commits n'ont pas
-   changé depuis le dernier passage de la phase 5. S'ils ont changé, retourne à la phase 5.
-2. **Montrer le résumé**, puis demander :
-   - le tableau de vérification de la phase 5 (scénario | tests | verdict UI),
-   - les commits et les branches à pousser, les pull requests à ouvrir (le titre de chacune),
-   - les avertissements : label `scenarios-approved` avec des scénarios ajoutés, un scénario
-     `needs a human` répondu par l'utilisateur.
-
-   Options du passage : `Pousser et ouvrir la ou les pull requests` / `Pousser seulement` / `Arrêter`.
-3. **Pousser et ouvrir**, seulement après le oui :
-   - Une PR par plan : suis `tnx-dev-standards-dev-and-git-workflow` (nom de branche, message de commit,
-     corps de PR : Description / Related Issue / Is this covered by automated tests). Titres et corps
-     de PR en anglais simple.
-   - Stack : suis les étapes 6 et 7 de `split` dans `../stack/SKILL.md`
-     (`gh stack submit --auto`, puis réécriture des titres et des corps). Couches backend d'abord.
-   - Ne force jamais le push. Ne change jamais les labels, le milestone, les assignés. Dis à
-     l'utilisateur d'assigner un reviewer.
-4. **Clore le run.** Mets `phase: done` dans les plans. Donne les liens des pull requests.
+- **Base saine.** Tout est commité, `git status` est propre (les fichiers de plan ne sont pas commités), et
+  les commits n'ont pas changé depuis le dernier passage de la phase 5. Sinon, retourne à la phase 5.
+- **Résumé avant le oui.** Montre : le tableau de vérification de la phase 5 (scénario | tests | verdict
+  UI), les commits et les branches à pousser, les pull requests à ouvrir (le titre de chacune), et les
+  avertissements (label `scenarios-approved` avec des scénarios ajoutés ; un scénario `needs a human`
+  répondu par l'utilisateur). Demande ensuite s'il faut pousser et ouvrir, pousser seulement, ou arrêter.
+- **Rien vers l'extérieur sans oui** donné dans cette phase. Ne force jamais le push. Ne change jamais les
+  labels, le milestone, les assignés : dis à l'utilisateur d'assigner un reviewer.
+- **Format.** Une seule PR (une ligne dans `## Pull requests`) : `tnx-dev-standards-dev-and-git-workflow`
+  (nom de branche, message de commit, corps de PR : Description / Related Issue / Is this covered by
+  automated tests). Le corps couvre backend et frontend. Plusieurs PR : étapes 6 et 7 de `split` dans
+  `../stack/SKILL.md` (`gh stack submit --auto`, puis réécriture des titres et des corps), PR backend
+  d'abord. Titres et corps en anglais simple.
+- **Clore le run.** Mets `phase: done` dans les plans et donne les liens des pull requests.
 
 ## Conditions de sortie
 

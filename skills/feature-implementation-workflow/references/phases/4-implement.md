@@ -1,73 +1,62 @@
 # Phase 4 — Implémenter
 
-But : le code et les tests de chaque couche de pull request, verts et commités. Plan backend d'abord,
-puis plan frontend. Dans un plan, couche par couche, de bas en haut.
+But : le code et les tests de chaque commit du tableau `### Commits` des plans, verts et commités. Plan
+backend d'abord, puis plan frontend. Dans un plan, commit par commit, dans l'ordre du tableau. Une
+« couche » ci-dessous est un commit du tableau ; une PR en contient un ou plusieurs.
 
-## Avant de coder
+## Contraintes
 
-- Travaille depuis le dossier de travail du package : `backend/` pour le plan backend, `frontend/` pour
-  le plan frontend. Chaque commande `npm run` ci-dessous s'y lance, et le plan se lit dans son
-  `.claude/plans/ticket/`.
-- Lis le plan du package, et le style de code du package : backend `backend/docs/coding-style/*`
-  (voir `backend/AGENTS.md`), frontend `frontend/AGENTS.md`.
-- Relis les scénarios de l'issue. Le plan y renvoie par leur titre.
-- Fichiers de test : utilise le skill `test-patterns`.
-- Branches : suis `tnx-dev-standards-dev-and-git-workflow`. Pour une stack, suis l'étape 4 de `split`
-  dans `../stack/SKILL.md` (`gh stack init`, `gh stack add`). Pour une seule PR, vérifie que
-  la branche courante est la bonne. Demande avant de créer une branche.
-
-## Travail, par couche
-
-1. Code et tests ensemble, dans l'ordre du plan. Ne code jamais une étape qui ne sert aucun scénario.
-2. Types et lint sur les fichiers que tu modifies, au fil de l'eau : MCP JetBrains `get_file_problems`
-   (`mcp__idea__get_file_problems`), jamais `mcp__ide__getDiagnostics`. Passe `projectPath` (racine du
-   repo) et un `filePath` relatif.
-3. À la fin de la couche, lance les contrôles ci-dessous.
-4. Quand la couche est verte, propose une fois `tnx-dev-simplify-implementation` pour le package, avant
-   son dernier commit.
-5. Commit : un commit atomique par couche, `feature(<issue>): short description` (en anglais simple).
-   Un refactor a son propre commit. N'ajoute pas les fichiers de plan à un commit.
-6. Couche backend qui change le schéma GraphQL : lance maintenant la génération de `5-verify.md`
-   (groupe A), pour que le plan frontend puisse utiliser les nouveaux types. Commite les fichiers
-   générés dans cette couche.
-
-## Contrôles d'une couche (backend, depuis `backend/`)
-
-- `npm run type:check`. Jamais `tsc` ni `npx tsc`. Pour quelques fichiers seulement :
-  `npm run tsgo -- -p tsconfig.json --noEmit --pretty false | grep -F -e <fichier>`.
-- `npm run lint`, et `npm run format` sur les fichiers modifiés.
-- `npm run opengrep:diff` : aucune nouvelle violation.
-- Tests unitaires de la zone : `npm run _test test -- <fichier>.spec.ts`. Tests d'intégration de la zone :
-  `npm run _test test:itg -- <fichier>.itg-spec.ts`.
-- Ne lance pas les tests e2e ici : ils appartiennent à la phase 5.
-
-## Contrôles d'une couche (frontend, depuis `frontend/`)
-
-Utilise les commandes de `frontend/AGENTS.md` : type check, `npm run lint`, `npm run test -- <fichier>`.
+- **Contexte.** Travaille depuis le dossier du package (`backend/` ou `frontend/`). Lis son plan, les
+  scénarios de l'issue (le plan y renvoie par leur titre) et le style de code du package :
+  `backend/docs/coding-style/*` (voir `backend/AGENTS.md`), `frontend/AGENTS.md`. Fichiers de test : skill
+  `test-patterns`.
+- **Périmètre.** Ne code jamais une étape qui ne sert aucun scénario, et n'implémente aucun comportement
+  hors des scénarios.
+- **Branches.** Suis `tnx-dev-standards-dev-and-git-workflow`. Plusieurs PR : étape 4 de `split` dans
+  `../stack/SKILL.md`, une branche par ligne de `## Pull requests`. Une seule PR : une seule branche pour
+  tous les commits, backend et frontend compris. Demande avant de créer une branche.
+- **Types et lint.** Au fil de l'eau sur les fichiers modifiés : MCP JetBrains
+  `mcp__idea__get_file_problems` (avec `projectPath` = racine du repo et un `filePath` relatif), jamais
+  `mcp__ide__getDiagnostics`. Contrôles complets d'une couche : les commandes des `AGENTS.md` du package
+  (type check, lint, format ; backend : `npm run opengrep:diff`, aucune nouvelle violation). Jamais
+  `tsc` ni `npx tsc`.
+- **Tests unitaires et d'intégration, pour échouer vite.** Lance ceux que le commit crée ou modifie, et
+  ceux qu'il peut impacter (mêmes classes, use cases, entités : cherche avec `grep`). Jamais la suite
+  complète : elle relève de la CI.
+- **Environnement `test`.** Les tests d'intégration et les preuves d'étapes qui touchent la base (une
+  migration, une requête) ont besoin de PostgreSQL. Démarre l'environnement avec le skill `launch`
+  (`test`) dès que le premier commit en a besoin, et laisse-le tourner : la phase 5 le réutilise. Après
+  une nouvelle migration, applique-la (`npm run _test mikro:migration:up`).
+- **Preuves.** Joue la preuve de chaque étape du plan à l'étape, base de données comprise.
+- **Pas d'e2e ici** : ils attendent l'ensemble de la feature et appartiennent à la phase 5.
+- **Commits.** Un commit atomique par ligne du tableau `### Commits`, `feature(<issue>): short description`
+  (anglais simple). Un refactor a son propre commit. N'ajoute jamais un fichier de plan à un commit.
+- **Schéma GraphQL.** Un commit backend qui le change déclenche la génération du code de `5-verify.md`
+  avant le plan frontend, pour que celui-ci ait les nouveaux types. Les fichiers générés vont dans un
+  commit séparé, juste après. La génération a besoin de l'environnement `dev` : démarre-le avec le skill
+  `launch` (`dev`) s'il ne tourne pas.
+- **Simplification.** Quand un package est vert, propose une fois `tnx-dev-simplify-implementation`, avant
+  son dernier commit.
 
 ## Conditions de sortie
 
-- [ ] Chaque étape du plan (ou de la couche en cours) est implémentée.
-- [ ] Chaque test du tableau de tests qui appartient à cette couche existe.
+- [ ] Chaque étape du plan (ou du commit en cours) est implémentée, et chaque test du tableau de tests qui
+      lui appartient existe.
 - [ ] Type check, lint et OpenGrep : aucune erreur. Montre la commande et le résultat.
 - [ ] Aucun problème IDE sur les fichiers modifiés.
-- [ ] Les tests unitaires et d'intégration de la zone passent. Montre la commande et le résultat.
-- [ ] Aucun comportement implémenté en dehors des scénarios (pas de dérive de périmètre).
-- [ ] La couche est commitée, `git status` est propre pour la couche, et le message de commit suit la
+- [ ] Les tests unitaires et d'intégration créés, modifiés ou impactés passent. Montre la commande et le
+      résultat.
+- [ ] La preuve de chaque étape du commit a été jouée, avec son résultat.
+- [ ] Aucun comportement implémenté en dehors des scénarios.
+- [ ] Le commit est fait, `git status` est propre pour le périmètre du commit, et le message suit la
       convention.
-- [ ] À la fin de la phase : chaque couche de chaque plan est faite, et `phase: verify` est dans les plans.
+- [ ] À la fin de la phase : chaque commit de chaque plan est fait, et `phase: verify` est dans les plans.
 
-## Compacter après cette phase
+## Compactage
 
 La phase 4 est la plus longue : propose le compactage après chaque couche commitée, et à la fin de la
-phase. Mêmes règles, même ligne, avec la couche dedans.
+phase. Les couches faites sont dans git (branche et SHA).
 
-Garde : numéro de l'issue, chemins des plans, couches faites (branche et SHA du commit), ce qui diffère
-du plan (et pourquoi), un piège trouvé dans le code dont la couche suivante a besoin, la génération ou
-les contrôles qui restent à lancer en phase 5.
-Jette : contenus de fichiers, diffs, sorties de tests et de type check, les boucles d'erreurs de types,
-les listes de problèmes IDE.
-
-```
-/compact Garde : issue <n> ; chemins des plans ; couches faites avec branche et SHA du commit ; écarts avec le plan ; pièges utiles à la couche suivante ; génération à lancer. Jette : contenus de fichiers, diffs, sorties de tests, de type check et de lint, boucles d'erreurs.
-```
+Seulement dans la conversation : les écarts avec le plan (et pourquoi), un piège trouvé dans le code dont
+la couche suivante a besoin, la génération ou les contrôles qui restent pour la phase 5, les serveurs
+démarrés avec leurs PID (la phase 5 les arrête).

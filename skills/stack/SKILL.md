@@ -48,13 +48,14 @@ Mettre à jour plus tard avec `gh extension upgrade gh-stack` et `gh skill updat
   - Branche : `<feature|bugfix|chore>/<issue>/<short-description>`, une description différente par couche
     (`feature/23773/emission-factor-entity`, `feature/23773/update-version-usecase`). Pas de préfixe numérique.
     Prendre le type et l'issue depuis la branche courante.
-  - Commit : `<type>(<issue>): short description`, **un commit par couche**. Les corrections de review sont des commits séparés.
+  - Commit : `<type>(<issue>): short description`. Une couche = une PR, avec un ou plusieurs commits
+    atomiques (refacto à part, fichiers générés dans un commit séparé). Les corrections de review sont des commits séparés.
   - Pas de ligne `Co-Authored-By` ni d'attribution Claude dans les commits ou les PR (règle de ce skill).
 - Écrire le texte des PR en anglais simple : phrases courtes, mots simples, pas d'idiomes.
 
 ## `split` - du plan à la stack
 
-1. **Lire le plan** (`$ARGUMENTS`, sinon `.claude/plans/ticket/<issue>-*.md` dans le répertoire de travail, sinon
+1. **Lire le plan** (`$ARGUMENTS`, sinon `.claude/plans/<issue>-*.md` dans le répertoire de travail, sinon
    `backend/.claude/plans/...`). Lire aussi `references/stack-design.md` du skill `gh-stack`.
    Si le plan a une section `## Pull requests` (écrite par `/feature-implementation-workflow`), l'utiliser comme proposition :
    la montrer, sauter l'étape 2, et aller à l'étape 3.

@@ -29,7 +29,7 @@ Entrée : `/feature-implementation-workflow <url-ou-numéro-de-l-issue>`.
 | Texte | Langue |
 |---|---|
 | Échanges avec l'utilisateur, y compris le grill avant la mise à jour de l'issue | français |
-| Plans (`.claude/plans/ticket/`) | français |
+| Plans (`.claude/plans/`) | français |
 | Mise à jour de l'issue (scénarios, How to test, `Out of scope:`, `Design:`, flag) | anglais simple |
 | Commits et pull requests | anglais simple (`AGENTS.md`) |
 
@@ -44,13 +44,13 @@ Chaque phase a un fichier dans `references/phases/`. Lis le fichier d'une phase 
 |---|---|---|---|
 | 1 | Raffiner l'issue | Toutes les trouvailles de l'audit sont closes. L'issue contient les scénarios convenus (flaggés), How to test et le lien design. L'utilisateur a validé le diff. | `1-refine.md` |
 | 2 | Plans | Un plan par package touché. Le contrôle de cohérence passe. `Questions non résolues : aucune`, `status: ready`. L'utilisateur a validé les plans. | `2-plan.md` |
-| 3 | Découpage | Un tableau de pull requests par plan, validé et écrit dans le plan. | `3-split.md` |
-| 4 | Implémenter | Par couche : étapes faites, tests écrits, type check, lint, problèmes IDE, tests unitaires de la zone, OpenGrep : tout est vert. Couche commitée. | `4-implement.md` |
-| 5 | Vérifier | Code généré à jour. Tous les tests passent : unitaires, intégration, e2e backend, frontend. Chaque scénario de l'issue a un verdict `pass` dans l'UI. | `5-verify.md` |
+| 3 | Découpage | Taille estimée (hors fichiers générés, seuil d'environ 30). Une PR ou plusieurs, avec la pile de commits de chacune, validées et écrites dans les plans. | `3-split.md` |
+| 4 | Implémenter | Par commit : étapes faites et prouvées, tests écrits, type check, lint, problèmes IDE, OpenGrep, tests unitaires et d'intégration créés, modifiés ou impactés : tout est vert. Commit fait. | `4-implement.md` |
+| 5 | Vérifier | Code généré à jour. Le harnais passe (tests unitaires, d'intégration et e2e créés, modifiés ou impactés, jamais la suite complète). Chaque scénario de l'issue a un verdict `pass` dans l'UI. | `5-verify.md` |
 | 6 | Livrer | L'utilisateur a validé le push. Branches poussées, pull request(s) ouverte(s), plans marqués terminés. | `6-ship.md` |
 
 Fichiers de référence utilisés par plusieurs phases : `references/scenario-audit.md`,
-`references/plan-template.md`.
+`../write-implementation-plan/references/plan-template.md` (template unique des plans).
 
 ## Passage d'une phase à l'autre
 
@@ -71,18 +71,21 @@ s'arrêter à n'importe quel passage.
 
 But : jeter ce dont la phase suivante n'a pas besoin. Le modèle ne peut pas lancer `/compact` lui-même.
 
+**Principe : ne garde que ce qui n'existe dans aucun fichier.** Tout le reste se relit (issue, plans, git)
+et se jette : contenus de fichiers, diffs, sorties de commandes, logs, discussions résolues. Garde
+toujours le numéro de l'issue et les chemins des plans. Chaque phase dit dans sa section `Compactage` ce
+qui n'existe que dans la conversation.
+
 Sur `Compacter, puis passer à la phase <n+1>` :
 
-1. Lis la section `Compacter après cette phase` du fichier de la phase qui se termine.
-2. Affiche la ligne `/compact` de cette section, dans un seul bloc de code, prête à coller. Dis en une
-   ligne ce qu'elle garde et ce qu'elle jette.
+1. Compose la ligne `/compact` : le numéro de l'issue, les chemins des plans, et ce que la section
+   `Compactage` de la phase qui se termine liste.
+2. Affiche-la dans un seul bloc de code, prête à coller. Dis en une ligne ce qu'elle garde.
 3. Arrête-toi et attends. Ne commence pas la phase suivante. L'utilisateur lance la ligne, puis dit
    `continue` (ou relance la commande de ce skill). Suis alors « Reprise ».
 
-Règles de la ligne : garde seulement les faits qui ne sont dans aucun fichier (décisions, résultats de
-preuves, réponses de l'utilisateur). Ne garde jamais un contenu de fichier, un diff, une sortie de
-commande ou un log : on peut les relire. Après un compactage, fais confiance aux fichiers (issue,
-plans, git), pas au souvenir de l'ancienne conversation.
+Après un compactage, fais confiance aux fichiers (issue, plans, git), pas au souvenir de l'ancienne
+conversation.
 
 ## Reprise
 
@@ -90,8 +93,8 @@ L'état est dans l'en-tête des plans (`phase: <prochaine phase à lancer>`) et 
 d'un run :
 
 1. Lis l'issue. Cherche les plans dans le dossier de travail de chaque package :
-   `.claude/plans/ticket/<n>-*.md` dans le dossier courant (`backend/` ou `frontend/`), et le plan de
-   l'autre package dans `../frontend/.claude/plans/ticket/` ou `../backend/.claude/plans/ticket/`. Depuis
+   `.claude/plans/<n>-*.md` dans le dossier courant (`backend/` ou `frontend/`), et le plan de
+   l'autre package dans `../frontend/.claude/plans/` ou `../backend/.claude/plans/`. Depuis
    la racine du repo, regarde dans `backend/` et `frontend/`.
 2. Aucun plan : commence à la phase 1. Des plans existent : prends la plus petite `phase` des plans.
 3. Ne fais pas confiance à l'état. Revérifie les conditions de sortie de la phase juste avant (et la date
@@ -118,12 +121,15 @@ compacte à la place.
 - Les actions vers l'extérieur (push, pull request, modification de l'issue) n'ont lieu qu'après un oui
   donné dans cette phase.
 - Réutilise l'existant. Appelle `launch` et `run-qa-scenarios` avec l'outil `Skill`. Les skills en slash
-  uniquement (`stack`) ne peuvent pas être appelés : lis leur `SKILL.md` et suis la
-  sous-commande. Ne recopie pas leurs règles ici.
+  uniquement (`stack`, `write-implementation-plan`) ne peuvent pas être appelés : lis leur `SKILL.md` et
+  suis la sous-commande ou les étapes. Ne recopie pas leurs règles ici.
 
-## Pas de sous-skills (pour l'instant)
+## Sous-skills
 
 Les phases partagent un même état (issue, plans, décisions) et une même règle de passage, et le modèle
 ne peut pas appeler un sous-skill en slash uniquement. Les phases restent donc des fichiers de ce skill.
-Extrais une phase dans son propre skill quand un deuxième workflow en a besoin (la vérification est le
-premier candidat), pas avant.
+Extrais une phase dans son propre skill quand un deuxième usage en a besoin, pas avant.
+
+Déjà extrait : la méthode de plan, dans `write-implementation-plan` (utilisable seule, hors de ce
+workflow). La phase 2 la lit et ajoute l'en-tête, les chemins, le design, le contrat backend et le
+découpage en PR. Prochain candidat : la vérification.
