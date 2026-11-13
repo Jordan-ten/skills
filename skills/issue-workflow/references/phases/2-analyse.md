@@ -1,19 +1,22 @@
 # Phase 2 — Analyser le pitch
 
 But : un premier jet d'analyse : résumé, lexique ancré dans le code, scénarios de chaque tâche gardée.
-Ce jet sera validé en phase 4 : ne cherche pas la perfection ici.
+Il sera validé en phase 3 : ne cherche pas la perfection ici.
 
-## Travail
+Utilise `${CLAUDE_PLUGIN_ROOT}/skills/analyze-pitch/SKILL.md`, étapes 1, 2, 3 et 5 (lire la capture,
+niveaux MoSCoW, lexique ancré dans le code, écrire l'analyse).
 
-1. Lis `../analyze-pitch/SKILL.md` et suis ses étapes 1, 2, 3 et 5 (lire la capture, demander les niveaux
-   MoSCoW, lire le code pour le lexique, écrire l'analyse).
-2. Demande une fois si un milestone GitHub existe déjà pour ce pitch. Si oui, passe-le à l'étape 4 de
-   `analyze-pitch` (`--milestone`) et note-le dans `milestone:` du fichier d'état. Sinon, `milestone: none` :
-   il sera choisi en phase 5.
-3. Écarts avec `analyze-pitch` : ne lance pas la boucle de corrections de son étape 6. À la place, donne le
-   chemin, les titres de sections et le nombre de scénarios, puis passe au gate. La validation se fait en
-   phase 4.
-4. Mets `phase: overview` dans le fichier d'état.
+Contraintes :
+- **Subagent pour le code** : l'étape 3 (lexique) lit beaucoup de code. Confie-la à un subagent `Explore`
+  avec les termes du pitch. Demande en retour un tableau court « terme du pitch → terme du code → fichier »,
+  plus la liste des mots absents du code. Écris le lexique toi-même dans l'analyse.
+- Demande une fois si un milestone GitHub existe déjà pour ce pitch. Si oui, passe-le à `analyze-pitch`
+  (`--milestone`) et note-le dans `milestone:` du fichier d'état. Sinon `milestone: none` : il sera choisi
+  en phase 5.
+- Ne lance pas la boucle de corrections de l'étape 6 d'`analyze-pitch` : donne le chemin, les titres de
+  sections et le nombre de scénarios. La validation se fait en phase 3.
+- Remplis le tableau `Tâches` du fichier d'état : numéro, titre, lot (tableau « Main User Tasks » de la
+  capture), MoSCoW, `Scénarios validés : non`, `Issue : —`. Mets `phase: scenarios`.
 
 ## Conditions de sortie
 
@@ -22,16 +25,5 @@ Ce jet sera validé en phase 4 : ne cherche pas la perfection ici.
 - [ ] Les niveaux MoSCoW gardés sont notés dans l'en-tête. Une tâche sans priorité dans Notion a sa priorité
       dans `Decisions`.
 - [ ] Chaque tâche gardée a au moins un scénario `Nominal case`.
-- [ ] Le lexique n'emploie que des mots du code, ou marque les mots nouveaux.
-- [ ] Les questions ouvertes sont listées dans `Open questions`.
-- [ ] Le nombre de scénarios par tâche est affiché.
-
-## Compacter après cette phase
-
-Garde : le slug, le milestone (ou `none`), les niveaux MoSCoW gardés, le nombre de tâches et de scénarios,
-les questions ouvertes de l'analyse (une ligne chacune).
-Jette : le contenu du code lu pour le lexique, la capture lue en entier.
-
-```
-/compact Garde : pitch <slug> ; milestone ; niveaux MoSCoW gardés ; nombre de tâches et de scénarios ; questions ouvertes en une ligne. Jette : fichiers de code lus, capture lue en entier. Tout est dans .claude/plans/pitch/.
-```
+- [ ] Les questions ouvertes sont dans `Open questions`.
+- [ ] Le milestone et les niveaux MoSCoW choisis sont dans l'analyse et le fichier d'état.

@@ -2,7 +2,8 @@
 
 Une tâche du pitch donne une issue de type `Feature`, avec le template `feature-checklist` de
 `tnx-plan-create-issue` (fichier `templates/feature-checklist.md` de ce skill). Le corps est écrit par
-l'aide `tnx-plan-write-issue-description`, qui suit ses propres règles (anglais simple, mots du produit,
+l'aide `tnx-plan-write-issue-description` (skill du repo projet, lu par `tnx-plan-create-issue` : ne
+l'appelle pas toi-même), qui suit ses propres règles (anglais simple, mots du produit,
 pas de noms de code). Ce fichier dit seulement quoi lui donner.
 
 ## Ce que tu donnes (en anglais simple)
@@ -26,4 +27,4 @@ pas de noms de code). Ce fichier dit seulement quoi lui donner.
   marque `<to confirm>` pour l'aide : ne crée pas l'issue avant que l'utilisateur ait tranché.
 - Ne copie jamais le pitch en entier : seulement la tâche. Un parcours n'est pas copié non plus : l'issue
   décrit une tâche.
-- N'invente aucun scénario pour « compléter » : tous les scénarios viennent de l'analyse validée en phase 4.
+- N'invente aucun scénario pour « compléter » : tous les scénarios viennent de l'analyse validée en phase 3.
