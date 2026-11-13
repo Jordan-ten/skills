@@ -54,7 +54,7 @@ pitch ─issue-workflow→ issues ─feature-implementation-workflow→ pull req
                                                        └─qa-workflow→ QA report
 ```
 
-`issue-workflow` and `feature-implementation-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, compact, redo, or stop. You can run the same command again to resume.
+`issue-workflow` and `feature-implementation-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, redo, or stop (`issue-workflow` also offers a `/clear` to keep the context small). You can run the same command again to resume.
 
 ### `issue-workflow`
 
@@ -62,21 +62,19 @@ From a PM pitch to GitHub issues. Command: `/jcontent-traace:issue-workflow <pit
 
 1. **Capture**: save a local copy of the pitch.
 2. **Analyze**: write the summary and a first draft of the scenarios.
-3. **Overview**: publish a page with the tasks, scenarios and user journeys.
-4. **Refine**: complete and validate the scenarios with you.
-5. **Create issues**: one GitHub issue per task.
-6. **Sync**: update the analysis and the overview with the final result.
+3. **Scenarios**: complete and validate the scenarios of each task with you.
+4. **Journeys and overview**: validate the user journeys, then publish a page with the tasks, scenarios and journeys.
+5. **Create issues**: one GitHub issue per task, then update the analysis and the page with the issues.
 
 ### `feature-implementation-workflow`
 
 From a GitHub issue to pull requests. Command: `/jcontent-traace:feature-implementation-workflow <issue URL or number>`.
 
 1. **Refine the issue**: fix the scenarios in the issue.
-2. **Plans**: one plan per package (backend, frontend).
-3. **Split**: decide the pull requests, one per layer.
-4. **Implement**: code and tests, layer by layer, one commit per layer.
-5. **Verify**: generated code, all tests, and each scenario checked in the UI.
-6. **Ship**: push and open the pull requests, after your yes.
+2. **Plans and split**: one plan per package (backend, frontend), and the pull requests, validated together.
+3. **Implement**: code and tests, one sub-agent per pull request, atomic commits. The main session stays light.
+4. **Review and verify**: `/code-review high`, then the end-to-end tests and each scenario checked in the UI.
+5. **Ship**: push and open the pull requests, after your yes.
 
 ### `review-workflow`
 
@@ -116,14 +114,14 @@ The Chrome profile is `.claude/chrome-profile/`, relative to the folder where Cl
 | `capture-pitch` | Saves a local copy of a PM pitch from Notion. | yes |
 | `analyze-pitch` | Reads a captured pitch. Writes a summary, a lexicon grounded in the code, and GIVEN/WHEN/THEN scenarios sorted by MoSCoW. | yes |
 | `build-scenario-overview` | Builds an Artifact page with the pitch scenarios: tasks by lot and priority, GitHub tickets, and user journeys. | yes |
-| `issue-workflow` | Takes a PM pitch to GitHub issues in six phases, with exit conditions and a compact between phases: capture, analyze, overview of the pitch lots and tasks with scenarios and journeys, refine and complete the scenarios with the user, create one issue per task, then sync the analysis and the overview. Resumable. | yes |
+| `issue-workflow` | Takes a PM pitch to GitHub issues in five phases, with exit conditions and a `/clear` between heavy phases (all state is in files): capture, analyze, build and validate the scenarios with the user, validate the journeys and publish the overview, then create one issue per task and update the analysis and the overview. Resumable. | yes |
 
 ### Dev
 
 | Skill | What it does | Slash-only |
 |---|---|---|
 | `rebase` | Rebases the current branch on a target branch (default `main`). Fixes generated-file conflicts, applies migrations, regenerates the GraphQL schema and SDK types, checks types, runs related tests, then force-pushes. | no |
-| `feature-implementation-workflow` | Takes a feature from its GitHub issue to pull requests in six phases, with exit conditions and a compact between phases: refine the issue scenarios, write one plan per package, split into commits and PRs, implement, verify (generated code, the tests of the change, end to end in the UI), push. Resumable. | yes |
+| `feature-implementation-workflow` | Takes a feature from its GitHub issue to pull requests in five phases, with exit conditions: refine the issue scenarios, write one plan per package and split into PRs, implement (one sub-agent per PR, so the main context stays small), review with `/code-review high` and verify (tests of the change, end to end in the UI), push. State lives in files, so `/clear` and the same command resume. Resumable. | yes |
 | `write-implementation-plan` | Writes the plan of one package (backend or frontend) from an issue or a free description. Defines observable success criteria, explores the code first, plans a vertical slice first, gives a proof for each step, adds a pre-mortem, and checks the plan is consistent. Writes no code. Phase 2 of `feature-implementation-workflow` is built on it. | yes |
 | `stack` | Splits a validated plan into a stack of pull requests, one per layer. Then manages the stack: status, review fixes, rebase, sync. | no |
 | `create-local-data` | Creates records in the local app through the GraphQL API with an offline-auth token. Used to see a screen, reproduce a bug, or prepare a demo. | no |
