@@ -24,9 +24,11 @@ Un plan couvre un package seulement.
 
 ## Fichier
 
-`<package>/.claude/plans/<numéro-issue>-<slug>.md`, dans le dossier de travail du package (`backend/` ou
-`frontend/`). `<slug>` est le slug de branche de l'issue, ou un slug court de la tâche sans issue.
-Préviens l'utilisateur avant d'écraser un plan existant.
+`<racine>/<package>/.claude/plans/<numéro-issue>-<slug>.md`, où `<racine>` vient de
+`git rev-parse --show-toplevel` (quel que soit le dossier courant : jamais `backend/backend/`) et
+`<package>` vaut `backend` ou `frontend`. Crée les dossiers si besoin. `<slug>` est le slug de branche de
+l'issue, ou un slug court de la tâche sans issue. Préviens l'utilisateur avant d'écraser un plan
+existant.
 
 **(workflow)** Écris le plan backend en premier : le plan frontend a besoin de son contrat.
 
@@ -61,7 +63,7 @@ crée. Rien que le plan backend ne crée pas.>
 Les étapes de la tranche 1 produisent un chemin de bout en bout qui prouve le critère principal. Les
 étapes suivantes enrichissent.
 
-| n | Étape (ce qui change, où) | Critères | Preuve |
+| n | Étape (fichiers créés ou modifiés, ce qui change) | Critères | Preuve |
 |---|---|---|---|
 | 1 | ... | 1 | `<commande ou action>` : <résultat attendu> |
 | 2 | ... | 1, 2 | ... |
@@ -86,12 +88,13 @@ imports.>
 ## Hors périmètre
 - <ce que le plan ne fait pas>
 
-## Pull requests (workflow, ajouté en phase 3, absent avant)
-<Voir « Pull requests et commits ».>
-
 ## Questions non résolues
 aucune
 ```
+
+Utilise les titres de section exactement tels qu'ils sont écrits ici, sans la mention entre parenthèses
+(`## Design`, pas `## Design (frontend seulement)`) : les contrôles les cherchent par leur nom. La section
+`## Pull requests` n'existe pas à ce stade : la phase 2 du workflow l'ajoute après les étapes (voir plus bas).
 
 ### En-tête (workflow)
 
@@ -104,7 +107,7 @@ issue_url: <url>
 issue_updated_at: <updatedAt de l'issue après la phase 1>
 package: backend | frontend
 sibling_plan: <chemin de l'autre plan, relatif à ce fichier, ou none>
-phase: split | implement | verify | ship | done   # prochaine phase à lancer
+phase: plan | implement | verify | ship | done   # prochaine phase à lancer, dans cet ordre
 status: ready | not-ready
 generated_at: <AAAA-MM-JJ HH:mm>
 ---
@@ -117,8 +120,9 @@ generated_at: <AAAA-MM-JJ HH:mm>
 
 - **Résultat attendu** : un critère est observable ou il est réécrit. « Le code est propre » n'est pas
   un critère. « Un utilisateur sans le droit reçoit une erreur » en est un.
-- **Étapes** : nomme les fichiers ou les couches, pas le code. Chaque étape liste les critères qu'elle
-  sert. Une étape qui ne sert aucun critère est supprimée ou justifiée en une ligne.
+- **Étapes** : nomme les fichiers que l'étape crée ou modifie (chemins), pas le code. On peut ainsi
+  compter les fichiers du plan sans deviner (la phase 2 du workflow s'en sert pour découper en PR).
+  Chaque étape liste les critères qu'elle sert. Une étape qui ne sert aucun critère est supprimée ou justifiée en une ligne.
   - **Tranche verticale d'abord.** La tranche 1 traverse toutes les couches utiles avec le minimum de
     comportement, jusqu'à un test de bout en bout qui passe. Ensuite, seulement, les cas limites et
     l'enrichissement. Ne planifie pas une couche entière avant la suivante.
@@ -136,30 +140,26 @@ generated_at: <AAAA-MM-JJ HH:mm>
 - **Questions non résolues** : `aucune`, ou une liste avec un responsable pour chacune. Avec une
   question, `status` vaut `not-ready`.
 
-## Pull requests et commits (workflow, phase 3)
+## Pull requests (workflow, phase 2)
 
-Ajoutés à chaque plan après la validation des plans, avant `## Questions non résolues` :
+Ajouté à chaque plan une fois les étapes écrites, avant la validation et avant `## Questions non résolues`. Le plan fixe le
+découpage en PR, pas l'ordre ni le contenu des commits :
 
 ```markdown
 ## Pull requests
 
-| n | Branche | Périmètre (une phrase) | Fichiers (hors générés) | Dépend de |
-|---|---|---|---|---|
-| 1 | `feature/<issue>/<layer-slug>` | ... | 12 | — |
-| 2 | `feature/<issue>/<layer-slug>` | ... | 9 | 1 |
-
-### Commits
-
-| PR | Commit (`feature(<issue>): ...`) | Étapes | Tests |
-|---|---|---|---|
-| 1 | ... | 1, 2 | ... |
-| 1 | generated files | — | — |
-| 2 | ... | 3 | ... |
+| n | Branche | Périmètre (une phrase) | Étapes | Fichiers (hors générés) | Dépend de | Avancement |
+|---|---|---|---|---|---|---|
+| 1 | `feature/<issue>/<layer-slug>` | ... | 1, 2 | 12 | — | faite (a1b2c3d) |
+| 2 | `feature/<issue>/<layer-slug>` | ... | 3 | 9 | 1 | en cours : étape 3 (e4f5a6b) |
 ```
 
-Une seule PR : une seule ligne dans le premier tableau. Une PR peut contenir les commits des deux
-packages : chaque plan liste alors ses propres commits, et la ligne de PR est la même dans les deux
-plans. Dans un plan frontend, `Dépend de` peut nommer une PR du plan backend (`backend 2`).
+`Avancement` vaut `—` à l'écriture du tableau. La phase 3 le met à jour après chaque commit : `en cours : étapes
+<liste> (<sha>)`, puis `faite (<sha>)`. Une reprise lit cette colonne et la confirme avec `git log`.
+
+Une seule PR : une seule ligne. Une PR peut contenir les étapes des deux packages : la ligne de PR est
+alors la même dans les deux plans. Dans un plan frontend, `Dépend de` peut nommer une PR du plan backend
+(`backend 2`).
 
 ## Contrôle de cohérence (avant de montrer le plan)
 
@@ -184,7 +184,7 @@ plans. Dans un plan frontend, `Dépend de` peut nommer une PR du plan backend (`
 - [ ] Chaque titre de scénario cité dans un plan existe dans l'issue tel quel.
 - [ ] Plan frontend : `## Design` a un lien venant de l'issue ou une raison. Chaque élément de
       `## Contrat backend` est créé par une étape du plan backend.
-- [ ] Après la phase 3 : dans chaque plan, chaque étape est dans exactement un commit et chaque test est
-      dans le commit qui contient le code qu'il couvre (le test e2e dans celui qui expose le
-      comportement). Une pull request frontend n'est jamais sous la pull request backend dont elle
-      dépend.
+- [ ] Avec `## Pull requests` : dans chaque plan, chaque étape est dans exactement une pull request et chaque
+      test est dans la pull request qui contient le code qu'il couvre (le test e2e dans celle qui
+      expose le comportement). Une pull request frontend n'est jamais sous la pull request backend dont
+      elle dépend.

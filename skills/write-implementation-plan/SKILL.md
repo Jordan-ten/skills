@@ -7,7 +7,7 @@ description: >
   observable, exploration du code, tranche verticale d'abord, une preuve par étape, pre-mortem, contrôle
   de cohérence. N'écrit aucun code. Ne jamais déclencher depuis une demande en langage naturel.
 disable-model-invocation: true
-allowed-tools: Bash(gh issue view *), Bash(git *), Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion
+allowed-tools: Bash(gh issue view *), Bash(git rev-parse *), Bash(git branch --show-current), Bash(git status *), Bash(git log *), Bash(git diff *), Bash(git show *), Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion
 ---
 
 # Écrire un plan d'implémentation
@@ -41,7 +41,9 @@ template sert aussi la phase 2 de `feature-implementation-workflow` : ses partie
 - **Tests** (détails : skill `test-patterns`) : e2e d'abord, sur un scénario métier réaliste, jamais sur
   une garde d'entrée ; test unitaire seulement pour une logique métier non triviale ; aucun test pour un
   wrapper trivial. Une migration n'a jamais de test automatisé : sa preuve est manuelle.
-- **Plusieurs packages** : un plan par package, backend d'abord, car le frontend a besoin de son contrat.
+- **Package.** Déduis-le de la demande (backend, frontend). Si la demande ne permet pas de trancher,
+  pose une question. Plusieurs packages : un plan par package, backend d'abord, car le frontend a besoin
+  de son contrat.
 - **Questions non résolues** : une par une avec `AskUserQuestion`, la réponse recommandée en premier. Une
   question que seule une autre personne peut trancher met `status: not-ready` : dis-le.
 - **Aucun effet de bord** : pas de code, pas de branche, aucune écriture sur GitHub. Préviens l'utilisateur
