@@ -20,10 +20,9 @@ Avant de montrer une tâche, cherche ce qui manque dans ses scénarios :
 - une dépendance avec une **autre tâche**, ou deux tâches qui disent la même chose autrement ;
 - une issue existante du **milestone** qui couvre déjà le cas (seulement si un milestone est noté).
 
-Puis audite les scénarios avec `${CLAUDE_PLUGIN_ROOT}/skills/feature-implementation-workflow/references/scenario-audit.md`,
-section « Trouvailles », points 1 (structure), 2 (accord avec le code), 3 (couverture) et 6 (design, quand
-un scénario montre un écran). Le point 4 (How to test) ne s'applique pas encore. Lis « issue » comme
-« tâche du pitch » : un scénario du pitch n'a ni flag ni How to test.
+Puis audite les scénarios avec `${CLAUDE_PLUGIN_ROOT}/shared/scenario-findings.md` (structure, accord avec
+le code, couverture, design) et son format de question. La source est l'analyse du pitch : un scénario du
+pitch n'a ni How to test, ni flag, ni `Open questions` d'issue.
 
 ## Contraintes
 

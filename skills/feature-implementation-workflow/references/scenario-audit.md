@@ -28,52 +28,20 @@ standard.
 
 ## Trouvailles
 
-Vérifie dans cet ordre. Une trouvaille = une ligne = une question plus tard.
+Les vérifications sur la structure, l'accord avec le code, la couverture et le design sont dans
+`${CLAUDE_PLUGIN_ROOT}/shared/scenario-findings.md`, avec le format d'une question. Lis-le et applique-les
+au body de l'issue.
 
-1. **Structure**
-   - Au moins un `Nominal case`.
-   - Chaque scénario a Given, When, Then, avec de vrais noms et de vraies valeurs.
-   - Chaque `Then` est observable par un utilisateur (écran, message, fichier exporté), pas un état
-     interne.
-2. **Accord avec le code** (utilise les notes de code de l'exploration)
-   - Chaque état du `Given` existe et peut être atteint. Les entités et champs qu'il nomme existent.
-   - Les mots sont ceux du code. Signale un mot qui n'apparaît nulle part dans `src/`.
-   - Deux scénarios ne se contredisent pas.
-   - Les scénarios respectent `Out of scope`.
-3. **Couverture.** Cherche des cas que l'issue ne dit pas, à partir du code de la zone. N'en propose un
-   que si le code montre qu'il est atteignable :
-   - permission : un utilisateur sans le droit
-   - état vide, un seul élément, beaucoup d'éléments, une limite
-   - valeur en double ou déjà existante
-   - un élément supprimé, archivé ou dans un autre état entre deux actions
-   - une autre organisation (multi-tenant)
-   - données existantes avant la feature (migration, valeur par défaut)
-   - entrée invalide, échec partiel
-   - l'API ou le schéma GraphQL change (consommateurs, SDK, codegen)
-   - un écran : chargement, erreur, traduction
-4. **Synchro.** Chaque groupe `How to test` vient d'un scénario, et chaque scénario important a un
-   groupe. `Reproduction steps` mène au cas nominal.
-5. **Points ouverts.** Les marques `<to confirm>` et les `Open questions` de l'issue. Chacun est une
-   trouvaille.
-6. **Design.** Seulement quand un scénario montre un écran ou un changement d'UI. Cherche dans le body et
-   les commentaires un lien design : Figma (`figma.com`) ou Claude Design (un lien
-   `claude.ai/.../artifact/...`). Sans lien, c'est une trouvaille. Demande le lien, ou demande de
-   confirmer qu'aucun design n'est nécessaire (composants existants du design system seulement).
-   Signale aussi un scénario dont les états d'écran (vide, chargement, erreur) ne sont pas dans le
-   design, quand le lien est connu et lisible.
+Ajoute ces deux vérifications, propres à une issue :
+
+- **Synchro.** Chaque groupe `How to test` vient d'un scénario, et chaque scénario important a un
+  groupe. `Reproduction steps` mène au cas nominal.
+- **Points ouverts.** Les marques `<to confirm>` et les `Open questions` de l'issue. Chacun est une
+  trouvaille.
 
 Verdict : `ready` (aucune trouvaille), `gaps` (des trouvailles, toutes closables par l'utilisateur),
 `blocked` (une trouvaille demande une autre personne que l'utilisateur, ou l'issue contredit le code
 d'une façon que l'utilisateur ne peut pas trancher).
-
-## Format d'une question
-
-```
-Trouvaille 3/7 — Edge case : un utilisateur sans le droit.
-Code : `update.xxx.usecase.ts` vérifie `Permission.XXX` ; l'issue ne dit pas ce que l'utilisateur voit.
-Recommandé : afficher l'erreur « non autorisé », rien n'est enregistré.
-Options : <recommandé> / <autre> / Hors périmètre
-```
 
 ## Écrire dans l'issue
 
