@@ -111,9 +111,10 @@ un `fetch origin main`, et dis-le.
 Copie `qa-guidelines.md` (à côté de ce fichier) vers `<path>/CLAUDE.local.md`. Ce fichier est ignoré par git
 et Claude Code le lit au démarrage.
 
-Si le workspace parent a un `frontend/.claude/mcp.dev_user_email`, copie-le au même endroit dans
-`<path>`. Ce fichier est ignoré par git, donc un workspace neuf ne l'a pas. Le parent n'en a pas : dis-le
-dans la réponse, `run-qa-scenarios` le demandera.
+L'email de dev vient du fichier global `~/code/.env/frontend.mcp.dev_user_email` (une seule ligne). S'il
+existe, copie-le vers `<path>/frontend/.claude/mcp.dev_user_email`, où `tnx-dev-mcp-local-dev` le lit. Ce
+fichier est ignoré par git, donc un workspace neuf ne l'a pas. Si le fichier global manque, dis-le dans la
+réponse : `run-qa-scenarios` demandera l'email.
 
 ## 7. Nommer et lancer
 

@@ -12,7 +12,7 @@ Tu testes une issue dans ce workspace. Le code de la PR est déjà sur disque (H
 
 - Ce workspace est neuf : l'app n'y tourne pas. Avant le premier scénario, vérifie que le backend et le frontend dev répondent. Sinon, lance `/jcontent-traace:launch dev front`, puis attends qu'ils soient prêts.
 - Le serveur MCP `chrome-devtools` est déclaré au niveau utilisateur. Le profil Chrome est `.claude/chrome-profile/` de ce workspace, ignoré par git. Si les outils `mcp__chrome-devtools__*` manquent, arrête-toi et dis-le.
-- Si `frontend/.claude/mcp.dev_user_email` manque, demande l'email de dev à l'utilisateur. Ne l'invente pas.
+- Si `frontend/.claude/mcp.dev_user_email` manque, copie `~/code/.env/frontend.mcp.dev_user_email` vers cet emplacement. Si le fichier global manque aussi, demande l'email de dev à l'utilisateur. Ne l'invente pas.
 - Les workspaces `qa-*` partagent les mêmes ports et la même base locale. Si une autre app dev tourne déjà, dis-le avant d'écrire des données.
 
 ## Écriture
