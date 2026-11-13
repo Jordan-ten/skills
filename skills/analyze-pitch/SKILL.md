@@ -76,8 +76,10 @@ generated_at: <YYYY-MM-DD HH:mm>
 #### Nominal case
 
 GIVEN <initial state>
-WHEN <user action>
+WHEN <user intent>
 THEN <observable result>
+ORIGIN <pitch | deduced>
+CHECK <e2e | unit | manual>   (added when the scenarios are validated, not in the first draft)
 
 #### Edge case / Error case (if the pitch gives enough information)
 
@@ -104,6 +106,11 @@ Tasks with no matching issue: <list, or "none">.
 ## Règles
 
 - Comportement observable seulement : pas de noms de tables, de resolvers ou de migrations.
+- `ORIGIN pitch` : le texte du pitch (capture ou sous-pages) dit ce comportement. `ORIGIN deduced` : il
+  vient du code, de l'analyse ou du bon sens, le pitch ne le dit pas. Dans le doute, `deduced`. Le PM
+  relira les scénarios `deduced`.
+- Un `WHEN` dit ce que l'utilisateur veut faire, pas où il clique (pas de nom de bouton ni de champ).
+- Peu de scénarios, bien choisis : un cas limite seulement s'il change le résultat visible.
 - Au moins un scénario nominal par tâche choisie.
 - Sans `--milestone`, n'appelle pas GitHub.
 - Une correspondance avec un milestone est un indice pour l'utilisateur. Ne retire jamais une tâche ou un scénario parce qu'une issue semble le couvrir.

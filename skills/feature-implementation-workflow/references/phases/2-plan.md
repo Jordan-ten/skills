@@ -15,6 +15,8 @@ fonctionnalité voisine et ce qu'on réutilise (ou dit qu'il n'y en a pas).
 ## Contraintes : plans
 
 - Un plan par package qu'au moins une étape modifie, à l'emplacement du template (section « Fichier »).
+- Le type de test de chaque scénario part du mode noté dans l'issue (`Automated test:` ou groupe
+  `How to test`). Un plan qui s'en écarte le dit en une ligne dans `## Décisions techniques`.
 - Plan backend en premier : le plan frontend a besoin de son contrat.
 - Une question que seule une autre personne peut trancher met `status: not-ready` : dis-le et n'avance
   pas.

@@ -64,9 +64,9 @@ updated_at: <AAAA-MM-JJ HH:mm>
 
 ## Parcours
 
-| id | Titre | Validé |
-|---|---|---|
-| p1 | ... | non |
+| id | Titre | Validé | Problème couvert | Candidat e2e |
+|---|---|---|---|---|
+| p1 | ... | non | — | — |
 ```
 
 Le tableau `Tâches` est rempli en phase 2, le tableau `Parcours` en phase 4.

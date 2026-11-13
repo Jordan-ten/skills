@@ -21,7 +21,8 @@ Avant de montrer une tâche, cherche ce qui manque dans ses scénarios :
 - une issue existante du **milestone** qui couvre déjà le cas (seulement si un milestone est noté).
 
 Puis audite les scénarios avec `${CLAUDE_PLUGIN_ROOT}/shared/scenario-findings.md` (structure, accord avec
-le code, couverture, design) et son format de question. La source est l'analyse du pitch : un scénario du
+le code, couverture, design) et son format de question. Cet audit inclut le style déclaratif du `When`, la
+sobriété (fusion des scénarios qui disent la même chose) et le mode de vérification. La source est l'analyse du pitch : un scénario du
 pitch n'a ni How to test, ni flag, ni `Open questions` d'issue.
 
 ## Contraintes
@@ -35,6 +36,15 @@ pitch n'a ni How to test, ni flag, ni `Open questions` d'issue.
   Une question dont le code connaît la réponse ne se pose pas.
 - Écris chaque changement dans `<slug>.analysis.md` (section `Scenarios`) tout de suite : observable,
   GIVEN / WHEN / THEN, vrais noms et vraies valeurs, au moins un `Nominal case`.
+- **Origine.** Avant de clore une tâche, vérifie la ligne `ORIGIN` de chaque scénario : `pitch` seulement
+  si le texte du pitch dit ce comportement, sinon `deduced`. Un scénario que l'utilisateur ajoute ou
+  change pendant le grill et que le pitch ne dit pas devient `deduced`. Montre l'origine dans la liste de
+  la tâche. Les scénarios `deduced` seront signalés au PM dans l'issue (phase 5).
+- **Mode de vérification.** Avant de clore une tâche, donne un mode à chaque scénario (`e2e`, `unit` ou
+  `manual`, tableau de `shared/scenario-findings.md`) et écris-le dans l'analyse, sur une ligne
+  `CHECK <mode>` sous le `THEN`. Montre les modes dans la liste de la tâche, avec ta recommandation
+  (`e2e` par défaut). Un seul changement de mode à la fois ne demande pas de question : l'utilisateur le
+  dit en validant la tâche.
 - Clos chaque tâche avec une `AskUserQuestion` : `Valider la tâche` / `Changer quelque chose` / `Hors
   périmètre`. `Hors périmètre` demande une ligne de raison, écrite dans `Decisions` de l'analyse.
   Mets à jour la ligne de la tâche dans le fichier d'état (`oui` ou `hors périmètre`).
@@ -61,6 +71,8 @@ l'utilisateur dit stop. Sans trouvaille, ne pose aucune question.
 - [ ] Chaque tâche du fichier d'état est `oui` ou `hors périmètre`. Chaque `hors périmètre` a une raison dans
       `Decisions`.
 - [ ] Chaque tâche `oui` a au moins un `Nominal case` dans l'analyse, et plus aucune trouvaille ouverte.
+- [ ] Chaque scénario d'une tâche `oui` a une ligne `CHECK <mode>` et une ligne `ORIGIN <pitch | deduced>`
+      dans l'analyse.
 - [ ] Chaque décision de l'utilisateur (scénario changé, `hors périmètre`, raison) est écrite dans l'analyse
       ou le fichier d'état : rien ne reste seulement dans la conversation.
 - [ ] Avec 6 tâches `oui` ou plus : la relecture d'ensemble est faite, ou l'utilisateur l'a refusée.

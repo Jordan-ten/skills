@@ -14,7 +14,11 @@ Contraintes :
 - **Parcours** : vérifie pour chacun que
   - chaque numéro de tâche d'une étape existe et n'est pas `hors périmètre` ;
   - le résultat d'une étape alimente la situation de la suivante ;
-  - les rôles sont ceux des tâches citées.
+  - les rôles sont ceux des tâches citées ;
+  - le parcours est **relié à la phrase « Problem »** de l'analyse : dis quelle partie du problème il
+    prouve résolue, en une ligne. Un parcours qu'on ne peut relier à rien est une trouvaille : demande si
+    on le garde. Marque aussi un parcours de bout en bout `candidat e2e` quand un seul test e2e peut le
+    parcourir (propose, l'utilisateur tranche).
 
   Corrige avec l'utilisateur jusqu'à un « ok » explicite, puis mets `Validé : oui` dans le fichier d'état.
   Quand tous sont validés, liste les tâches `Must` dans aucun parcours : l'utilisateur décide pour chacune
@@ -33,6 +37,8 @@ Contraintes :
       même lot), sauf les tâches écartées par le MoSCoW ou `hors périmètre`.
 - [ ] Le nombre de scénarios par tâche est le même dans l'analyse et dans `overview.json`.
 - [ ] Chaque parcours est validé, et chaque étape renvoie à des tâches existantes.
+- [ ] Chaque parcours validé a une ligne `Problème couvert` dans le fichier d'état (ou la décision de le
+      garder sans lien), et un parcours `candidat e2e` est marqué comme tel.
 - [ ] Chaque tâche `Must` dans aucun parcours a une décision explicite.
 - [ ] La page est publiée (lien dans `artifactUrl`), ou l'utilisateur a refusé de publier.
 - [ ] Le tableau `Parcours` du fichier d'état est rempli, et chaque décision de l'utilisateur (parcours

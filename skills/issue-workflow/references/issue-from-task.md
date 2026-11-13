@@ -15,9 +15,24 @@ pas de noms de code). Ce fichier dit seulement quoi lui donner.
 | `Out of scope:` | Le « Out of scope » de l'analyse qui concerne la tâche, et les décisions `hors périmètre` voisines. |
 | Parcours utilisateur jusqu'au cas nominal | `where` de la tâche (l'écran) et le scénario nominal. |
 | Scénarios | Tous les scénarios de la tâche, un par bloc : `Nominal case`, `Edge case`, `Error case`. Chaque tag de la tâche (`limite`, `confirmer`, …) donne le type du scénario. Sans tag, un scénario après le premier est un `Edge case`. |
-| How to test | Un groupe par scénario important (le nominal, et les cas à vrai risque). Seulement ce qu'un utilisateur peut faire à la main. |
+| How to test | Un groupe par scénario de mode `manual`, et par scénario important (le nominal, les cas à vrai risque). Seulement ce qu'un utilisateur peut faire à la main. |
+| Technical notes | Une ligne par scénario de mode `e2e` ou `unit` : `Automated test: e2e — <titre du scénario>` (ou `unit`). Elle vient de la ligne `CHECK` de l'analyse. |
 | Lien design | S'il existe dans l'analyse ou le pitch : ligne `Design: <url>` dans le contexte. |
 | Source | L'URL Notion du pitch (`source_url` de la capture), pour la traçabilité. |
+
+## Flag PO sur les scénarios déduits
+
+Un scénario dont la ligne `ORIGIN` vaut `deduced` reçoit deux lignes juste sous son titre en gras, avant
+le bloc `gherkin` (même forme que le flag de `feature-implementation-workflow`) :
+
+```markdown
+**Edge case: a user without the right**
+<!-- issue-workflow: deduced YYYY-MM-DD -->
+_Deduced from the code, not stated in the pitch. To review by the PO._
+```
+
+Un scénario `ORIGIN pitch` n'a pas de flag. Le titre ne change jamais. Ne pose ni ne retire jamais le
+label `scenarios-approved`. Dans le rapport de la phase 5, dis combien de scénarios sont flaggés.
 
 ## Règles
 

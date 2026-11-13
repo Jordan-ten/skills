@@ -35,7 +35,10 @@ au body de l'issue.
 Ajoute ces deux vérifications, propres à une issue :
 
 - **Synchro.** Chaque groupe `How to test` vient d'un scénario, et chaque scénario important a un
-  groupe. `Reproduction steps` mène au cas nominal.
+  groupe ou une ligne `Automated test:`. `Reproduction steps` mène au cas nominal.
+- **Mode de vérification.** Chaque scénario a un mode : un groupe `How to test` (`manual`) ou une ligne
+  `Automated test: <e2e | unit> — <titre>` dans `### Technical notes`. Un scénario sans mode est une
+  trouvaille : recommande un mode (tableau de `shared/scenario-findings.md`).
 - **Points ouverts.** Les marques `<to confirm>` et les `Open questions` de l'issue. Chacun est une
   trouvaille.
 
@@ -57,8 +60,8 @@ stocke et vérifie qu'il est là.
 - Nouveau scénario : titre en gras avec le bon préfixe, puis le flag (ci-dessous), puis un bloc
   `gherkin`, dans le `<details>` replié. Garde la ligne vide après `</summary>` et avant `</details>`.
 - Nouveau groupe `How to test` seulement quand un utilisateur peut faire la vérification à la main.
-  Sinon écris `Automated test: ...` dans `### Technical notes`. Le groupe a le même flag machine, juste
-  sous son titre `###`.
+  Sinon écris `Automated test: <e2e | unit> — <titre du scénario>` dans `### Technical notes`. Le groupe
+  a le même flag machine, juste sous son titre `###`.
 - Un scénario modifié modifie son groupe. Scénarios et How to test restent synchronisés.
 - Issue raffinée : écris dans `## Test scenarios` avec le même style que la section.
 - Montre le diff du body avant d'écrire.
@@ -82,7 +85,12 @@ _Added during planning. To review by the PO._
 - Un scénario déjà existant garde son texte et n'a pas de flag. Un scénario que l'utilisateur modifie
   pendant le grill garde son texte avec la modification, et reçoit aussi le flag.
 
+Une issue créée depuis un pitch peut avoir des scénarios flaggés `<!-- issue-workflow: deduced ... -->`
+(déduits du code, pas dans le pitch). Traite-les comme des scénarios flaggés : ne les réécris pas sans
+demander à l'utilisateur.
+
 ### Label d'approbation
 
-Quand l'issue a le label `scenarios-approved`, l'approbation du PO ne couvre pas les scénarios ajoutés.
+Quand l'issue a le label `scenarios-approved`, l'approbation du PO ne couvre pas les scénarios ajoutés,
+ni les scénarios flaggés `deduced` que le PO n'a pas encore relus.
 Dis-le à la fin du run. Ne retire et n'ajoute jamais un label.
