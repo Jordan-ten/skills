@@ -1,7 +1,7 @@
 # Template de plan
 
 Le plan définit l'implémentation d'un package. Il vise un résultat observable : chaque étape existe
-pour le prouver. Ce template sert `write-implementation-plan` seul et la phase 2 de
+pour le prouver. Ce template sert `write-implementation-plan` seul et la phase « Plans » de
 `feature-implementation-workflow`. Les parties propres au workflow sont marquées **(workflow)**.
 
 Langue : le plan est écrit en **français**. Les identifiants de code, chemins et commandes restent tels
@@ -94,7 +94,7 @@ aucune
 
 Utilise les titres de section exactement tels qu'ils sont écrits ici, sans la mention entre parenthèses
 (`## Design`, pas `## Design (frontend seulement)`) : les contrôles les cherchent par leur nom. La section
-`## Pull requests` n'existe pas à ce stade : la phase 2 du workflow l'ajoute après les étapes (voir plus bas).
+`## Pull requests` n'existe pas à ce stade : la phase de plan du workflow l'ajoute après les étapes (voir plus bas).
 
 ### En-tête (workflow)
 
@@ -104,7 +104,7 @@ Avec une issue, l'en-tête devient :
 ---
 issue: <numéro>
 issue_url: <url>
-issue_updated_at: <updatedAt de l'issue après la phase 1>
+issue_updated_at: <updatedAt de l'issue à la lecture>
 package: backend | frontend
 sibling_plan: <chemin de l'autre plan, relatif à ce fichier, ou none>
 phase: plan | implement | verify | ship | done   # prochaine phase à lancer, dans cet ordre
@@ -121,7 +121,7 @@ generated_at: <AAAA-MM-JJ HH:mm>
 - **Résultat attendu** : un critère est observable ou il est réécrit. « Le code est propre » n'est pas
   un critère. « Un utilisateur sans le droit reçoit une erreur » en est un.
 - **Étapes** : nomme les fichiers que l'étape crée ou modifie (chemins), pas le code. On peut ainsi
-  compter les fichiers du plan sans deviner (la phase 2 du workflow s'en sert pour découper en PR).
+  compter les fichiers du plan sans deviner (la phase de plan du workflow s'en sert pour découper en PR).
   Chaque étape liste les critères qu'elle sert. Une étape qui ne sert aucun critère est supprimée ou justifiée en une ligne.
   - **Tranche verticale d'abord.** La tranche 1 traverse toutes les couches utiles avec le minimum de
     comportement, jusqu'à un test de bout en bout qui passe. Ensuite, seulement, les cas limites et
@@ -140,7 +140,7 @@ generated_at: <AAAA-MM-JJ HH:mm>
 - **Questions non résolues** : `aucune`, ou une liste avec un responsable pour chacune. Avec une
   question, `status` vaut `not-ready`.
 
-## Pull requests (workflow, phase 2)
+## Pull requests (workflow, phase de plan)
 
 Ajouté à chaque plan une fois les étapes écrites, avant la validation et avant `## Questions non résolues`. Le plan fixe le
 découpage en PR, pas l'ordre ni le contenu des commits :
@@ -154,7 +154,7 @@ découpage en PR, pas l'ordre ni le contenu des commits :
 | 2 | `feature/<issue>/<layer-slug>` | ... | 3 | 9 | 1 | en cours : étape 3 (e4f5a6b) |
 ```
 
-`Avancement` vaut `—` à l'écriture du tableau. La phase 3 le met à jour après chaque commit : `en cours : étapes
+`Avancement` vaut `—` à l'écriture du tableau. La phase « Implémenter » le met à jour après chaque commit : `en cours : étapes
 <liste> (<sha>)`, puis `faite (<sha>)`. Une reprise lit cette colonne et la confirme avec `git log`.
 
 Une seule PR : une seule ligne. Une PR peut contenir les étapes des deux packages : la ligne de PR est

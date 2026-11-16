@@ -6,7 +6,7 @@ description: >
   phases, chacune avec des conditions de sortie à prouver avant la suivante : reproduire le bug en
   local (serveur dev, ou e2e rouge), écrire le diagnostic et le plan du correctif, implémenter (un
   sous-agent par pull request, test de non-régression rouge avant le correctif), relire avec
-  /code-review et vérifier (le bug a disparu, mêmes étapes qu'avant), puis pousser. La session
+  /code-review et vérifier (test de non-régression et e2e verts ; la QA dans l'UI se lance à part), puis pousser. La session
   principale reste légère : le travail lourd tourne dans des sous-agents. Reprenable : relancer la
   commande sur la même issue continue là où on s'est arrêté. Ne jamais déclencher depuis une demande en
   langage naturel.
@@ -22,8 +22,8 @@ continuer.
 
 - **L'issue est la source de vérité** du symptôme : ce qui est observé, ce qui est attendu, comment
   l'atteindre. La phase 1 y ajoute un scénario de non-régression.
-- **Un bug n'est corrigé que s'il a été reproduit.** La reproduction est la preuve « avant » ; la phase 4
-  rejoue les mêmes étapes pour la preuve « après ».
+- **Un bug n'est corrigé que s'il a été reproduit.** La reproduction est la preuve « avant » ; le test de
+  non-régression, vert en phase 4, est la preuve « après ». Le rejeu dans l'UI est fait par `qa-workflow`.
 - **Un plan est la définition du correctif** d'un package : cause, étapes, tests. Il ne recopie jamais le
   comportement. Il renvoie au scénario par son titre.
 - **Les fichiers portent l'état**, jamais la conversation (voir « Fichiers du run »).
@@ -56,7 +56,7 @@ avant. Les conditions de sortie sont dans ce fichier, et nulle part ailleurs.
 | 1 | Reproduire | Le bug est vu en local, avec la preuve « avant », et le scénario de non-régression est dans l'issue. | session principale | `1-reproduce.md` |
 | 2 | Diagnostic et plan | La cause est prouvée. Un plan de correctif minimal, sans question ouverte, validé. | session principale | `2-plan.md` |
 | 3 | Implémenter | Test de non-régression rouge, puis correctif, tests et commits atomiques, tout vert. | **un sous-agent par PR** | `3-implement.md` |
-| 4 | Relire et vérifier | `/code-review high`, puis e2e, puis les étapes de la phase 1 rejouées : le bug a disparu. | relecture : principale ; tests : **un sous-agent** | `4-verify.md` |
+| 4 | Relire et vérifier | `/code-review medium` (un tour), puis les e2e : le test de non-régression est vert. | relecture : principale ; corrections et e2e : **un seul sous-agent** | `4-verify.md` |
 | 5 | Livrer | Branches poussées, PR ouvertes, après un oui. | session principale | `5-ship.md` |
 
 **Voie rapide** (phases 2 et 3) : quand le bug s'est reproduit du premier coup, que la cause est évidente et le correctif petit (l'agent
@@ -65,7 +65,7 @@ phase 3 tourne dans la session principale, sans sous-agent. Conditions et effets
 `2-plan.md`. Les phases 1, 4 et 5 ne changent pas.
 
 Fichiers partagés avec `feature-implementation-workflow` (ne les recopie pas) :
-`../feature-implementation-workflow/references/subagent.md` (phases 3 et 4),
+`../feature-implementation-workflow/references/subagent.md` (phases implémenter et vérifier),
 `../feature-implementation-workflow/references/scenario-audit.md` (section « Écrire dans l'issue »),
 `../write-implementation-plan/references/plan-template.md` (template des plans).
 
@@ -73,10 +73,12 @@ Fichiers partagés avec `feature-implementation-workflow` (ne les recopie pas) :
 
 À la fin d'une phase :
 
-1. Affiche les conditions de sortie du fichier de la phase sous forme de liste. Chaque ligne : ✅ ou ❌,
-   et la preuve en quelques mots (commande et résultat, ou fichier et section). Une condition sans
-   preuve est ❌. Ce qui se vérifie en une commande (`git status --short`, `git log`, `gh issue view`),
-   vérifie-le toi-même au lieu de croire un rapport.
+1. Vérifie chaque condition de sortie du fichier de la phase. Une condition sans preuve est ❌. Ce qui se
+   vérifie en une commande (`git status --short`, `git log`, `gh issue view`), vérifie-le toi-même au lieu
+   de croire un rapport.
+   Affichage court : **une ligne** `✅ <n>/<n> conditions` avec les preuves clés en une phrase. Détaille
+   ligne par ligne (✅ ou ❌, preuve en quelques mots) seulement pour les ❌, ou si l'utilisateur le
+   demande. Exception : les listes que la phase exige d'afficher (e2e impactés, nombre de fichiers, etc.).
 2. Tout est ✅ : sauvegarde d'abord l'état (`phase:` dans les plans, issue déjà écrite, fichier de run).
    Puis pose une seule `AskUserQuestion` avec les options de « Passage de phase et `/clear` » de
    `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`.
@@ -102,8 +104,7 @@ logs ni de sorties de tests.
 - **Serveurs.** Seule la session principale démarre et arrête les environnements (skill `launch`). Les
   sous-agents les utilisent.
 - **`/clear`.** Tout l'état est dans les fichiers : à chaque passage, `/clear` puis la même commande
-  reprend sans perte. Règles : `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`. Recommande `Clear` après les phases 2 et 3, et quand `/context`
-  dépasse environ la moitié.
+  reprend sans perte. Règles : `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`. Recommande `Clear` à chaque passage de phase.
 
 ## Fichiers du run
 
@@ -156,7 +157,7 @@ Propre à ce workflow :
 - Une seule question à la fois avec `AskUserQuestion`. La réponse recommandée est la première option.
 - Les actions vers l'extérieur (push, pull request, modification de l'issue) n'ont lieu qu'après un oui
   donné dans cette phase.
-- Réutilise l'existant. Appelle `launch`, `create-local-data`, `run-qa-scenarios`, `code-review`,
+- Réutilise l'existant. Appelle `launch`, `create-local-data`, `code-review`,
   `tnx-dev-mcp-local-dev` et `hotfix` avec l'outil `Skill`. Les skills en slash uniquement (`stack`,
   `write-implementation-plan`) ne peuvent pas être appelés : lis leur `SKILL.md` et suis la sous-commande
   ou les étapes. Ne recopie pas leurs règles ici.

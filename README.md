@@ -71,11 +71,12 @@ From a PM pitch to GitHub issues. Command: `/jcontent-traace:issue-workflow <pit
 
 From a GitHub issue to pull requests. Command: `/jcontent-traace:feature-implementation-workflow <issue URL or number>`.
 
-1. **Refine the issue**: fix the scenarios in the issue.
-2. **Plans and split**: one plan per package (backend, frontend), and the pull requests, validated together.
-3. **Implement**: code and tests, one sub-agent per pull request, atomic commits. The main session stays light.
-4. **Review and verify**: `/code-review high`, then the end-to-end tests and each scenario checked in the UI.
-5. **Ship**: push and open the pull requests, after your yes.
+The issue must already be refined (see `issue-workflow`). The workflow never edits it. QA in the UI is a separate step: `qa-workflow`.
+
+1. **Plans and split**: one plan per package (backend, frontend), and the pull requests, validated together.
+2. **Implement**: code and tests, one sub-agent per pull request, atomic commits. The main session stays light.
+3. **Review and verify**: one `/code-review medium` pass per pull request, then the end-to-end tests.
+4. **Ship**: push and open the pull requests, after your yes.
 
 ### `bug-fix-workflow`
 
@@ -84,7 +85,7 @@ From a GitHub bug issue to a pull request. Command: `/jcontent-traace:bug-fix-wo
 1. **Reproduce**: see the bug in the local app (dev server, or a failing end-to-end test). Add a regression scenario to the issue.
 2. **Diagnosis and plan**: prove the root cause, then write a minimal fix plan.
 3. **Implement**: regression test red, then the fix, atomic commits, one sub-agent per pull request.
-4. **Review and verify**: `/code-review high`, the end-to-end tests, then the reproduction steps replayed: the bug is gone.
+4. **Review and verify**: one `/code-review medium` pass per pull request, then the end-to-end tests. The regression test is green. QA in the UI is a separate step: `qa-workflow`.
 5. **Ship**: push and open the pull request, after your yes. Offers a hotfix.
 
 ### `review-workflow`
@@ -132,8 +133,8 @@ The Chrome profile is `.claude/chrome-profile/`, relative to the folder where Cl
 | Skill | What it does | Slash-only |
 |---|---|---|
 | `rebase` | Rebases the current branch on a target branch (default `main`). Fixes generated-file conflicts, applies migrations, regenerates the GraphQL schema and SDK types, checks types, runs related tests, then force-pushes. | no |
-| `feature-implementation-workflow` | Takes a feature from its GitHub issue to pull requests in five phases, with exit conditions: refine the issue scenarios, write one plan per package and split into PRs, implement (one sub-agent per PR, so the main context stays small), review with `/code-review high` and verify (tests of the change, end to end in the UI), push. State lives in files, so `/clear` and the same command resume. Resumable. | yes |
-| `bug-fix-workflow` | Takes a bug from its GitHub issue to a pull request in five phases, with exit conditions: reproduce it locally (dev server or red e2e) and add a regression scenario to the issue, prove the root cause and write a minimal fix plan, implement (regression test red before the fix, one sub-agent per PR), review with `/code-review high` and replay the reproduction to prove the bug is gone, push and offer a hotfix. State lives in files, so `/clear` and the same command resume. Shares sub-agent rules and plan template with `feature-implementation-workflow`. | yes |
+| `feature-implementation-workflow` | Takes a feature from its GitHub issue to pull requests in four phases, with exit conditions, from an issue that is already refined: write one plan per package and split into PRs, implement (one sub-agent per PR, so the main context stays small), review with `/code-review medium` (one pass) and run the e2e tests of the change, push. QA in the UI is separate (`qa-workflow`). State lives in files, so `/clear` and the same command resume. Resumable. | yes |
+| `bug-fix-workflow` | Takes a bug from its GitHub issue to a pull request in five phases, with exit conditions: reproduce it locally (dev server or red e2e) and add a regression scenario to the issue, prove the root cause and write a minimal fix plan, implement (regression test red before the fix, one sub-agent per PR), review with `/code-review medium` (one pass) and run the e2e tests (regression test green), push and offer a hotfix. QA in the UI is separate (`qa-workflow`). State lives in files, so `/clear` and the same command resume. Shares sub-agent rules and plan template with `feature-implementation-workflow`. | yes |
 | `write-implementation-plan` | Writes the plan of one package (backend or frontend) from an issue or a free description. Defines observable success criteria, explores the code first, plans a vertical slice first, gives a proof for each step, adds a pre-mortem, and checks the plan is consistent. Writes no code. Phase 2 of `feature-implementation-workflow` is built on it. | yes |
 | `stack` | Splits a validated plan into a stack of pull requests, one per layer. Then manages the stack: status, review fixes, rebase, sync. | no |
 | `create-local-data` | Creates records in the local app through the GraphQL API with an offline-auth token. Used to see a screen, reproduce a bug, or prepare a demo. | no |

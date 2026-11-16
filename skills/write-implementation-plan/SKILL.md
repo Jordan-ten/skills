@@ -23,7 +23,7 @@ Un plan qui atteint le résultat voulu, pas seulement un plan qui liste des éta
 - un lecteur sait quoi construire et où, sans deviner.
 
 Le plan suit `references/plan-template.md` (structure, règles du contenu, contrôle de cohérence). Ce
-template sert aussi la phase 2 de `feature-implementation-workflow` : ses parties sont marquées
+template sert aussi la phase « Plans » de `feature-implementation-workflow` : ses parties sont marquées
 **(workflow)**.
 
 ## Contraintes

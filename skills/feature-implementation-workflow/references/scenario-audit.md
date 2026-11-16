@@ -2,6 +2,9 @@
 
 Les scénarios sont ce que l'agent vérifie le plus. Tout le reste de l'issue est du contexte.
 
+Le workflow feature n'utilise que « Lire l'issue » : l'issue arrive déjà raffinée. « Trouvailles » et
+« Écrire dans l'issue » servent `bug-fix-workflow` (scénario de non-régression).
+
 Langues : les trouvailles, les questions et le verdict sont en français. Ce qui est écrit dans l'issue
 (scénarios, How to test, `Out of scope:`, `Design:`, flag) est en anglais simple.
 

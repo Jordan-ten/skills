@@ -1,15 +1,15 @@
-# Phase 5 — Livrer
+# Phase 4 — Livrer
 
 But : les branches sont poussées et les pull requests ouvertes, après un oui clair de l'utilisateur.
 
 ## Contraintes
 
 - **Base saine.** Tout est commité, `git status` est propre (les fichiers de plan ne sont pas commités), et
-  les commits n'ont pas changé depuis le dernier passage de la phase 4. Sinon, retourne à la phase 4.
-- **Résumé avant le oui.** Montre : le tableau de vérification de la phase 4 (scénario | tests | verdict
-  UI), les commits et les branches à pousser, les pull requests à ouvrir (le titre de chacune), et les
-  avertissements (label `scenarios-approved` avec des scénarios ajoutés ; un scénario `needs a human`
-  répondu par l'utilisateur). Demande ensuite s'il faut pousser et ouvrir, pousser seulement, ou arrêter.
+  les commits n'ont pas changé depuis le dernier passage de la phase 3. Sinon, retourne à la phase 3.
+- **Résumé avant le oui.** Montre : le rapport de la phase 3 (e2e lancés et résultats, trouvailles de
+  relecture refusées), les commits et les branches à pousser, les pull requests à ouvrir (le titre de
+  chacune). Rappelle que la QA des scénarios se lance à part, avec `qa-workflow`. Demande ensuite s'il
+  faut pousser et ouvrir, pousser seulement, ou arrêter.
 - **Rien vers l'extérieur sans oui** donné dans cette phase. Ne force jamais le push. Ne change jamais les
   labels, le milestone, les assignés : dis à l'utilisateur d'assigner un reviewer.
 - **Format.** Une seule PR (une ligne dans `## Pull requests`) : `tnx-dev-standards-dev-and-git-workflow`

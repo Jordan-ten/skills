@@ -51,7 +51,7 @@ Le template de plan s'applique avec ces adaptations pour un bug :
 ## Contraintes : découpage
 
 Un correctif tient presque toujours en **une seule PR**. Applique la règle de taille de
-`feature-implementation-workflow` (`../feature-implementation-workflow/references/phases/2-plan.md`,
+`feature-implementation-workflow` (`../feature-implementation-workflow/references/phases/1-plan.md`,
 « Contraintes : découpage ») seulement au-dessus de 30 fichiers relus. Écris `## Pull requests` (une ligne)
 avec la colonne `Avancement` à `—`. Branche : `bugfix/<issue>/<slug>`, ou la branche de travail déjà
 dédiée à l'issue.

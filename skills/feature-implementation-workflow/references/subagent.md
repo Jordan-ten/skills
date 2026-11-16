@@ -1,4 +1,4 @@
-# Sous-agents (phases 3 et 4)
+# Sous-agents (phases « Implémenter » et « Relire et vérifier »)
 
 But : le travail lourd tourne hors de la session principale. Le sous-agent lit les fichiers, fait le
 travail et renvoie un rapport court. La session principale ne garde que le rapport.
@@ -12,10 +12,10 @@ Seulement des chemins et des numéros. Ne colle ni l'issue, ni le plan : le sous
 
 - Le numéro et l'URL de l'issue.
 - Le chemin du plan du package, et celui du plan de l'autre package.
-- La PR à faire : son numéro dans `## Pull requests`, sa branche, ses étapes (phase 3), ou la liste des
-  PR à vérifier (phase 4).
-- Le chemin absolu du fichier de phase à lire et à appliquer (`references/phases/3-implement.md` ou
-  `4-verify.md`).
+- La PR à faire : son numéro dans `## Pull requests`, sa branche, ses étapes (implémenter), ou la liste des
+  PR à vérifier (vérifier).
+- Le chemin absolu du fichier de phase à lire et à appliquer : `implement` ou `verify` dans
+  `references/phases/` du workflow en cours (feature ou bug).
 - Les environnements qui tournent (`test` port 3007, `dev`), démarrés par la session principale.
 - Les règles dures : ne pousse pas, n'écris rien sur GitHub, ne démarre ni n'arrête aucun serveur, ne pose
   aucune question à l'utilisateur.
@@ -25,7 +25,7 @@ Seulement des chemins et des numéros. Ne colle ni l'issue, ni le plan : le sous
 
 - Lis le fichier de phase, le plan, l'issue et le style de code du package. Applique-les.
 - Redirige toute sortie longue dans un fichier du scratchpad et lis la fin (`tail`) ou un `grep`.
-- Phase 3 : après chaque commit, mets à jour la colonne `Avancement` de la PR dans le plan.
+- Implémenter : après chaque commit, mets à jour la colonne `Avancement` de la PR dans le plan.
 - Arrête-toi et rapporte, sans deviner, quand : une décision revient à l'utilisateur ; le même échec
   revient 3 fois ; un serveur ou un outil n'est pas disponible ; le plan et le code se contredisent.
 

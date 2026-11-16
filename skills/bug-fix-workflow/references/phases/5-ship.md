@@ -7,9 +7,9 @@ But : les branches sont poussées et les pull requests ouvertes, après un oui c
 - **Base saine.** Tout est commité, `git status` est propre (les fichiers de plan et de notes ne sont pas
   commités), et les commits n'ont pas changé depuis le dernier passage de la phase 4. Sinon, retourne à la
   phase 4.
-- **Résumé avant le oui.** Montre : le tableau avant/après de la phase 4, la cause en une ligne, les
+- **Résumé avant le oui.** Montre : le rapport de la phase 4 (test de non-régression et e2e lancés, résultats), la cause en une ligne, les
   commits et les branches à pousser, les pull requests à ouvrir (le titre de chacune), et les
-  avertissements (un scénario `needs a human` répondu par l'utilisateur ; des données déjà touchées sans
+  avertissements (la QA dans l'UI se lance à part, avec `qa-workflow` ; des données déjà touchées sans
   réparation ; un défaut voisin laissé en `Hors périmètre`). Demande ensuite s'il faut pousser et ouvrir,
   pousser seulement, ou arrêter.
 - **Rien vers l'extérieur sans oui** donné dans cette phase. Ne force jamais le push. Ne change jamais les

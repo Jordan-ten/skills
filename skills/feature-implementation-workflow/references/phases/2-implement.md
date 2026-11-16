@@ -1,4 +1,4 @@
-# Phase 3 — Implémenter
+# Phase 2 — Implémenter
 
 But : le code et les tests de chaque pull request du tableau `## Pull requests` des plans, verts et
 commités en une pile de commits atomiques que le reviewer lit facilement. Plan backend d'abord, puis plan
@@ -7,11 +7,25 @@ frontend.
 Cette phase est la plus lourde : elle tourne dans **un sous-agent par PR** (`references/subagent.md`). La
 session principale prépare, délègue, vérifie et passe à la PR suivante.
 
+## Voie rapide
+
+Tu tranches, pas l'utilisateur. Si le tableau `## Pull requests` n'a **qu'une seule PR** et que la PR est
+petite, la session principale fait elle-même les contraintes ci-dessous, sans sous-agent (il relirait
+l'issue, le plan et le style de code pour rien), et garde ses sorties dans des fichiers du scratchpad
+(`tail`, `grep`). Les conditions de sortie sont les mêmes.
+
+- **Petite = environ 10 fichiers relus.** C'est un repère approximatif, pas une limite. Compte les fichiers
+  que quelqu'un relit (code, tests, migration, sources i18n) et ignore tous les fichiers générés
+  (`schema.gql`, `sdk/generated/`, `frontend/src/gql/`, `i18n-types.ts`...), comme en phase 1.
+- Un peu au-dessus, avec une PR simple et répétitive : voie rapide possible. Très au-dessus, ou une PR
+  complexe : sous-agent.
+- Annonce ton choix en une ligne avec le chiffre. Un doute : sous-agent.
+
 ## Session principale
 
 1. **Environnements.** Démarre avec le skill `launch` : `test` quand une PR a des tests d'intégration, une
    migration ou un e2e ; `dev` quand le schéma GraphQL, la spec OpenAPI ou le codegen du frontend changent
-   (la génération a besoin de `dev`). Laisse-les tourner : la phase 4 les réutilise. Note les PID.
+   (la génération a besoin de `dev`). Laisse-les tourner : la phase 3 les réutilise. Note les PID.
 2. **Branches.** Demande une fois l'accord pour créer les branches du tableau. Suis
    `tnx-dev-standards-dev-and-git-workflow`. Plusieurs PR : étape 4 de `split` dans `../stack/SKILL.md`,
    une branche par ligne de `## Pull requests`. Une seule PR : une seule branche pour tous les commits,
@@ -52,7 +66,7 @@ session principale prépare, délègue, vérifie et passe à la PR suivante.
 - **Preuves.** Joue la preuve de chaque étape du plan quand l'étape est faite, base de données comprise.
 - **Premier retour de bout en bout.** Dès que le code de la tranche 1 du plan backend est commité, lance
   l'e2e qui prouve le critère principal (serveur `test`, port 3007), seul. Un e2e rouge ici coûte un
-  commit, pas un retour en arrière en phase 4. Les autres e2e et les e2e frontend attendent la phase 4.
+  commit, pas un retour en arrière en phase 3. Les autres e2e et les e2e frontend attendent la phase 3.
   Jamais la suite complète.
 - **Code généré, à chaque commit qui le change.** Régénère ce que le commit exige, avec les commandes des
   `AGENTS.md` : schéma GraphQL (une seule fois, après tous les changements GraphQL du commit), types du
@@ -65,7 +79,7 @@ session principale prépare, délègue, vérifie et passe à la PR suivante.
 ## Conditions de sortie
 
 - [ ] Chaque étape du plan est implémentée, et chaque test du tableau de tests qui lui appartient existe
-      (sauf les e2e dont le plan renvoie à la phase 4).
+      (sauf les e2e dont le plan renvoie à la phase 3).
 - [ ] L'e2e de la tranche 1 passe. Montre la commande et le résultat.
 - [ ] Type check, lint et OpenGrep : aucune erreur. Montre la commande et le résultat.
 - [ ] Aucun problème IDE sur les fichiers modifiés.

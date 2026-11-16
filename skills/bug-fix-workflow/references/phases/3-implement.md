@@ -61,7 +61,7 @@ sont les mêmes.
   Une migration n'a jamais de test automatisé : sa preuve est manuelle.
 - **Vert ensuite.** Après le correctif, relance le test de non-régression, seul : il passe. C'est le
   premier retour de bout en bout. Les autres e2e attendent la phase 4. Jamais la suite complète.
-- **Code généré, à chaque commit qui le change.** Même règle que la phase 3 de
+- **Code généré, à chaque commit qui le change.** Même règle que la phase « Implémenter » de
   `feature-implementation-workflow` : régénère avec les commandes des `AGENTS.md` (schéma GraphQL, SDK des
   tests e2e, spec OpenAPI avec `npm run _dev build:openapi:json`, `build:docs-index`, codegen du
   frontend), dans un commit séparé juste après. Ne modifie jamais un fichier généré à la main et ne le lis

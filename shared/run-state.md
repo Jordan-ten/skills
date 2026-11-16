@@ -10,7 +10,7 @@ n'importe quel moment, sans perte. Il ne contient ni comportement, ni plan, ni d
 ## Emplacement
 
 `<racine>/<package>/.claude/plans/<n>.run.md`, à côté des notes du run (`<n>.notes.md`). `<racine>` vient
-de `git rev-parse --show-toplevel`, `<package>` est le dossier où la phase 1 tourne (`backend` ou
+de `git rev-parse --show-toplevel`, `<package>` est le dossier où la première phase tourne (`backend` ou
 `frontend`), `<n>` est le numéro de l'issue. Ce dossier est hors commit : le fichier ne finit jamais dans
 une pull request. Un seul fichier par run, même quand il y a deux packages.
 
@@ -30,7 +30,7 @@ updated_at: <AAAA-MM-JJ HH:mm>
 
 | Phase | Terminée le | Preuve |
 |---|---|---|
-| refine | 2026-11-16 | scénarios validés, issue mise à jour |
+| plan | 2026-11-16 | plans validés, découpage validé |
 
 ## Fichiers
 
@@ -44,7 +44,7 @@ updated_at: <AAAA-MM-JJ HH:mm>
 - <ce qui n'est écrit nulle part ailleurs : décision, question en attente, piège rencontré>
 ```
 
-- `phase` : `refine` (feature) ou `reproduce` (bug), puis `plan`, `implement`, `verify`, `ship`, `done`.
+- `phase` : `reproduce` (bug seulement, première phase), puis `plan`, `implement`, `verify`, `ship`, `done`.
   Mêmes valeurs que le `phase:` des plans à partir de `plan`.
 - `status` : `ready` = la phase n'est pas commencée ; `in-progress` = elle est commencée ;
   `done` = le run est clos.
@@ -55,11 +55,12 @@ updated_at: <AAAA-MM-JJ HH:mm>
 
 ## Quand l'écrire
 
-1. **Création** : en phase 1, dès le premier point d'étape (voir 3).
+1. **Création** : dans la première phase (`reproduce` pour un bug, `plan` pour une feature), dès le
+   premier point d'étape (voir 3).
 2. **Passage de phase** : après le tableau de conditions, tout ✅, **avant** l'`AskUserQuestion`. Mets
    `phase` à la phase suivante, `status: ready`, ajoute la ligne dans `Phases terminées`.
 3. **Pendant une phase longue** : mets à jour `status: in-progress` et `next_action` après chaque décision
-   validée (phases 1 et 2) et après chaque pull request terminée (phase 3).
+   validée (phases de cadrage : `reproduce`, `plan`) et après chaque pull request terminée (`implement`).
 4. **Fin du run** (fin de la phase `ship`) : `phase: done`, `status: done`.
 
 Le fichier de run résume. Les sources restent l'issue, les plans (`phase:`, `Avancement`) et git. En cas de
@@ -69,9 +70,9 @@ désaccord, les sources gagnent : corrige le fichier de run.
 
 La question de passage a ces options, dans cet ordre :
 
-1. `Clear, puis passer à la phase <n+1>` : recommandée après les phases 2 et 3 (les plus lourdes), et
-   dès que la conversation est longue ;
-2. `Passer à la phase <n+1>` : recommandée sinon ;
+1. `Clear, puis passer à la phase <n+1>` : **toujours recommandée** (le fichier de run porte l'état, et un
+   contexte qui grossit se repaie à chaque message) ;
+2. `Passer à la phase <n+1>` : seulement si la phase suivante est très courte et que `/context` est bas ;
 3. `Refaire quelque chose` ;
 4. `Arrêter`.
 
@@ -89,7 +90,7 @@ La commande d'entrée accepte `--phase <nom>` après l'issue (exemple :
    s'il est un package).
 2. **Fichier présent** : lis-le, puis lis l'issue et les plans qu'il pointe. Ne lis rien d'autre pour
    décider de la phase.
-3. **Fichier absent** : déduis la phase comme avant (aucun plan : phase 1 ; sinon la plus petite `phase:`
+3. **Fichier absent** : déduis la phase comme avant (aucun plan : première phase ; sinon la plus petite `phase:`
    des plans), puis crée le fichier de run.
 4. Compare le fichier aux sources (`phase:` des plans, `Avancement`, `git log` de la branche, date de
    l'issue contre `issue_updated_at`). Désaccord : prends la phase la plus ancienne, corrige le fichier et
