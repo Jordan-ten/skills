@@ -15,7 +15,8 @@ Au premier échec, corrige (voir « En cas d'échec »), puis repars de l'étape
 - Pour chaque PR du tableau, dans l'ordre des dépendances : `Skill code-review` avec les arguments `high`
   puis la branche de la PR. Sans `--fix` et sans `--comment`. Vérifie dans la sortie que le diff relu est
   bien celui de la PR (contre sa base).
-- Demande en plus à la relecture : « le correctif traite-t-il la cause du plan, ou seulement le symptôme ? »
+- Toi-même, compare le diff de chaque PR à `## Cause` du plan : le correctif change-t-il la ligne ou la
+  donnée fausse du diagnostic, ou seulement le symptôme ? Réponds oui ou non, avec le `fichier:ligne`.
 - Montre les trouvailles à l'utilisateur en français, numérotées, une ligne chacune. L'utilisateur
   décide de ce qu'on corrige. Une trouvaille refusée est notée dans le rapport de la phase.
 - Les corrections acceptées vont à un sous-agent de la phase 3 (même brief, une liste de trouvailles à la
@@ -25,7 +26,7 @@ Au premier échec, corrige (voir « En cas d'échec »), puis repars de l'étape
 ## Étape 2 — Tests (un sous-agent)
 
 Un sous-agent exécute les e2e et rejoue la reproduction, avec le brief de
-`../../feature-implementation-workflow/references/subagent.md` et les contraintes ci-dessous. Il renvoie
+`../feature-implementation-workflow/references/subagent.md` et les contraintes ci-dessous. Il renvoie
 le tableau de rapport.
 
 - **Serveurs.** La session principale démarre les environnements avec le skill `launch` (`test`,
@@ -42,8 +43,10 @@ le tableau de rapport.
 - **E2E frontend** : seulement quand un plan en liste ou quand le diff impacte des e2e existants. Si
   l'environnement n'est pas prêt (voir le skill `tnx-tests-setup-front-e2e-tests`), arrête-toi et dis-le :
   ne saute jamais cette étape en silence.
-- **Reproduction rejouée.** Reprends **les mêmes étapes et les mêmes données** que les notes du run (phase
-  1), sur le code corrigé : le symptôme n'apparaît plus. `Skill run-qa-scenarios` avec le numéro de l'issue
+- **Reproduction rejouée.** Rejoue **les mêmes actions** que les notes du run (phase 1), sur le code
+  corrigé, avec des données **neuves** créées de la même façon (`create-local-data`) : le symptôme
+  n'apparaît plus. Un enregistrement produit par le code fautif avant le correctif reste abîmé : ne le
+  réutilise pas pour conclure, ni dans un sens ni dans l'autre. `Skill run-qa-scenarios` avec le numéro de l'issue
   joue le scénario de non-régression dans le navigateur. Un bug sans écran se rejoue par l'API ou le job,
   avec la même commande que la phase 1. Un scénario qu'il ne peut pas jouer va à l'utilisateur sous forme
   de checklist avec les étapes exactes, via la session principale, qui attend la réponse.
@@ -58,7 +61,7 @@ le tableau de rapport.
 - [ ] Le test de non-régression passe, et chaque e2e backend créé, modifié ou impacté passe.
 - [ ] Les e2e frontend créés, modifiés ou impactés passent, ou il n'y en a aucun.
 - [ ] La liste des e2e impactés est affichée avec la raison de chacun.
-- [ ] La reproduction rejouée avec les mêmes étapes et les mêmes données ne montre plus le symptôme.
+- [ ] La reproduction rejouée (mêmes actions, données neuves) ne montre plus le symptôme.
 - [ ] Le chemin nominal voisin marche, avec une preuve (snapshot, réponse d'API, test).
 - [ ] Un tableau avant/après est affiché : étape de la reproduction | avant (phase 1) | après. Aucune
       cellule vide. Un scénario `needs a human` ne compte qu'après la réponse `pass` de l'utilisateur.

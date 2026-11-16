@@ -4,7 +4,7 @@ But : le test de non-régression et le correctif de chaque pull request du table
 et commités en commits atomiques que le reviewer lit facilement.
 
 Cette phase tourne dans **un sous-agent par PR**
-(`../../feature-implementation-workflow/references/subagent.md`). La session principale prépare, délègue,
+(`../feature-implementation-workflow/references/subagent.md`). La session principale prépare, délègue,
 vérifie et passe à la PR suivante.
 
 ## Session principale
@@ -14,7 +14,7 @@ vérifie et passe à la PR suivante.
    tourner : la phase 4 les réutilise. Note les PID.
 2. **Branche.** Si la branche courante n'est pas dédiée à l'issue, demande l'accord pour créer celle du
    tableau. Suis `tnx-dev-standards-dev-and-git-workflow`. Plusieurs PR : étape 4 de `split` dans
-   `../../stack/SKILL.md`.
+   `../stack/SKILL.md`.
 3. **Une PR après l'autre**, dans l'ordre des dépendances. Lance un sous-agent avec le brief de
    `subagent.md` et les contraintes ci-dessous. Vérifie son rapport, puis passe à la PR suivante sans
    demander, sauf question dans le rapport.

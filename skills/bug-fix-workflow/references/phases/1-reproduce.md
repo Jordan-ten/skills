@@ -11,12 +11,14 @@ anglais simple.
 - **Lecture.** Lis l'issue avec ses commentaires (`gh issue view <n> --json
   number,title,body,comments,labels,updatedAt,url`) : les décisions tardives et les analyses y vivent
   souvent. Extrais : symptôme observé, comportement
-  attendu, étapes, environnement, données concernées. Arrête-toi avec un message clair quand l'issue n'est
+  attendu, étapes, environnement, données concernées. Si l'issue contient déjà une analyse (cause, approche
+  de correctif), recopie-la dans les notes comme **hypothèse à prouver en phase 2** : ne la crois pas sans
+  preuve, ne la refais pas. Arrête-toi avec un message clair quand l'issue n'est
   pas un bug, ou quand le symptôme ou le comportement attendu manque et que le code ne le dit pas : demande
   à l'utilisateur de compléter l'issue d'abord.
 - **Exploration silencieuse.** Modules, entités, mots déjà utilisés (grep avant d'employer un mot), tests
-  de la zone, `docs/product/<module>/overview.md`. Un agent `Explore` quand la zone est large. Ne cherche
-  pas encore la cause : repère seulement où le symptôme se produit.
+  de la zone, `docs/product/<module>/overview.md`. Un agent `Explore` quand la zone est large. Ne refais pas
+  l'analyse : repère où le symptôme se produit, et où l'hypothèse de l'issue le place.
 - **Choisis le chemin le moins cher qui montre le symptôme exact :**
   1. **e2e** quand le symptôme est une réponse d'API ou un état de données. Écris-le dans l'arbre de travail
      (style : skill `test-patterns`), lance-le sur l'environnement `test`, constate qu'il échoue avec le
@@ -41,7 +43,7 @@ anglais simple.
   attendu vient de l'issue, du code ou de la doc produit ; sinon l'utilisateur tranche.
 - **Écriture dans l'issue.** Le scénario et son groupe How to test sont ajoutés avec le flag, dans le
   format de l'issue (voir « Écrire dans l'issue » dans
-  `../../feature-implementation-workflow/references/scenario-audit.md`). Texte en **anglais simple**.
+  `../feature-implementation-workflow/references/scenario-audit.md`). Texte en **anglais simple**.
   Montre le diff du body et n'écris qu'après l'accord, avec `gh issue edit <n> --body-file <fichier>`
   (fichier du scratchpad).
 - **Notes du run.** Écris `.claude/plans/<n>.notes.md` (voir « Fichiers du run » dans `SKILL.md`) :

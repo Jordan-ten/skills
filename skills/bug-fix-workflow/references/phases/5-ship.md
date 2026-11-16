@@ -17,7 +17,7 @@ But : les branches sont poussées et les pull requests ouvertes, après un oui c
 - **Format.** Une seule PR (le cas normal) : `tnx-dev-standards-dev-and-git-workflow` (branche
   `bugfix/<issue>/<slug>`, message `bugfix(<issue>): ...`, corps de PR : Description / Related Issue / Is
   this covered by automated tests). La description dit la cause et le correctif en quelques puces, et
-  nomme le test de non-régression. Plusieurs PR : étapes 6 et 7 de `split` dans `../../stack/SKILL.md`.
+  nomme le test de non-régression. Plusieurs PR : étapes 6 et 7 de `split` dans `../stack/SKILL.md`.
   Titres et corps en anglais simple.
 - **Hotfix.** Après l'ouverture, demande si le correctif doit aussi aller en demo ou en production. Si oui,
   propose `Skill hotfix` avec la branche. Ne l'appelle qu'après un oui.

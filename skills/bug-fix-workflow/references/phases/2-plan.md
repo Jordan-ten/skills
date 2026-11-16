@@ -4,19 +4,20 @@ But : la cause racine est prouvée, et un plan de correctif minimal la traite, s
 avec le découpage en pull requests. L'utilisateur valide le tout en une seule fois. Les plans sont écrits
 en **français**.
 
-Méthode : `../../write-implementation-plan/SKILL.md` (but, contraintes, conditions de sortie) et son
-template `../../write-implementation-plan/references/plan-template.md`. Applique-les, ne les recopie pas.
+Méthode : `../write-implementation-plan/SKILL.md` (but, contraintes, conditions de sortie) et son
+template `../write-implementation-plan/references/plan-template.md`. Applique-les, ne les recopie pas.
 Le cadrage est déjà fait : le critère est le scénario de non-régression de l'issue.
 
 Pars des notes du run (`.claude/plans/<n>.notes.md`).
 
 ## Diagnostic (avant le plan)
 
-- **Cherche la cause, pas le symptôme.** Pars du point où le symptôme se voit et remonte le chemin du code
+- **Cherche la cause, pas le symptôme.** Pars de l'hypothèse des notes (issue déjà analysée) et vérifie-la :
+  si la preuve la contredit, dis-le. Sinon pars du point où le symptôme se voit et remonte le chemin du code
   jusqu'à la première ligne ou donnée qui est fausse. `git log` et `git blame` de la zone disent si une
   modification récente l'explique.
-- **Prouve-la.** Une preuve qu'on peut rejouer : un log ajouté, une valeur lue au debugger (`mcp__idea__`
-  xdebug), une requête de lecture, un test qui isole la cause. Une hypothèse sans preuve n'est pas une
+- **Prouve-la.** Une preuve qu'on peut rejouer : un log temporaire, une requête de lecture, un test qui isole la
+  cause. Une instrumentation temporaire est permise, jamais commitée, et retirée avant la fin de la phase. Une hypothèse sans preuve n'est pas une
   cause. Après 3 hypothèses réfutées, arrête-toi et demande à l'utilisateur.
 - **Cherche le même défaut ailleurs** (`grep` du même motif, des autres appelants). Chaque occurrence
   trouvée est corrigée dans ce plan, ou nommée dans `## Hors périmètre` avec la raison.
@@ -50,7 +51,7 @@ Le template de plan s'applique avec ces adaptations pour un bug :
 ## Contraintes : découpage
 
 Un correctif tient presque toujours en **une seule PR**. Applique la règle de taille de
-`feature-implementation-workflow` (`../../feature-implementation-workflow/references/phases/2-plan.md`,
+`feature-implementation-workflow` (`../feature-implementation-workflow/references/phases/2-plan.md`,
 « Contraintes : découpage ») seulement au-dessus de 30 fichiers relus. Écris `## Pull requests` (une ligne)
 avec la colonne `Avancement` à `—`. Branche : `bugfix/<issue>/<slug>`, ou la branche de travail déjà
 dédiée à l'issue.
@@ -67,8 +68,9 @@ vraies, preuves à l'appui :
 - aucune migration, aucune réparation de données, aucun changement du schéma GraphQL ou de l'API publique ;
 - aucun doute sur le comportement attendu.
 
-Alors : le plan ne garde que `## Résultat attendu`, `## Cause`, `## Étapes`, `## Tests` et `## Hors
-périmètre`, avec `fast_path: true` dans l'en-tête. Une seule PR. Un doute sur une condition, ou
+Alors : le plan ne garde que `## Résultat attendu`, `## Cause`, `## Étapes`, `## Tests`, `## Pre-mortem` (une
+ligne), `## Hors périmètre`, `## Pull requests` (une ligne, la phase 3 et la reprise s'en servent) et
+`## Questions non résolues`, avec `fast_path: true` dans l'en-tête. Une seule PR. Un doute sur une condition, ou
 une reproduction qui a demandé plusieurs tentatives : plan complet. Annonce ton choix en une ligne, avec les
 preuves des conditions. Ne pose pas de question : l'utilisateur peut le changer à la validation.
 
@@ -80,6 +82,8 @@ seule validation. Mets `phase: implement` dans l'en-tête des plans seulement ap
 ## Conditions de sortie
 
 - [ ] La cause racine est prouvée : la preuve (commande et résultat) est dans `## Cause`.
+- [ ] Aucune instrumentation temporaire ne reste (`git status --short` ne montre que l'e2e de
+      reproduction).
 - [ ] Le même défaut ailleurs a été cherché : chaque occurrence est corrigée ou en `## Hors périmètre`.
 - [ ] `## Données déjà touchées` contient la décision de l'utilisateur, ou `aucune`.
 - [ ] Un plan existe pour chaque package modifié, au bon emplacement, avec l'en-tête du workflow.
