@@ -11,7 +11,7 @@ anglais simple.
   number,title,body,comments,labels,updatedAt,url`) : les décisions tardives y vivent souvent. Analyse le
   body avec `references/scenario-audit.md` (section « Lire l'issue »). Arrête-toi avec un message clair
   quand il n'y a aucun scénario `Nominal case` (dis à l'utilisateur de raffiner l'issue d'abord), ou quand
-  l'issue est un bug (dis-lui d'utiliser le flow d'analyse de bug).
+  l'issue est un bug (dis-lui d'utiliser `/bug-fix-workflow`).
 - **Exploration silencieuse.** Modules, entités, mots déjà utilisés (grep avant d'employer un mot), tests
   de la zone, `docs/product/<module>/overview.md`. Un agent `Explore` quand la zone est large. Garde des
   notes pour l'audit et les plans.
