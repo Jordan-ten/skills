@@ -17,11 +17,12 @@ But : les branches sont poussées et les pull requests ouvertes, après un oui c
   automated tests). Le corps couvre backend et frontend. Plusieurs PR : étapes 6 et 7 de `split` dans
   `../stack/SKILL.md` (`gh stack submit --auto`, puis réécriture des titres et des corps), PR backend
   d'abord. Titres et corps en anglais simple.
-- **Clore le run.** Mets `phase: done` dans les plans et donne les liens des pull requests.
+- **Clore le run.** Mets `phase: done` dans les plans et dans le fichier de run (`status: done`, liens des
+  pull requests dans `Fichiers`), et donne les liens des pull requests.
 
 ## Conditions de sortie
 
 - [ ] L'utilisateur a dit oui au push dans cette phase.
 - [ ] Chaque branche est poussée (`git status -sb` ne montre aucun commit en avance sur son remote).
 - [ ] Chaque pull request est ouverte, son corps suit le format, et son titre et son numéro sont affichés.
-- [ ] `phase: done` est dans les plans.
+- [ ] `phase: done` est dans les plans, et `phase: done`, `status: done` dans le fichier de run.

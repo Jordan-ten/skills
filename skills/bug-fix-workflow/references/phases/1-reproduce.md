@@ -62,3 +62,5 @@ anglais simple.
 - [ ] L'utilisateur a validé le diff avant l'écriture.
 - [ ] Aucun fichier modifié hors e2e de reproduction : `git status --short` le montre, et rien n'est commité.
 - [ ] Les notes du run existent avec tous les éléments ci-dessus.
+- [ ] Le fichier de run existe (`.claude/plans/<n>.run.md`, format de `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`) : `phase: plan`,
+      `status: ready`, la phase `reproduce` dans `Phases terminées`, `next_action` renseignée.

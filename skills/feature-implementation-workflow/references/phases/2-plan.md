@@ -57,6 +57,7 @@ l'utilisateur change le découpage, corrige le tableau dans les plans et relance
       comportement), et chaque pull request passe ses tests seule.
 - [ ] Une pull request frontend n'est jamais sous la pull request backend dont elle dépend.
 - [ ] L'utilisateur a validé les plans et le découpage.
+- [ ] Le fichier de run est à jour : `phase: implement`, `status: ready`, plans et branches dans `Fichiers`.
 
 Au passage, dis que `/clear` puis `/feature-implementation-workflow <issue>` reprend à la phase 3 : les
 plans portent l'état.

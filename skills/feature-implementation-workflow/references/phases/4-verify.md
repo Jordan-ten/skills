@@ -58,7 +58,7 @@ et les contraintes ci-dessous. Il renvoie le tableau de rapport.
 - [ ] Un tableau de rapport est affiché : scénario | tests | verdict UI. Aucune cellule vide.
 - [ ] Les serveurs démarrés pour la phase 3 ou 4 sont arrêtés, après accord de l'utilisateur (les PID sont
       dans la sortie de `launch`).
-- [ ] `phase: ship` est dans les plans.
+- [ ] `phase: ship` est dans les plans et dans le fichier de run.
 
 ## En cas d'échec
 

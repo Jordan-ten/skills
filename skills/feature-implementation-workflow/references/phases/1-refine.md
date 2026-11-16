@@ -47,6 +47,8 @@ anglais simple.
 - [ ] L'utilisateur a validé le diff avant l'écriture.
 - [ ] Les notes du run existent et contiennent toutes les décisions techniques du grill (ou disent qu'il
       n'y en a aucune).
+- [ ] Le fichier de run existe (`.claude/plans/<n>.run.md`, format de `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`) : `phase: plan`,
+      `status: ready`, la phase `refine` dans `Phases terminées`, `next_action` renseignée.
 
 Au passage, si l'issue a le label `scenarios-approved` et que des scénarios ont été ajoutés, dis que le
 PO doit les relire.

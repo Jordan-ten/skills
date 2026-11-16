@@ -23,7 +23,8 @@ But : les branches sont poussées et les pull requests ouvertes, après un oui c
   propose `Skill hotfix` avec la branche. Ne l'appelle qu'après un oui.
 - **Données à réparer.** Si `## Données déjà touchées` demande une réparation (migration déjà dans la PR, ou
   script à lancer par l'équipe), dis-le dans la conclusion : c'est une action à suivre après le déploiement.
-- **Clore le run.** Mets `phase: done` dans les plans et donne les liens des pull requests.
+- **Clore le run.** Mets `phase: done` dans les plans et dans le fichier de run (`status: done`, liens des
+  pull requests dans `Fichiers`), et donne les liens des pull requests.
 
 ## Conditions de sortie
 
@@ -31,4 +32,4 @@ But : les branches sont poussées et les pull requests ouvertes, après un oui c
 - [ ] Chaque branche est poussée (`git status -sb` ne montre aucun commit en avance sur son remote).
 - [ ] Chaque pull request est ouverte, son corps suit le format, et son titre et son numéro sont affichés.
 - [ ] La question du hotfix a été posée, et la réponse est notée.
-- [ ] `phase: done` est dans les plans.
+- [ ] `phase: done` est dans les plans, et `phase: done`, `status: done` dans le fichier de run.

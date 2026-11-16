@@ -55,7 +55,7 @@ pitch ─issue-workflow→ issues ─feature-implementation-workflow→ pull req
 bug issue ─bug-fix-workflow→ pull request ─review-workflow→ review
 ```
 
-`issue-workflow`, `feature-implementation-workflow` and `bug-fix-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, redo, or stop (`issue-workflow` also offers a `/clear` to keep the context small). You can run the same command again to resume.
+`issue-workflow`, `feature-implementation-workflow` and `bug-fix-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, redo, or stop (`issue-workflow` also offers a `/clear` to keep the context small). Each run keeps a run file (`<n>.run.md`, format in `shared/run-state.md`) with the phase and the next action. At the end of a phase, choose `Clear, then continue`: run `/clear`, then the same command resumes where it stopped. Use `--phase <name>` to restart from a given phase.
 
 ### `issue-workflow`
 

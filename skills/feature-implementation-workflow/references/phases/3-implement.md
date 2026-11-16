@@ -21,7 +21,9 @@ session principale prépare, délègue, vérifie et passe à la PR suivante.
    passe à la PR suivante sans demander à l'utilisateur, sauf question dans le rapport.
 4. **Simplification.** Quand une PR est verte, propose une fois `tnx-dev-simplify-implementation`. Les
    retouches acceptées font un commit à part.
-5. **Fin.** Quand chaque PR est faite, mets `phase: verify` dans les plans.
+5. **Fichier de run.** Après chaque PR terminée, mets à jour `status: in-progress` et `next_action` (PR
+   suivante, ou fin de phase) et les branches avec leur SHA dans le fichier de run (`${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`).
+6. **Fin.** Quand chaque PR est faite, mets `phase: verify` dans les plans et dans le fichier de run.
 
 ## Contraintes du sous-agent
 
@@ -76,4 +78,4 @@ session principale prépare, délègue, vérifie et passe à la PR suivante.
 - [ ] Les commits de chaque PR sont atomiques et leur message suit la convention. `git status` est propre
       (hors fichiers de plan).
 - [ ] `Avancement` vaut `faite (<sha>)` pour chaque PR de chaque plan, et le SHA est celui de la branche.
-- [ ] À la fin de la phase : `phase: verify` est dans les plans.
+- [ ] À la fin de la phase : `phase: verify` est dans les plans et dans le fichier de run.

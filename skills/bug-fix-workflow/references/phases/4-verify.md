@@ -67,7 +67,7 @@ le tableau de rapport.
       cellule vide. Un scénario `needs a human` ne compte qu'après la réponse `pass` de l'utilisateur.
 - [ ] Les serveurs démarrés pour la phase 3 ou 4 sont arrêtés, après accord de l'utilisateur (les PID sont
       dans la sortie de `launch`).
-- [ ] `phase: ship` est dans les plans.
+- [ ] `phase: ship` est dans les plans et dans le fichier de run.
 
 ## En cas d'échec
 

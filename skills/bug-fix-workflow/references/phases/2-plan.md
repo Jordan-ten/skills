@@ -96,6 +96,7 @@ seule validation. Mets `phase: implement` dans l'en-tête des plans seulement ap
 - [ ] `Questions non résolues` vaut `aucune` et `status` vaut `ready` dans chaque plan.
 - [ ] Le nombre de fichiers (hors générés) est affiché.
 - [ ] L'utilisateur a validé le diagnostic, les plans et le découpage.
+- [ ] Le fichier de run est à jour : `phase: implement`, `status: ready`, plans et branches dans `Fichiers`.
 
 Au passage, dis que `/clear` puis `/bug-fix-workflow <issue>` reprend à la phase 3 : les plans portent
 l'état.

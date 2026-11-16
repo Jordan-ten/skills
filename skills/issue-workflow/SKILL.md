@@ -15,7 +15,8 @@ allowed-tools: Bash(gh *), Bash(git *), Bash(python3 ${CLAUDE_PLUGIN_ROOT}/skill
 But : passer d'un pitch Notion à une issue GitHub par tâche, avec des scénarios et des parcours validés
 par l'utilisateur. Ensuite chaque issue s'implémente avec `/feature-implementation-workflow <issue>`.
 
-Entrée : `/issue-workflow <nom-ou-url-notion-du-pitch>`.
+Entrée : `/issue-workflow <nom-ou-url-notion-du-pitch> [--phase <nom>]`. Sans `--phase`, le run reprend là
+où le fichier d'état l'indique.
 
 Le workflow a cinq phases. Chaque phase a un but et des conditions de sortie : elle se termine seulement
 quand elles sont vraies et prouvées. Ensuite l'utilisateur décide de continuer. Lis le fichier d'une phase
@@ -43,7 +44,10 @@ Les fichiers du pitch sont dans `.claude/plans/pitch/`, relatif au dossier de tr
 ## Fichier d'état
 
 `.claude/plans/pitch/<slug>.workflow.md`, créé en phase 1, tenu à jour par chaque phase. C'est la mémoire
-du workflow : il permet la reprise.
+du workflow : il permet la reprise. Il joue le rôle du fichier de run de
+`${CLAUDE_PLUGIN_ROOT}/shared/run-state.md` : mêmes moments d'écriture (passage de phase avant la question,
+puis après chaque décision validée) et même règle `--phase`. Ajoute-y `status: ready | in-progress | done` et
+`next_action: <une phrase>`.
 
 ```markdown
 ---
@@ -107,7 +111,9 @@ résumé perd des détails et garde un souvenir périmé.
 1. Lis `.claude/plans/pitch/<slug>.workflow.md`. Absent : commence à la phase 1.
 2. Ne fais pas confiance à `phase:`. Revérifie les conditions de sortie de la phase juste avant. Si l'une
    échoue, reviens à cette phase et dis pourquoi.
-3. Dis à l'utilisateur où le run reprend, puis continue.
+3. `--phase <nom>` : l'utilisateur choisit la phase. Dis quelles conditions des phases précédentes ne sont
+   pas prouvées, sans bloquer, et mets `phase:` à jour.
+4. Dis à l'utilisateur où le run reprend (phase et `next_action`), puis continue.
 
 ## Règles
 

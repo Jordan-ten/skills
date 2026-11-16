@@ -28,7 +28,8 @@ continuer.
   comportement. Il renvoie au scénario par son titre.
 - **Les fichiers portent l'état**, jamais la conversation (voir « Fichiers du run »).
 
-Entrée : `/bug-fix-workflow <url-ou-numéro-de-l-issue>`.
+Entrée : `/bug-fix-workflow <url-ou-numéro-de-l-issue> [--phase <nom>]`. Sans `--phase`, le run reprend
+là où le fichier de run l'indique.
 
 `allowed-tools` n'approuve volontairement ni `git push`, ni `gh pr create`, ni `gh issue edit`, ni
 `gh stack push|submit` : le harnais demande une confirmation pour chaque action vers l'extérieur.
@@ -76,9 +77,9 @@ Fichiers partagés avec `feature-implementation-workflow` (ne les recopie pas) :
    et la preuve en quelques mots (commande et résultat, ou fichier et section). Une condition sans
    preuve est ❌. Ce qui se vérifie en une commande (`git status --short`, `git log`, `gh issue view`),
    vérifie-le toi-même au lieu de croire un rapport.
-2. Tout est ✅ : sauvegarde d'abord l'état (`phase:` dans les plans, issue déjà écrite). Puis pose une
-   seule `AskUserQuestion` : `Passer à la phase <n+1>` (recommandé) / `Refaire quelque chose` /
-   `Arrêter`.
+2. Tout est ✅ : sauvegarde d'abord l'état (`phase:` dans les plans, issue déjà écrite, fichier de run).
+   Puis pose une seule `AskUserQuestion` avec les options de « Passage de phase et `/clear` » de
+   `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`.
 3. Un ❌ : corrige-le, ou reviens à la phase qui possède la cause. Ne propose jamais de continuer avec
    un ❌.
 
@@ -101,8 +102,8 @@ logs ni de sorties de tests.
 - **Serveurs.** Seule la session principale démarre et arrête les environnements (skill `launch`). Les
   sous-agents les utilisent.
 - **`/clear`.** Tout l'état est dans les fichiers : à chaque passage, `/clear` puis la même commande
-  reprend sans perte. Conseille-le quand `/context` dépasse environ la moitié. Après un `/clear`, fais
-  confiance aux fichiers (issue, plans, notes, git), pas au souvenir.
+  reprend sans perte. Règles : `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`. Recommande `Clear` après les phases 2 et 3, et quand `/context`
+  dépasse environ la moitié.
 
 ## Fichiers du run
 
@@ -111,6 +112,8 @@ logs ni de sorties de tests.
   racine du repo : `backend/.claude/plans/` ou `frontend/.claude/plans/`). Écrites en phase 1. Elles
   gardent la reproduction : étapes exactes, données utilisées, observé, attendu, preuve « avant », chemin
   d'un e2e de reproduction non commité. Le diagnostic de la phase 2 y est aussi résumé en une ligne.
+- **Fichier de run** : `.claude/plans/<n>.run.md`, à côté des notes. Il dit où reprendre (phase, prochaine
+  action). Format, écriture et reprise : `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md`. Créé en phase 1.
 - **Plans** : `.claude/plans/<n>-<slug>.md` dans le dossier de chaque package modifié (le plus souvent
   un seul), avec l'en-tête du workflow (`phase:`, `issue_updated_at:`) et le tableau `## Pull requests`
   (voir le template), dont la colonne `Avancement` suit chaque PR.
@@ -120,21 +123,18 @@ Ordre des valeurs de `phase:` : `plan` → `implement` → `verify` → `ship` �
 
 ## Reprise
 
-Au début d'un run :
+Règles complètes : `${CLAUDE_PLUGIN_ROOT}/shared/run-state.md` (section « Reprise »). Ordre : fichier de run, puis issue, notes et plans qu'il
+pointe, puis revérification des conditions de sortie de la phase d'avant. `--phase <nom>` force la phase.
 
-1. Lis l'issue. Cherche les notes et les plans dans `backend/.claude/plans/` et
-   `frontend/.claude/plans/` (ou le dossier courant s'il est déjà un package) :
-   `<n>.notes.md` et `<n>-*.md`.
-2. Aucun plan : commence à la phase 1 (lis les notes si elles existent). Un plan existe : prends la plus
-   petite `phase` des plans, dans l'ordre ci-dessus.
-3. Ne fais pas confiance à l'état. Revérifie les conditions de sortie de la phase juste avant (et la date
-   de mise à jour de l'issue contre `issue_updated_at` des plans). Si l'une échoue, reviens à cette phase
-   et dis pourquoi.
-4. L'e2e de reproduction non commité doit exister au chemin des notes. Sinon, réécris-le d'après les étapes
-   des notes avant la phase 3.
-5. En phase 3, la colonne `Avancement` de `## Pull requests` dit où reprendre. Confirme-la avec
-   `git log` sur la branche de la PR.
-6. Dis à l'utilisateur où le run reprend, puis continue.
+Propre à ce workflow :
+
+- Sans fichier de run : lis l'issue, cherche les notes et les plans dans `backend/.claude/plans/` et
+  `frontend/.claude/plans/` (`<n>.notes.md`, `<n>-*.md`). Aucun plan → phase 1 ; sinon la plus petite
+  `phase:` des plans.
+- L'e2e de reproduction non commité doit exister au chemin des notes. Sinon, réécris-le d'après les étapes
+  des notes avant la phase 3.
+- En phase 3, la colonne `Avancement` de `## Pull requests` dit où reprendre. Confirme-la avec `git log`
+  sur la branche de la PR.
 
 ## Règles
 
