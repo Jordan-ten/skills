@@ -47,14 +47,15 @@ Skills marked **slash-only** run only when you type their command. Claude never 
 
 ## Workflow
 
-Four skills with `workflow` in the name. Each one runs a fixed list of steps.
+Five skills with `workflow` in the name. Each one runs a fixed list of steps.
 
 ```
 pitch ─issue-workflow→ issues ─feature-implementation-workflow→ pull requests ─review-workflow→ review
                                                        └─qa-workflow→ QA report
+bug issue ─bug-fix-workflow→ pull request ─review-workflow→ review
 ```
 
-`issue-workflow` and `feature-implementation-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, redo, or stop (`issue-workflow` also offers a `/clear` to keep the context small). You can run the same command again to resume.
+`issue-workflow`, `feature-implementation-workflow` and `bug-fix-workflow` work in phases. At the end of each phase, Claude shows proof that it is done, then you choose: continue, redo, or stop (`issue-workflow` also offers a `/clear` to keep the context small). You can run the same command again to resume.
 
 ### `issue-workflow`
 
@@ -75,6 +76,16 @@ From a GitHub issue to pull requests. Command: `/jcontent-traace:feature-impleme
 3. **Implement**: code and tests, one sub-agent per pull request, atomic commits. The main session stays light.
 4. **Review and verify**: `/code-review high`, then the end-to-end tests and each scenario checked in the UI.
 5. **Ship**: push and open the pull requests, after your yes.
+
+### `bug-fix-workflow`
+
+From a GitHub bug issue to a pull request. Command: `/jcontent-traace:bug-fix-workflow <issue URL or number>`.
+
+1. **Reproduce**: see the bug in the local app (dev server, or a failing end-to-end test). Add a regression scenario to the issue.
+2. **Diagnosis and plan**: prove the root cause, then write a minimal fix plan.
+3. **Implement**: regression test red, then the fix, atomic commits, one sub-agent per pull request.
+4. **Review and verify**: `/code-review high`, the end-to-end tests, then the reproduction steps replayed: the bug is gone.
+5. **Ship**: push and open the pull request, after your yes. Offers a hotfix.
 
 ### `review-workflow`
 
@@ -122,6 +133,7 @@ The Chrome profile is `.claude/chrome-profile/`, relative to the folder where Cl
 |---|---|---|
 | `rebase` | Rebases the current branch on a target branch (default `main`). Fixes generated-file conflicts, applies migrations, regenerates the GraphQL schema and SDK types, checks types, runs related tests, then force-pushes. | no |
 | `feature-implementation-workflow` | Takes a feature from its GitHub issue to pull requests in five phases, with exit conditions: refine the issue scenarios, write one plan per package and split into PRs, implement (one sub-agent per PR, so the main context stays small), review with `/code-review high` and verify (tests of the change, end to end in the UI), push. State lives in files, so `/clear` and the same command resume. Resumable. | yes |
+| `bug-fix-workflow` | Takes a bug from its GitHub issue to a pull request in five phases, with exit conditions: reproduce it locally (dev server or red e2e) and add a regression scenario to the issue, prove the root cause and write a minimal fix plan, implement (regression test red before the fix, one sub-agent per PR), review with `/code-review high` and replay the reproduction to prove the bug is gone, push and offer a hotfix. State lives in files, so `/clear` and the same command resume. Shares sub-agent rules and plan template with `feature-implementation-workflow`. | yes |
 | `write-implementation-plan` | Writes the plan of one package (backend or frontend) from an issue or a free description. Defines observable success criteria, explores the code first, plans a vertical slice first, gives a proof for each step, adds a pre-mortem, and checks the plan is consistent. Writes no code. Phase 2 of `feature-implementation-workflow` is built on it. | yes |
 | `stack` | Splits a validated plan into a stack of pull requests, one per layer. Then manages the stack: status, review fixes, rebase, sync. | no |
 | `create-local-data` | Creates records in the local app through the GraphQL API with an offline-auth token. Used to see a screen, reproduce a bug, or prepare a demo. | no |
