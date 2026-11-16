@@ -150,23 +150,22 @@ ENV_DIR=$HOME/code/.env
 
 ## Étape 1 — Vérifier et démarrer Docker
 
-Compter le nombre de services attendus et le nombre de conteneurs running :
+Comparer les **noms** des services attendus et des services running. Ne jamais comparer des nombres : un
+service sous profil (par exemple `clickhouse`) peut tourner sans être attendu, et masquer un service
+manquant (par exemple `redis` arrêté).
 
 ```bash
-EXPECTED=$(docker compose \
-  -f $BACKEND_DIR/docker-compose.yml \
-  --env-file $BACKEND_DIR/$ENV_FILE \
-  -p $PROJECT_NAME \
-  config --services 2>/dev/null | wc -l)
+compose() {
+  docker compose -f $BACKEND_DIR/docker-compose.yml --env-file $BACKEND_DIR/$ENV_FILE -p $PROJECT_NAME "$@"
+}
 
-RUNNING=$(docker compose \
-  -f $BACKEND_DIR/docker-compose.yml \
-  --env-file $BACKEND_DIR/$ENV_FILE \
-  -p $PROJECT_NAME \
-  ps --format json 2>/dev/null | grep -c '"State":"running"' || echo 0)
+EXPECTED=$(compose config --services 2>/dev/null | sort)
+RUNNING=$(compose ps --services --status running 2>/dev/null | sort)
+MISSING=$(comm -23 <(echo "$EXPECTED") <(echo "$RUNNING"))
 ```
 
-Si `RUNNING < EXPECTED` (au moins un conteneur manquant ou arrêté) → lancer `up -d` :
+Si `MISSING` n'est pas vide (au moins un service attendu manquant ou arrêté) → afficher les noms
+manquants et lancer `up -d` :
 
 ```bash
 docker compose \
@@ -176,7 +175,7 @@ docker compose \
   up -d
 ```
 
-Si `RUNNING == EXPECTED` → afficher "Docker déjà démarré ($RUNNING/$EXPECTED), on continue." et passer à l'étape 2.
+Si `MISSING` est vide → afficher "Docker déjà démarré ($(echo $EXPECTED)), on continue." et passer à l'étape 2.
 
 Après `up -d`, attendre que PostgreSQL accepte les connexions (max 30 s) :
 
@@ -191,8 +190,8 @@ for i in $(seq 1 15); do
 done
 ```
 
-Après `up -d`, recompter les conteneurs running. Si `RUNNING < EXPECTED`, ou si `PG_READY` n'est pas `true`
-après 30 s → **stopper et reporter** quels conteneurs ne tournent pas (`docker compose ... ps`).
+Après `up -d`, recalculer `MISSING`. S'il n'est pas vide, ou si `PG_READY` n'est pas `true`
+après 30 s → **stopper et reporter** les services qui ne tournent pas (`compose ps`).
 Ne pas lancer les migrations ni le serveur sans Docker complet.
 
 ---
@@ -315,7 +314,7 @@ tail -30 /tmp/traace-frontend-dev.log
 | Étape | Vérification | Critère de succès |
 |-------|-------------|-------------------|
 | Ports | `ss -ltnp` sur `$PORT` (et `$FRONT_PORT`) | Libres, ou gardés sur un oui de l'utilisateur |
-| Docker | `docker compose ps` | Tous les services running (`RUNNING == EXPECTED`) |
+| Docker | `compose ps --services --status running` contre `compose config --services` | Aucun service attendu manquant (`MISSING` vide) |
 | PostgreSQL | `pg_isready` | Exit 0 |
 | Migrations PG | `mikro:migration:up` puis `migration:pending` | Exit 0 et "No pending migrations" |
 | Serveur | `curl /health` | HTTP 200 ou 401 |
