@@ -110,11 +110,51 @@ Une liste plate, une ligne par commentaire traité. Chaque ligne commence par un
 
 Omet une section si elle est vide.
 
+## 8. Réponse dans chaque thread
+
+Après le rapport, réponds dans le thread de **chaque** commentaire, sans exception. Cette réponse fait partie du process : ne demande pas de confirmation.
+
+La première ligne est un titre qui donne l'état de résolution. Ensuite, le contenu dépend de l'état :
+
+| Titre | Quand | Contenu |
+|---|---|---|
+| `**Fix**` | Corrigé (avec ou sans décision) | La correction faite, très simple. |
+| `**Not fix**` | Non pertinent, ou refusé par l'utilisateur à l'étape 5 | L'argumentaire : pourquoi rien n'a changé, avec la preuve (fichier, ligne, comportement). |
+| `**Already fixed**` | Déjà traité par un commit récent | Le commit qui l'a corrigé. |
+| `**To decide**` | Doute ou conflit, pas encore tranché | Ce qui reste à décider. |
+
+Règles d'écriture :
+
+- Anglais simple (phrases courtes, mots courants).
+- Une à trois phrases. Pas de résumé en plus.
+
+Commentaire inline (thread de review) : réponds dans le thread.
+
+```bash
+gh api repos/{owner}/{repo}/pulls/{number}/comments/{comment_id}/replies -f body="$BODY"
+```
+
+Si le commentaire est lui-même une réponse, utilise l'id du premier commentaire du thread.
+
+Commentaire général ou body de review (pas de thread possible) : poste un commentaire de PR avec `gh pr comment [PR] --body "$BODY"`, qui commence par le lien du commentaire concerné.
+
+Exemples :
+
+```
+**Fix**
+Renamed `data` to `userEmails`.
+```
+
+```
+**Not fix**
+The column already has an index in migration `xxx`, so a new one is not needed.
+```
+
 ## Règles
 
 - Ne corrige que ce que tu as validé. Tout doute passe par l'utilisateur.
 - Changements minimaux : seulement ce que le commentaire demande.
 - Ne corrige pas un commentaire déjà résolu.
-- Ne réponds pas sur GitHub, ne résous aucun thread, ne soumets aucune review, sauf demande explicite.
+- Les seuls messages postés sur GitHub sont les réponses de l'étape 8, une par commentaire, dans son thread. Ne résous aucun thread, ne soumets aucune review, sauf demande explicite.
 - Ne fais pas de commit sauf demande explicite.
 - Si deux commentaires se contredisent, montre le conflit avant d'agir.
